@@ -1,0 +1,100 @@
+[
+    {
+        "id": "class-6-10-maths",
+        "title": "Mathematics (Class 6-10)",
+        "category": "Class 6-10",
+        "image": "https://images.unsplash.com/photo-1509228468518-180dd4864904?auto=format&fit=crop&q=80&w=600",
+        "price": "Free"
+    },
+    {
+        "id": "class-6-10-science",
+        "title": "Science (Class 6-10)",
+        "category": "Class 6-10",
+        "image": "https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&q=80&w=600",
+        "price": "Free"
+    },
+    {
+        "id": "class-6-10-social",
+        "title": "Social Science (Class 6-10)",
+        "category": "Class 6-10",
+        "image": "https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?auto=format&fit=crop&q=80&w=600",
+        "price": "Free"
+    },
+    {
+        "id": "class-6-10-english",
+        "title": "English (Class 6-10)",
+        "category": "Class 6-10",
+        "image": "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?auto=format&fit=crop&q=80&w=600",
+        "price": "Free"
+    },
+    {
+        "id": "class-11-12-physics",
+        "title": "Physics (Class 11-12)",
+        "category": "Class 11-12",
+        "image": "https://images.unsplash.com/photo-1636466484565-f374c4393691?auto=format&fit=crop&q=80&w=600",
+        "price": "Free"
+    },
+    {
+        "id": "class-11-12-chem",
+        "title": "Chemistry (Class 11-12)",
+        "category": "Class 11-12",
+        "image": "https://images.unsplash.com/photo-1532187875605-1ef6ec1e0ea9?auto=format&fit=crop&q=80&w=600",
+        "price": "Free"
+    },
+    {
+        "id": "class-11-12-bio",
+        "title": "Biology (Class 11-12)",
+        "category": "Class 11-12",
+        "image": "https://images.unsplash.com/photo-1530026405186-ed1f139313f8?auto=format&fit=crop&q=80&w=600",
+        "price": "Free"
+    },
+    {
+        "id": "neet-biology",
+        "title": "NEET Biology Masterclass",
+        "category": "NEET",
+        "image": "https://images.unsplash.com/photo-1576086213369-97a306d36557?auto=format&fit=crop&q=80&w=600",
+        "price": "Free"
+    },
+    {
+        "id": "jee-physics",
+        "title": "JEE Physics: Mechanics & Optics",
+        "category": "JEE",
+        "image": "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?auto=format&fit=crop&q=80&w=600",
+        "price": "Free"
+    },
+    {
+        "id": "ug-btech-cs",
+        "title": "B.Tech (CS Core)",
+        "category": "UG Courses",
+        "image": "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&q=80&w=600",
+        "price": "Free"
+    },
+    {
+        "id": "ug-btech",
+        "title": "B.Tech (Information Technology)",
+        "category": "UG Courses",
+        "image": "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&q=80&w=600",
+        "price": "Free"
+    },
+    {
+        "id": "ug-bcom",
+        "title": "B.Com (Business Accounting)",
+        "category": "UG Courses",
+        "image": "https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&q=80&w=600",
+        "price": "Free"
+    },
+    {
+        "id": "pg-mba",
+        "title": "MBA (Business Strategy)",
+        "category": "PG Courses",
+        "image": "https://images.unsplash.com/photo-1434626881859-194d67b2b86f?auto=format&fit=crop&q=80&w=600",
+        "price": "Free"
+    },
+    {
+        "id": "pg-data-science",
+        "title": "PG Diploma in Data Science",
+        "category": "PG Courses",
+        "image": "https://images.unsplash.com/photo-1551288049-bbbda536639a?auto=format&fit=crop&q=80&w=600",
+        "price": "Free"
+    }
+]
