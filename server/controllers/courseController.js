@@ -38,7 +38,22 @@ const createCourse = asyncHandler(async (req, res) => {
     res.status(201).json(course);
 });
 
+// @desc    Get single course by ID
+// @route   GET /api/courses/:id
+// @access  Private
+const getCourseById = asyncHandler(async (req, res) => {
+    const course = await Course.findById(req.params.id);
+
+    if (course) {
+        res.json(course);
+    } else {
+        res.status(404);
+        throw new Error('Course not found');
+    }
+});
+
 module.exports = {
     getCourses,
-    createCourse
+    createCourse,
+    getCourseById
 };

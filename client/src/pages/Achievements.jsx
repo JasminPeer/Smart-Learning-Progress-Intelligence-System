@@ -114,7 +114,12 @@ const Achievements = () => {
                         <div style={{ backgroundColor: '#F0FDF4', padding: '16px', borderRadius: '16px', display: 'inline-block', marginBottom: '20px' }}>
                             <Award size={32} color="var(--primary)" />
                         </div>
-                        <h3 style={{ fontSize: '1.4rem', marginBottom: '10px', color: 'var(--primary-dark)' }}>{ach.title}</h3>
+                        <h3 style={{ fontSize: '1.4rem', marginBottom: '5px', color: 'var(--primary-dark)' }}>{ach.title}</h3>
+                        {ach.certificateId && (
+                            <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--primary)', marginBottom: '10px', fontFamily: 'monospace' }}>
+                                ID: {ach.certificateId}
+                            </div>
+                        )}
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#64748B', fontSize: '0.9rem', marginBottom: '25px' }}>
                             <Calendar size={16} />
                             <span>Awarded on {new Date(ach.date).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}</span>
@@ -122,9 +127,13 @@ const Achievements = () => {
 
                         <div style={{ display: 'flex', gap: '15px' }}>
                             <button onClick={() => handleDownload(ach.title)} className="btn" style={{ padding: '10px 20px', backgroundColor: '#F1F5F9', color: '#1E293B', fontSize: '0.9rem', gap: '8px' }}>
-                                <Download size={18} /> Download PDF
+                                <Download size={18} /> Download
                             </button>
-                            <button className="btn" style={{ padding: '10px 20px', backgroundColor: 'transparent', color: 'var(--primary)', border: '1px solid var(--primary)', fontSize: '0.9rem', gap: '8px' }}>
+                            <button
+                                onClick={() => ach.certificateId ? window.open(`/verify/${ach.certificateId}`, '_blank') : alert("No verification ID found for this legacy certificate.")}
+                                className="btn"
+                                style={{ padding: '10px 20px', backgroundColor: 'transparent', color: 'var(--primary)', border: '1px solid var(--primary)', fontSize: '0.9rem', gap: '8px' }}
+                            >
                                 <ExternalLink size={18} /> Verify
                             </button>
                         </div>

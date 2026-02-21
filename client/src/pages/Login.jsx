@@ -3,6 +3,8 @@ import { useNavigate, Link } from 'react-router-dom';
 import AuthContext from '../auth/AuthContext';
 import Footer from '../components/layout/Footer';
 import { Brain } from 'lucide-react';
+import loginBg from '../assets/auth/login-bg.jpg';
+import logoImg from '../assets/logo.png';
 
 const Login = () => {
     const [formData, setFormData] = useState({ email: '', password: '' });
@@ -18,14 +20,26 @@ const Login = () => {
         e.preventDefault();
         try {
             const data = await login(email, password);
-            if (data.role === 'admin') navigate('/dashboard/admin');
-            else if (data.role === 'instructor') navigate('/dashboard/instructor');
-            else navigate('/dashboard/student');
+            console.log("[DEBUG] Login successful, role:", data.role);
+
+            // Defensive coding: Force string and lower case, default to student if undefined
+            const userRole = data.role ? String(data.role).toLowerCase() : 'student';
+
+            if (userRole === 'admin') {
+                console.log("[DEBUG] Navigating to /admin");
+                navigate('/admin');
+            } else if (userRole === 'instructor') {
+                console.log("[DEBUG] Navigating to /dashboard/instructor");
+                navigate('/dashboard/instructor');
+            } else {
+                console.log("[DEBUG] Navigating to /dashboard/student");
+                navigate('/dashboard/student');
+            }
         } catch (err) {
-            const msg = err.response?.data?.message || 'Login failed. Please check your network or credentials.';
+            const msg = err.response?.data?.message || 'Login failed. Please check your credentials.';
             console.error("Login Page Error:", msg, err);
             setError(msg);
-            alert("Login Error: " + msg); // Immediate feedback
+            alert("Login Error: " + msg); // Immediate feedback with server message
         }
     };
 
@@ -49,7 +63,7 @@ const Login = () => {
                         {/* Background Image (Low Opacity) */}
                         <div style={{
                             position: 'absolute', top: 0, left: 0, width: '100%', height: '100%',
-                            background: 'url("https://images.unsplash.com/photo-1546410531-bb4caa6b424d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80")',
+                            backgroundImage: `url(${loginBg})`,
                             backgroundSize: 'cover', opacity: 0.1, pointerEvents: 'none'
                         }}></div>
 
@@ -93,11 +107,11 @@ const Login = () => {
                     {/* Right Panel - Login Form (White) */}
                     <div style={{ flex: '1 1 500px', padding: '40px', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
                         <div style={{ width: '100%', maxWidth: '400px' }}>
-                            <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '30px', textDecoration: 'none', color: 'inherit' }}>
-                                <div style={{ width: '30px', height: '30px', color: 'var(--primary)', position: 'relative' }}>
-                                    <Brain size={30} strokeWidth={2} />
+                            <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '30px', textDecoration: 'none', color: 'inherit' }}>
+                                <div style={{ width: '50px', height: '50px', cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
+                                    <img src={logoImg} alt="LearnIQ Logo" style={{ width: '100%', height: 'auto' }} />
                                 </div>
-                                <span style={{ fontSize: '1.25rem', fontWeight: 700 }}>LearnIQ</span>
+                                <span style={{ fontSize: '1.4rem', fontWeight: 800 }}>LearnIQ</span>
                             </Link>
 
                             <h2 style={{ fontSize: '1.8rem', marginBottom: '10px' }}>Welcome back</h2>
@@ -127,11 +141,12 @@ const Login = () => {
                                 Don't have an account? <Link to="/register" style={{ color: 'var(--primary)', fontWeight: 600, textDecoration: 'none' }}>Sign up</Link>
                             </p>
 
+
                             <div style={{ marginTop: '40px', padding: '20px', backgroundColor: '#F9FAFB', borderRadius: '8px', fontSize: '0.85rem' }}>
                                 <strong>Quick Access (Demo):</strong>
                                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginTop: '10px' }}>
-                                    <button className="btn" style={{ fontSize: '0.75rem', padding: '5px', backgroundColor: '#E0E7FF', color: '#4338CA' }} onClick={() => setFormData({ email: 'student@test.com', password: '123456' })}>Student</button>
-                                    <button className="btn" style={{ fontSize: '0.75rem', padding: '5px', backgroundColor: '#FEF3C7', color: '#B45309' }} onClick={() => setFormData({ email: 'admin@test.com', password: '123' })}>Admin</button>
+                                    <button className="btn" type="button" style={{ fontSize: '0.75rem', padding: '5px', backgroundColor: '#E0E7FF', color: '#4338CA' }} onClick={() => setFormData({ email: 'student@test.com', password: '123456' })}>Student</button>
+                                    <button className="btn" type="button" style={{ fontSize: '0.75rem', padding: '5px', backgroundColor: '#FEF3C7', color: '#B45309' }} onClick={() => setFormData({ email: 'admin@test.com', password: '123456' })}>Admin</button>
                                 </div>
                             </div>
                         </div>

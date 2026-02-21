@@ -3,23 +3,26 @@ import { useNavigate, Link } from 'react-router-dom';
 import AuthContext from '../auth/AuthContext';
 import Footer from '../components/layout/Footer';
 import { Brain } from 'lucide-react';
+import registerBg from '../assets/auth/register-bg.jpg';
 
 const Register = () => {
-    const [formData, setFormData] = useState({ name: '', educationLevel: '', mobileNumber: '', email: '', password: '', role: 'student' });
+    // ... code truncated ...
+    const [formData, setFormData] = useState({ name: '', category: '', mobileNumber: '', email: '', password: '', role: 'student' });
     const { register } = useContext(AuthContext);
     const navigate = useNavigate();
     const [error, setError] = useState('');
 
-    const { name, educationLevel, mobileNumber, email, password, role } = formData;
+    const { name, category, mobileNumber, email, password, role } = formData;
 
     const onChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
 
     const onSubmit = async (e) => {
+        // ... code truncated ...
         e.preventDefault();
         try {
-            await register(name, educationLevel, mobileNumber, email, password, role);
-            if (role === 'admin') navigate('/dashboard/admin');
-            else navigate('/onboarding'); // Redirect to Onboarding for students
+            await register(name, category, mobileNumber, email, password, role);
+            if (role === 'admin') navigate('/admin');
+            else navigate('/onboarding');
         } catch (err) {
             const msg = err.response?.data?.message || 'Registration failed. Please check your network connection.';
             console.error("Register Page Error:", msg);
@@ -35,6 +38,7 @@ const Register = () => {
 
                     {/* Left Panel - Register Form (Swapped) */}
                     <div style={{ flex: '1 1 500px', padding: '40px', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+                        {/* ... Form Content ... */}
                         <div style={{ width: '100%', maxWidth: '450px' }}>
                             <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '30px', textDecoration: 'none', color: 'inherit' }}>
                                 <div style={{ width: '30px', height: '30px', color: 'var(--primary)', position: 'relative' }}>
@@ -54,8 +58,16 @@ const Register = () => {
                                     <input type="text" name="name" value={name} onChange={onChange} required placeholder="Enter your full name" />
                                 </div>
                                 <div className="form-group">
-                                    <label>Education Level</label>
-                                    <input type="text" name="educationLevel" value={educationLevel} onChange={onChange} required placeholder="e.g. Class 10, UG, PG" />
+                                    <label>Category</label>
+                                    <select name="category" value={formData.category} onChange={onChange} required style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid #CBD5E1', backgroundColor: 'white' }}>
+                                        <option value="">Select Category</option>
+                                        <option value="Class 6-10">Class 6-10</option>
+                                        <option value="Class 11-12">Class 11-12</option>
+                                        <option value="NEET">NEET</option>
+                                        <option value="JEE">JEE</option>
+                                        <option value="UG Courses">UG Courses</option>
+                                        <option value="PG Courses">PG Courses</option>
+                                    </select>
                                 </div>
                                 <div className="form-group">
                                     <label>Mobile Number</label>
@@ -122,7 +134,7 @@ const Register = () => {
                         {/* Background Image (Low Opacity) */}
                         <div style={{
                             position: 'absolute', top: 0, left: 0, width: '100%', height: '100%',
-                            background: 'url("https://images.unsplash.com/photo-1523240795612-9a054b0db644?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80")', // Example Student/Group image
+                            backgroundImage: `url(${registerBg})`, // Example Student/Group image
                             backgroundSize: 'cover', opacity: 0.1, pointerEvents: 'none'
                         }}></div>
 
@@ -152,7 +164,7 @@ const Register = () => {
                 </div>
                 <Footer />
             </div>
-        </div>
+        </div >
     );
 };
 

@@ -1,3 +1,18 @@
+import mathImg from '../assets/store/class-6-10-maths.jpg';
+import scienceImg from '../assets/store/class-6-10-science.jpg';
+import socialImg from '../assets/store/class-6-10-social.jpg';
+import englishImg from '../assets/store/class-6-10-english.jpg';
+import phyImg from '../assets/store/class-11-12-physics.jpg';
+import chemImg from '../assets/store/class-11-12-chem.jpg';
+import bioImg from '../assets/store/class-11-12-bio.jpg';
+import neetImg from '../assets/store/neet-biology.jpg';
+import jeeImg from '../assets/store/jee-physics.jpg';
+import btechCsImg from '../assets/store/ug-btech-cs.jpg';
+import btechItImg from '../assets/store/ug-btech.jpg';
+import bcomImg from '../assets/store/ug-bcom.jpg';
+import mbaImg from '../assets/store/pg-mba.jpg';
+import dsImg from '../assets/store/pg-data-science.jpg';
+
 export const courses = [
     {
         id: "class-6-10-maths",
@@ -5,7 +20,7 @@ export const courses = [
         category: "Class 6-10",
         description: "Foundational mathematics covering Algebra, Geometry, and Number Systems.",
         duration: "52 Weeks",
-        coverImage: "https://images.unsplash.com/photo-1509228468518-180dd4864904?auto=format&fit=crop&q=80&w=800",
+        coverImage: mathImg,
         topics: [
             {
                 id: "math-6-10-algebra",
@@ -95,7 +110,7 @@ export const courses = [
         category: "K-12",
         description: "Explore the wonders of Biology, Chemistry, and Physics with interactive experiments and deep theory.",
         duration: "52 Weeks",
-        coverImage: "https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&q=80&w=800",
+        coverImage: scienceImg,
         topics: [
             {
                 id: "sci-6-10-physics",
@@ -142,7 +157,26 @@ export const courses = [
             title: "Science Junior Mastery Exam",
             passingScore: 70,
             questions: [
-                { id: 1, question: "Unit of Force?", options: ["Joule", "Watt", "Newton", "Volt"], answer: "Newton" }
+                { id: 1, question: "Unit of Force?", options: ["Joule", "Watt", "Newton", "Volt"], answer: "Newton" },
+                { id: 2, question: "Which law is known as the Law of Inertia?", options: ["Newton's 1st Law", "Newton's 2nd Law", "Newton's 3rd Law", "Law of Gravity"], answer: "Newton's 1st Law" },
+                { id: 3, question: "What is the 'Powerhouse' of the cell?", options: ["Nucleus", "Ribosome", "Mitochondria", "Golgi Body"], answer: "Mitochondria" },
+                { id: 4, question: "The process by which plants make food is?", options: ["Respiration", "Photosynthesis", "Digestion", "Transpiration"], answer: "Photosynthesis" },
+                { id: 5, question: "Formula for Force is?", options: ["F=m/a", "F=ma", "F=a/m", "F=m+a"], answer: "F=ma" },
+                { id: 6, question: "The control center of the cell is?", options: ["Cell Wall", "Cytoplasm", "Nucleus", "Vacuole"], answer: "Nucleus" },
+                { id: 7, question: "Which of these is a plant cell component not in animal cells?", options: ["Cell Membrane", "Cell Wall", "Nucleus", "Ribosome"], answer: "Cell Wall" },
+                { id: 8, question: "Rate of change of displacement is?", options: ["Speed", "Acceleration", "Velocity", "Distance"], answer: "Velocity" },
+                { id: 9, question: "Weight of an object is measured in?", options: ["Kilograms", "Newtons", "Grams", "Litres"], answer: "Newtons" },
+                { id: 10, question: "What is the SI unit of work?", options: ["Newton", "Watt", "Joule", "Pascal"], answer: "Joule" },
+                { id: 11, question: "The liquid part of the cell is?", options: ["Cytoplasm", "Nucleoplasm", "Protoplasm", "Xylem"], answer: "Cytoplasm" },
+                { id: 12, question: "Inertia depends on an object's?", options: ["Shape", "Color", "Mass", "Velocity"], answer: "Mass" },
+                { id: 13, question: "Chlorophyll is present in?", options: ["Mitochondria", "Chloroplasts", "Vacuoles", "Nucleus"], answer: "Chloroplasts" },
+                { id: 14, question: "Distance travelled per unit time is?", options: ["Velocity", "Speed", "Acceleration", "Force"], answer: "Speed" },
+                { id: 15, question: "Human blood is red due to?", options: ["Hemoglobin", "Chlorophyll", "Platelets", "WBC"], answer: "Hemoglobin" },
+                { id: 16, question: "Symbol for the element Carbon is?", options: ["Ca", "Co", "C", "Cr"], answer: "C" },
+                { id: 17, question: "Pure water has a pH of?", options: ["5", "7", "9", "1"], answer: "7" },
+                { id: 18, question: "The hardest natural substance is?", options: ["Iron", "Gold", "Diamond", "Graphite"], answer: "Diamond" },
+                { id: 19, question: "Boiling point of water in Celsius is?", options: ["0°", "50°", "100°", "273°"], answer: "100°" },
+                { id: 20, question: "Gas used by plants for photosynthesis?", options: ["Oxygen", "Nitrogen", "Carbon Dioxide", "Hydrogen"], answer: "Carbon Dioxide" }
             ]
         }
     },
@@ -152,7 +186,7 @@ export const courses = [
         category: "Class 11-12",
         description: "Advanced physics including Mechanics, Electrodynamics, and Optics.",
         duration: "104 Weeks",
-        coverImage: "https://images.unsplash.com/photo-1636466484565-f374c4393691?auto=format&fit=crop&q=80&w=800",
+        coverImage: phyImg,
         topics: [
             {
                 id: "physics-11-mech",
@@ -208,7 +242,7 @@ export const courses = [
         category: "Class 6-10",
         description: "Geography, History, and Civics basics for school students.",
         duration: "52 Weeks",
-        coverImage: "/social-cover.svg",
+        coverImage: socialImg,
         topics: [
             {
                 id: "soc-history",
@@ -235,7 +269,26 @@ export const courses = [
             title: "Social Science Foundation Exam",
             passingScore: 70,
             questions: [
-                { id: 1, question: "Year of the first war of independence?", options: ["1857", "1947", "1757", "1919"], answer: "1857" }
+                { id: 1, question: "Year of the first war of independence?", options: ["1857", "1947", "1757", "1919"], answer: "1857" },
+                { id: 2, question: "Who led the revolt in Jhansi?", options: ["Nana Saheb", "Tatya Tope", "Rani Laxmi Bai", "Kunwar Singh"], answer: "Rani Laxmi Bai" },
+                { id: 3, question: "Immediate cause of the 1857 revolt?", options: ["Economic crisis", "Greased cartridges", "Education tax", "Land reforms"], answer: "Greased cartridges" },
+                { id: 4, question: "Mughal Emperor during 1857 revolt?", options: ["Akbar II", "Bahadur Shah Zafar", "Aurangzeb", "Shah Alam"], answer: "Bahadur Shah Zafar" },
+                { id: 5, question: "Who was the 'Father of Indian Nation'?", options: ["Nehru", "Patel", "Mahatma Gandhi", "Bose"], answer: "Mahatma Gandhi" },
+                { id: 6, question: "Which layer of Atmosphere has the Ozone layer?", options: ["Troposphere", "Stratosphere", "Mesosphere", "Exosphere"], answer: "Stratosphere" },
+                { id: 7, question: "The longest river in India is?", options: ["Ganga", "Yamuna", "Godavari", "Brahmaputra"], answer: "Ganga" },
+                { id: 8, question: "Capital of India is?", options: ["Mumbai", "Kolkata", "New Delhi", "Chennai"], answer: "New Delhi" },
+                { id: 9, question: "Highest mountain peak in India?", options: ["Mt. Everest", "K2", "Kanchenjunga", "Anamudi"], answer: "Kanchenjunga" },
+                { id: 10, question: "Which planet is known as the Red Planet?", options: ["Venus", "Mars", "Jupiter", "Saturn"], answer: "Mars" },
+                { id: 11, question: "Indian Constitution was adopted on?", options: ["15 Aug 1947", "26 Jan 1950", "2 Oct 1948", "26 Nov 1949"], answer: "26 Jan 1950" },
+                { id: 12, question: "Who is the head of the Indian State?", options: ["Prime Minister", "President", "Chief Justice", "Speaker"], answer: "President" },
+                { id: 13, question: "Term of the Lok Sabha is?", options: ["4 years", "5 years", "6 years", "Permanent"], answer: "5 years" },
+                { id: 14, question: "Fundamental Rights are in which part of Constitution?", options: ["Part I", "Part II", "Part III", "Part IV"], answer: "Part III" },
+                { id: 15, question: "Minimum age to vote in India?", options: ["16", "18", "21", "25"], answer: "18" },
+                { id: 16, question: "Silicon Valley of India is?", options: ["Hyderabad", "Pune", "Bengaluru", "Delhi"], answer: "Bengaluru" },
+                { id: 17, question: "White Revolution is related to?", options: ["Egg", "Milk", "Rice", "Cotton"], answer: "Milk" },
+                { id: 18, question: "Suez Canal connects Mediterranean Sea and?", options: ["Black Sea", "Red Sea", "Arabian Sea", "Caspian Sea"], answer: "Red Sea" },
+                { id: 19, question: "The study of population is called?", options: ["Cartography", "Demography", "Geography", "History"], answer: "Demography" },
+                { id: 20, question: "First Prime Minister of independent India?", options: ["Sardar Patel", "Jawaharlal Nehru", "Dr. Rajendra Prasad", "Lal Bahadur Shastri"], answer: "Jawaharlal Nehru" }
             ]
         }
     },
@@ -245,7 +298,7 @@ export const courses = [
         category: "Class 6-10",
         description: "Grammar, Composition, and Literature for school excellence.",
         duration: "52 Weeks",
-        coverImage: "/english-cover.svg",
+        coverImage: englishImg,
         topics: [
             {
                 id: "eng-grammar",
@@ -272,7 +325,26 @@ export const courses = [
             title: "English Proficiency Exam",
             passingScore: 75,
             questions: [
-                { id: 1, question: "The plural of 'Child' is?", options: ["Childs", "Children", "Childrens", "Childes"], answer: "Children" }
+                { id: 1, question: "The plural of 'Child' is?", options: ["Childs", "Children", "Childrens", "Childes"], answer: "Children" },
+                { id: 2, question: "Which is a synonym of 'Happy'?", options: ["Sad", "Joyful", "Angry", "Tired"], answer: "Joyful" },
+                { id: 3, question: "The feminine of 'Horse' is?", options: ["Filly", "Mare", "Ewe", "Doe"], answer: "Mare" },
+                { id: 4, question: "Identify the Adjective in: 'The blue bag is mine.'", options: ["The", "blue", "bag", "mine"], answer: "blue" },
+                { id: 5, question: "Which of these is a Vowel?", options: ["B", "E", "D", "G"], answer: "E" },
+                { id: 6, question: "Opposite of 'Arrival' is?", options: ["Departure", "Coming", "Entrance", "Reaching"], answer: "Departure" },
+                { id: 7, question: "He ___ going to the market.", options: ["am", "is", "are", "be"], answer: "is" },
+                { id: 8, question: "The sun ___ in the East.", options: ["rise", "rises", "rising", "rose"], answer: "rises" },
+                { id: 9, question: "Identify the Pronoun: 'They are playing.'", options: ["They", "are", "playing", "football"], answer: "They" },
+                { id: 10, question: "An apple ___ day keeps the doctor away.", options: ["a", "an", "the", "some"], answer: "a" },
+                { id: 11, question: "Past tense of 'Run' is?", options: ["Runned", "Running", "Ran", "Runs"], answer: "Ran" },
+                { id: 12, question: "Plural of 'Tooth' is?", options: ["Tooths", "Teeth", "Toothes", "Teeths"], answer: "Teeth" },
+                { id: 13, question: "Young one of a 'Cat' is?", options: ["Puppy", "Cub", "Kitten", "Calf"], answer: "Kitten" },
+                { id: 14, question: "Identify the Verb: 'She dances gracefully.'", options: ["She", "dances", "gracefully", "stage"], answer: "dances" },
+                { id: 15, question: "Which of these is a Proper Noun?", options: ["City", "India", "Book", "River"], answer: "India" },
+                { id: 16, question: "Superlative of 'Good' is?", options: ["Better", "Best", "Goodest", "Well"], answer: "Best" },
+                { id: 17, question: "A person who writes books is an?", options: ["Actor", "Doctor", "Author", "Engineer"], answer: "Author" },
+                { id: 18, question: "The opposite of 'Sharp' is?", options: ["Blunt", "Pointed", "Fast", "Hard"], answer: "Blunt" },
+                { id: 19, question: "We ___ students.", options: ["am", "is", "are", "does"], answer: "are" },
+                { id: 20, question: "Plural of 'Knife' is?", options: ["Knifes", "Knive", "Knives", "Knifess"], answer: "Knives" }
             ]
         }
     },
@@ -282,7 +354,7 @@ export const courses = [
         category: "Class 11-12",
         description: "In-depth Inorganic, Organic, and Physical Chemistry.",
         duration: "104 Weeks",
-        coverImage: "/chemistry-cover.svg",
+        coverImage: chemImg,
         topics: [
             {
                 id: "chem-organic",
@@ -309,7 +381,26 @@ export const courses = [
             title: "Senior Chemistry Mastery Exam",
             passingScore: 75,
             questions: [
-                { id: 1, question: "The atomic number of Carbon is?", options: ["4", "6", "8", "12"], answer: "6" }
+                { id: 1, question: "The atomic number of Carbon is?", options: ["4", "6", "8", "12"], answer: "6" },
+                { id: 2, question: "What is the general formula for Alkanes?", options: ["CnH2n", "CnH2n+2", "CnH2n-2", "CnH2n+1"], answer: "CnH2n+2" },
+                { id: 3, question: "Identify the simplest Alkene:", options: ["Methane", "Ethane", "Ethene", "Ethyne"], answer: "Ethene" },
+                { id: 4, question: "Functional group -OH represents?", options: ["Aldehyde", "Ketone", "Alcohol", "Carboxylic Acid"], answer: "Alcohol" },
+                { id: 5, question: "Avogadro's number is approximately?", options: ["6.022 x 10^23", "3.011 x 10^23", "9.11 x 10^-31", "1.6 x 10^-19"], answer: "6.022 x 10^23" },
+                { id: 6, question: "What is the pH of a neutral solution?", options: ["0", "1", "7", "14"], answer: "7" },
+                { id: 7, question: "Which element is the most electronegative?", options: ["Oxygen", "Chlorine", "Fluorine", "Nitrogen"], answer: "Fluorine" },
+                { id: 8, question: "The oxidation state of Oxygen in H2O is?", options: ["0", "+1", "-1", "-2"], answer: "-2" },
+                { id: 9, question: "Bond angle in CH4 (Methane) is?", options: ["90°", "120°", "180°", "109.5°"], answer: "109.5°" },
+                { id: 10, question: "Mass of one mole of Oxygen gas (O2) is?", options: ["16g", "32g", "8g", "48g"], answer: "32g" },
+                { id: 11, question: "Which gas is released during the reaction of Zinc with HCl?", options: ["Oxygen", "Hydrogen", "Chlorine", "Nitrogen"], answer: "Hydrogen" },
+                { id: 12, question: "What is the shape of a NH3 (Ammonia) molecule?", options: ["Linear", "Tetrahedral", "Pyramidal", "Bent"], answer: "Pyramidal" },
+                { id: 13, question: "Process of losing electrons is called?", options: ["Reduction", "Oxidation", "Hydrogenation", "Hydration"], answer: "Oxidation" },
+                { id: 14, question: "Unit of molarity is?", options: ["mol/kg", "mol/L", "g/L", "no unit"], answer: "mol/L" },
+                { id: 15, question: "Identify the noble gas:", options: ["Oxygen", "Hydrogen", "Helium", "Chlorine"], answer: "Helium" },
+                { id: 16, question: "Hybridization of Carbon in Ethane is?", options: ["sp", "sp2", "sp3", "dsp2"], answer: "sp3" },
+                { id: 17, question: "What is the main component of LPG?", options: ["Methane", "Butane", "Ethane", "Propane"], answer: "Butane" },
+                { id: 18, question: "Which catalyst is used in Haber's process?", options: ["Nickel", "Platinum", "Iron", "Vanadium Pentoxide"], answer: "Iron" },
+                { id: 19, question: "Value of R (Gas constant) in L·atm/(K·mol)?", options: ["8.314", "0.0821", "1.98", "2.0"], answer: "0.0821" },
+                { id: 20, question: "What is the coordinate number of Na+ in NaCl crystal?", options: ["4", "6", "8", "12"], answer: "6" }
             ]
         }
     },
@@ -319,7 +410,7 @@ export const courses = [
         category: "Class 11-12",
         description: "Advanced Human Physiology, Genetics, and Biotechnology.",
         duration: "104 Weeks",
-        coverImage: "/biology-cover.svg",
+        coverImage: bioImg,
         topics: [
             {
                 id: "bio-genetics",
@@ -346,7 +437,26 @@ export const courses = [
             title: "Senior Biology Core Exam",
             passingScore: 80,
             questions: [
-                { id: 1, question: "Units of heredity are?", options: ["Cells", "Proteins", "Genes", "Chromosomes"], answer: "Genes" }
+                { id: 1, question: "Units of heredity are?", options: ["Cells", "Proteins", "Genes", "Chromosomes"], answer: "Genes" },
+                { id: 2, question: "Who is known as the Father of Genetics?", options: ["Darwin", "Mendel", "Watson", "Morgan"], answer: "Mendel" },
+                { id: 3, question: "The physical appearance of an organism is called?", options: ["Genotype", "Phenotype", "Allele", "Homotype"], answer: "Phenotype" },
+                { id: 4, question: "How many chromosomes are in a normal human cell?", options: ["23", "44", "46", "48"], answer: "46" },
+                { id: 5, question: "Powerhouse of the cell is?", options: ["Golgi Body", "Mitochondria", "Ribosome", "Lysosome"], answer: "Mitochondria" },
+                { id: 6, question: "Process of copying DNA to RNA is?", options: ["Translation", "Transcription", "Replication", "Mutation"], answer: "Transcription" },
+                { id: 7, question: "Main site of photosynthesis in plants?", options: ["Stem", "Root", "Leaf", "Flower"], answer: "Leaf" },
+                { id: 8, question: "Blood group 'O' is known as?", options: ["Universal Donor", "Universal Acceptor", "Rare group", "Common group"], answer: "Universal Donor" },
+                { id: 9, question: "The largest gland in human body is?", options: ["Pancreas", "Thyroid", "Liver", "Pituitary"], answer: "Liver" },
+                { id: 10, question: "Which plant hormone is responsible for fruit ripening?", options: ["Auxin", "Gibberellin", "Ethylene", "Cytokinin"], answer: "Ethylene" },
+                { id: 11, question: "Study of fungi is called?", options: ["Phycology", "Mycology", "Virology", "Bacteriology"], answer: "Mycology" },
+                { id: 12, question: "What is the genetic material in most viruses?", options: ["DNA", "RNA", "Both", "Either DNA or RNA"], answer: "Either DNA or RNA" },
+                { id: 13, question: "Double helix model of DNA was given by?", options: ["Mendel", "Darwin", "Watson & Crick", "Bohr"], answer: "Watson & Crick" },
+                { id: 14, question: "Human heart has how many chambers?", options: ["2", "3", "4", "5"], answer: "4" },
+                { id: 15, question: "Which vitamin is synthesized in skin by sunlight?", options: ["Vitamin A", "Vitamin B", "Vitamin C", "Vitamin D"], answer: "Vitamin D" },
+                { id: 16, question: "Universal recipient blood group is?", options: ["O+", "A+", "B+", "AB+"], answer: "AB+" },
+                { id: 17, question: "Structural and functional unit of kidney?", options: ["Neuron", "Nephron", "Alveoli", "Villi"], answer: "Nephron" },
+                { id: 18, question: "The 'suicidal bags' of the cell are?", options: ["Ribosomes", "Lysosomes", "Vacuoles", "Nucleus"], answer: "Lysosomes" },
+                { id: 19, question: "Function of RBCs is to transport?", options: ["Urea", "Carbon dioxide", "Oxygen", "Hormones"], answer: "Oxygen" },
+                { id: 20, question: "Which organ is affected by Hepatitis?", options: ["Heart", "Lungs", "Liver", "Kidney"], answer: "Liver" }
             ]
         }
     },
@@ -356,7 +466,7 @@ export const courses = [
         category: "NEET",
         description: "Master the entire NEET Biology syllabus with expert lectures focused on NCERT concepts and previous year questions.",
         duration: "40 Weeks",
-        coverImage: "https://images.unsplash.com/photo-1530026405186-ed1f139313f8?auto=format&fit=crop&q=80&w=800",
+        coverImage: neetImg,
         topics: [
             {
                 id: "neet-cell",
@@ -469,12 +579,26 @@ export const courses = [
             title: "NEET Biology Mastery Exam",
             passingScore: 80,
             questions: [
-                {
-                    id: 1,
-                    question: "Who proposed that all cells arise from pre-existing cells?",
-                    options: ["Hooke", "Schwann", "Schleiden", "Virchow"],
-                    answer: "Virchow"
-                }
+                { id: 1, question: "Who proposed that all cells arise from pre-existing cells?", options: ["Hooke", "Schwann", "Schleiden", "Virchow"], answer: "Virchow" },
+                { id: 2, question: "The term 'Biotechnology' was coined by?", options: ["Karl Ereky", "Louis Pasteur", "Alexander Fleming", "Watson"], answer: "Karl Ereky" },
+                { id: 3, question: "Which enzyme is known as 'molecular scissors'?", options: ["Ligase", "Polymerase", "Restriction Endonuclease", "Helicase"], answer: "Restriction Endonuclease" },
+                { id: 4, question: "PCR is used for?", options: ["DNA synthesis", "DNA amplification", "DNA cutting", "DNA repair"], answer: "DNA amplification" },
+                { id: 5, question: "What is the role of DNA ligase in genetic engineering?", options: ["Denaturing DNA", "Joining DNA fragments", "Cutting DNA", "Synthesizing RNA"], answer: "Joining DNA fragments" },
+                { id: 6, question: "Plasmids are used as vectors because they?", options: ["Are small", "Can replicate independently", "Are found in bacteria", "All of these"], answer: "All of these" },
+                { id: 7, question: "In Bt cotton, the Bt toxin exists as?", options: ["Active toxin", "Protoxin", "Enzyme", "Lipid"], answer: "Protoxin" },
+                { id: 8, question: "Which of these is used to produce insulin using biotechnology?", options: ["Yeast", "E. coli", "Rhizopus", "Agrobacterium"], answer: "E. coli" },
+                { id: 9, question: "Ecology is the study of?", options: ["Environment", "Ecosystem", "Interactions of organisms & environment", "Global warming"], answer: "Interactions of organisms & environment" },
+                { id: 10, question: "Mutualism is an interaction where?", options: ["Both benefit", "One benefits other harmed", "One benefits other unaffected", "Both harmed"], answer: "Both benefit" },
+                { id: 11, question: "Relationship between algae and fungi in lichens is?", options: ["Parasitism", "Commensalism", "Mutualism", "Ammensalism"], answer: "Mutualism" },
+                { id: 12, question: "Part of the cell that contains hydrolytic enzymes?", options: ["Gogli body", "Lysosome", "Ribosome", "Chloroplast"], answer: "Lysosome" },
+                { id: 13, question: "The 'Powerhouse' of the cell is?", options: ["Nucleus", "Ribosome", "Mitochondria", "Centrosome"], answer: "Mitochondria" },
+                { id: 14, question: "Which vitamin is found in Golden Rice?", options: ["Vitamin A", "Vitamin B12", "Vitamin C", "Vitamin D"], answer: "Vitamin A" },
+                { id: 15, question: "Antibodies are proteins produced by?", options: ["T-cells", "B-cells", "RBCs", "Platelets"], answer: "B-cells" },
+                { id: 16, question: "The first clinical gene therapy was given for?", options: ["Cystic fibrosis", "ADA deficiency", "Cancer", "AIDS"], answer: "ADA deficiency" },
+                { id: 17, question: "Functional unit of nature is?", options: ["Biosphere", "Ecosystem", "Population", "Biome"], answer: "Ecosystem" },
+                { id: 18, question: "Which one of these is a greenhouse gas?", options: ["Methane", "Oxygen", "Nitrogen", "Argon"], answer: "Methane" },
+                { id: 19, question: "The pyramid of energy is always?", options: ["Inverted", "Upright", "Spindle shaped", "Horizontal"], answer: "Upright" },
+                { id: 20, question: "Ozone hole is largest over?", options: ["Africa", "Antarctica", "Europe", "North Pole"], answer: "Antarctica" }
             ]
         }
     },
@@ -484,7 +608,7 @@ export const courses = [
         category: "JEE",
         description: "A rigorous deep-dive into Physics for JEE aspirants. Problem-solving techniques for JEE Main & Advanced.",
         duration: "45 Weeks",
-        coverImage: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?auto=format&fit=crop&q=80&w=800",
+        coverImage: jeeImg,
         topics: [
             {
                 id: "jee-kinematics",
@@ -593,12 +717,26 @@ export const courses = [
             title: "JEE Physics Qualification Exam",
             passingScore: 75,
             questions: [
-                {
-                    id: 1,
-                    question: "What is the centripetal acceleration of an object in circular motion?",
-                    options: ["v/r", "v^2/r", "r/v^2", "m*v^2"],
-                    answer: "v^2/r"
-                }
+                { id: 1, question: "What is the centripetal acceleration of an object in circular motion?", options: ["v/r", "v^2/r", "r/v^2", "m*v^2"], answer: "v^2/r" },
+                { id: 2, question: "A projectile is fired at 45°. The ratio of max height to range is?", options: ["1:1", "1:2", "1:4", "2:1"], answer: "1:4" },
+                { id: 3, question: "Dimensional formula for Gravitational Constant (G) is?", options: ["[M-1L3T-2]", "[ML2T-2]", "[M-1L2T-2]", "[ML3T-2]"], answer: "[M-1L3T-2]" },
+                { id: 4, question: "Gauss's Law relates electric flux to?", options: ["Field", "Enclosed charge", "Potential", "Distance"], answer: "Enclosed charge" },
+                { id: 5, question: "The work done by a conservative force depends on?", options: ["Path", "Endpoint positions", "Velocity", "Time"], answer: "Endpoint positions" },
+                { id: 6, question: "Formula for Torque is?", options: ["F x d", "r x F", "m x a", "v / r"], answer: "r x F" },
+                { id: 7, question: "Moment of inertia of a ring about its axis is?", options: ["MR^2", "1/2 MR^2", "2/5 MR^2", "1/4 MR^2"], answer: "MR^2" },
+                { id: 8, question: "Value of escape velocity on Earth is?", options: ["9.8 km/s", "11.2 km/s", "7.9 km/s", "42 km/s"], answer: "11.2 km/s" },
+                { id: 9, question: "SI unit of Electric Potential is?", options: ["Joule", "Coulomb", "Volt", "Ampere"], answer: "Volt" },
+                { id: 10, question: "Capacitance of a parallel plate capacitor is?", options: ["ε0A/d", "ε0d/A", "Ad/ε0", "Q/V"], answer: "ε0A/d" },
+                { id: 11, question: "Potential energy of a dipole in electric field is?", options: ["-p·E", "p·E", "p x E", "p/E"], answer: "-p·E" },
+                { id: 12, question: "Index of refraction is n = ?", options: ["c/v", "v/c", "sin r / sin i", "λ/f"], answer: "c/v" },
+                { id: 13, question: "Total internal reflection occurs when angle of incidence is?", options: ["< Critical angle", "> Critical angle", "90°", "0°"], answer: "> Critical angle" },
+                { id: 14, question: "Energy of a photon is?", options: ["h/f", "hf", "h/λ", "mc"], answer: "hf" },
+                { id: 15, question: "De Broglie wavelength is λ = ?", options: ["h/p", "p/h", "mc^2", "hf"], answer: "h/p" },
+                { id: 16, question: "Half-life of a radioactive substance is T1/2 = ?", options: ["ln2 / λ", "λ / ln2", "1 / λ", "t / 2"], answer: "ln2 / λ" },
+                { id: 17, question: "An ideal voltmeter has resistance?", options: ["Zero", "Infinite", "1000 Ohms", "1 Ohm"], answer: "Infinite" },
+                { id: 18, question: "Magnetic force on a moving charge is?", options: ["qE", "q(v x B)", "qvB sinθ", "Both B and C"], answer: "Both B and C" },
+                { id: 19, question: "According to Lens's law, induced current opposes?", options: ["Flux", "Change in flux", "Resistance", "Magnetic field"], answer: "Change in flux" },
+                { id: 20, question: "Power in an AC circuit is P = ?", options: ["VI", "VI cosφ", "I^2R", "Both B and C"], answer: "Both B and C" }
             ]
         }
     },
@@ -608,7 +746,7 @@ export const courses = [
         category: "PG Courses",
         description: "Advanced postgraduate modules on Machine Learning, AI, and Big Data Analytics for career acceleration.",
         duration: "2 Years",
-        coverImage: "/pg-cover.svg",
+        coverImage: dsImg,
         topics: [
             {
                 id: "pg-ds-ml",
@@ -628,12 +766,26 @@ export const courses = [
             title: "PG Data Science Exam",
             passingScore: 70,
             questions: [
-                {
-                    id: 1,
-                    question: "What type of regression models relationships using a straight line?",
-                    options: ["Linear", "Logistic", "Polynomial", "Ridge"],
-                    answer: "Linear"
-                }
+                { id: 1, question: "What type of regression models relationships using a straight line?", options: ["Linear", "Logistic", "Polynomial", "Ridge"], answer: "Linear" },
+                { id: 2, question: "A technique used for classification into two categories?", options: ["Linear Regression", "Logistic Regression", "K-Means", "PCA"], answer: "Logistic Regression" },
+                { id: 3, question: "What does 'unsupervised learning' mean?", options: ["Learning with labels", "Learning without labels", "Learning with past data", "Learning with reinforcement"], answer: "Learning without labels" },
+                { id: 4, question: "K-Means is a ___ algorithm?", options: ["Classification", "Regression", "Clustering", "Dimensionality Reduction"], answer: "Clustering" },
+                { id: 5, question: "What does PCA stand for?", options: ["Primary Component Analysis", "Principal Component Analysis", "Path Component Analysis", "Python Code Analysis"], answer: "Principal Component Analysis" },
+                { id: 6, question: "Which library is used for data manipulation in Python?", options: ["Matplotlib", "Pandas", "Scikit-Learn", "NLTK"], answer: "Pandas" },
+                { id: 7, question: "The process of cleaning data is called?", options: ["Data Mining", "Data Wrangling", "Data Science", "Data Modeling"], answer: "Data Wrangling" },
+                { id: 8, question: "Standard Deviation is a measure of?", options: ["Central tendency", "Dispersion", "Correlation", "Frequency"], answer: "Dispersion" },
+                { id: 9, question: "What is an 'outlier' in a dataset?", options: ["Normal data point", "Extreme data point", "Missing value", "Average value"], answer: "Extreme data point" },
+                { id: 10, question: "The 'f1-score' combines precision and?", options: ["Accuracy", "Sensitivity", "Recall", "Specificity"], answer: "Recall" },
+                { id: 11, question: "Overfitting happens when a model is?", options: ["Too simple", "Too complex", "Just right", "Data is missing"], answer: "Too complex" },
+                { id: 12, question: "Which algorithm uses a 'kernel trick'?", options: ["Random Forest", "SVM", "Naive Bayes", "KNN"], answer: "SVM" },
+                { id: 13, question: "Naive Bayes is based on which theorem?", options: ["Pythagoras", "Bayes", "Central Limit", "Taylor"], answer: "Bayes" },
+                { id: 14, question: "The 'root' node is found in which structure?", options: ["Queue", "Stack", "Decision Tree", "Linked List"], answer: "Decision Tree" },
+                { id: 15, question: "Which phase of CRISP-DM comes first?", options: ["Data Preparation", "Modeling", "Business Understanding", "Evaluation"], answer: "Business Understanding" },
+                { id: 16, question: "A 'p-value' < 0.05 usually indicates?", options: ["Statistical significance", "No significance", "Data error", "Random result"], answer: "Statistical significance" },
+                { id: 17, question: "What is 'Big Data' characterized by?", options: ["Volume", "Velocity", "Variety", "All of these"], answer: "All of these" },
+                { id: 18, question: "SQL stands for?", options: ["Standard Query Language", "Structured Query Language", "Simple Query Language", "Strong Query Language"], answer: "Structured Query Language" },
+                { id: 19, question: "Mean, Median, and Mode are measures of?", options: ["Dispersion", "Center", "Shape", "Size"], answer: "Center" },
+                { id: 20, question: "Natural Language Processing (NLP) is for?", options: ["Images", "Audio", "Text", "Numbers"], answer: "Text" }
             ]
         }
     },
@@ -642,7 +794,7 @@ export const courses = [
         title: "B.Tech (Information Technology)",
         category: "UG Courses",
         description: "Engineering principles applied to software and systems.",
-        coverImage: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&q=80&w=800",
+        coverImage: btechItImg,
         topics: [
             {
                 id: "btech-networking",
@@ -669,7 +821,26 @@ export const courses = [
             title: "B.Tech IT Core Exam",
             passingScore: 70,
             questions: [
-                { id: 1, question: "Layer 3 of OSI is?", options: ["Data Link", "Network", "Transport", "Session"], answer: "Network" }
+                { id: 1, question: "Layer 3 of OSI is?", options: ["Data Link", "Network", "Transport", "Session"], answer: "Network" },
+                { id: 2, question: "What is the full form of IP?", options: ["Internet Protocol", "Internal Process", "Intranat Path", "Information Port"], answer: "Internet Protocol" },
+                { id: 3, question: "Which protocol is used for email transfer?", options: ["HTTP", "FTP", "SMTP", "TCP"], answer: "SMTP" },
+                { id: 4, question: "IP address 192.168.1.1 is in which class?", options: ["Class A", "Class B", "Class C", "Class D"], answer: "Class C" },
+                { id: 5, question: "Function of a Router is to connect?", options: ["Same networks", "Different networks", "Server to client", "User to OS"], answer: "Different networks" },
+                { id: 6, question: "Which layer in OSI is responsible for error-free delivery?", options: ["Application", "Presentation", "Transport", "Network"], answer: "Transport" },
+                { id: 7, question: "MAC address belongs to which layer?", options: ["Physical", "Data Link", "Network", "Session"], answer: "Data Link" },
+                { id: 8, question: "HTTP port number is?", options: ["21", "25", "80", "443"], answer: "80" },
+                { id: 9, question: "A collection of 8 bits is called?", options: ["Nibble", "Byte", "Word", "Packet"], answer: "Byte" },
+                { id: 10, question: "What is the heart of Computer System?", options: ["Monitor", "Mouse", "CPU", "Keyboard"], answer: "CPU" },
+                { id: 11, question: "Primary memory is?", options: ["HDD", "SSD", "RAM", "DVD"], answer: "RAM" },
+                { id: 12, question: "Which is an operating system?", options: ["Chrome", "Python", "Linux", "Oracle"], answer: "Linux" },
+                { id: 13, question: "Full form of SQL?", options: ["Simple Query Link", "Structured Query Language", "Short Queue List", "Soft Query Logic"], answer: "Structured Query Language" },
+                { id: 14, question: "A primary key must be?", options: ["Null", "Unique", "Duplicate", "Foreign"], answer: "Unique" },
+                { id: 15, question: "In OOP, 'Poly' means?", options: ["One", "Many", "None", "All"], answer: "Many" },
+                { id: 16, question: "Software testing phase comes after?", options: ["Analysis", "Design", "Coding", "Deployment"], answer: "Coding" },
+                { id: 17, question: "Which is a cloud service provider?", options: ["AWS", "HTML", "TCP", "BIOS"], answer: "AWS" },
+                { id: 18, question: "Binary system uses base?", options: ["2", "8", "10", "16"], answer: "2" },
+                { id: 19, question: "Which is a markup language?", options: ["C++", "Java", "HTML", "PHP"], answer: "HTML" },
+                { id: 20, question: "Compiler translates source code to?", options: ["Text", "Machine code", "Design", "Images"], answer: "Machine code" }
             ]
         }
     },
@@ -677,7 +848,7 @@ export const courses = [
         id: "pg-mba",
         title: "MBA (Business Strategy)",
         category: "PG Courses",
-        coverImage: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80&w=800",
+        coverImage: mbaImg,
         topics: [
             {
                 id: "mba-finance",
@@ -704,7 +875,26 @@ export const courses = [
             title: "MBA Strategy Certification",
             passingScore: 75,
             questions: [
-                { id: 1, question: "SWOT stands for Strengths, Weaknesses, Opportunities and?", options: ["Stability", "Strength", "Threats", "Treats"], answer: "Threats" }
+                { id: 1, question: "SWOT stands for Strengths, Weaknesses, Opportunities and?", options: ["Stability", "Strength", "Threats", "Treats"], answer: "Threats" },
+                { id: 2, question: "What is the primary goal of Financial Management?", options: ["Profit Maximization", "Wealth Maximization", "Sales Maximization", "Cost Minimization"], answer: "Wealth Maximization" },
+                { id: 3, question: "Diversification helps to reduce which type of risk?", options: ["Systematic", "Unsystematic", "Market", "Interest Rate"], answer: "Unsystematic" },
+                { id: 4, question: "ROI stands for?", options: ["Return on Investment", "Risk on Interest", "Revenue over Income", "Real Option Index"], answer: "Return on Investment" },
+                { id: 5, question: "The '4 Ps' of Marketing are Product, Price, Place and?", options: ["Purpose", "Promotion", "Process", "People"], answer: "Promotion" },
+                { id: 6, question: "Porter's Five Forces model is used for?", options: ["Marketing", "HR", "Industry Analysis", "Accounting"], answer: "Industry Analysis" },
+                { id: 7, question: "Capital Budgeting is a process of?", options: ["Short-term planning", "Long-term planning", "Daily operations", "Inventory check"], answer: "Long-term planning" },
+                { id: 8, question: "What is 'Brand Equity'?", options: ["Brand's debt", "Brand's value", "Brand's name", "Brand's owner"], answer: "Brand's value" },
+                { id: 9, question: "Just-In-Time (JIT) is a strategy for?", options: ["Marketing", "Finance", "Inventory Management", "HR"], answer: "Inventory Management" },
+                { id: 10, question: "A 'Unicorn' startup has a valuation of over?", options: ["$100 Million", "$500 Million", "$1 Billion", "$10 Billion"], answer: "$1 Billion" },
+                { id: 11, question: "Supply Chain Management involves?", options: ["Production only", "Sales only", "Flow of goods/services", "Hiring only"], answer: "Flow of goods/services" },
+                { id: 12, question: "What is a 'Stakeholder'?", options: ["Only shareholders", "Only employees", "Anyone affected by business", "The government"], answer: "Anyone affected by business" },
+                { id: 13, question: "BCG Matrix categories include Stars, Dogs, Cash Cows and?", options: ["Question Marks", "Exclamation Points", "Arrows", "Bulls"], answer: "Question Marks" },
+                { id: 14, question: "Blue Ocean Strategy refers to?", options: ["Red ocean competition", "Uncontested market space", "Deep sea mining", "Naval strategy"], answer: "Uncontested market space" },
+                { id: 15, question: "Ethical behavior in business is part of?", options: ["CSR", "ROI", "KPI", "SEO"], answer: "CSR" },
+                { id: 16, question: "Who is known as the father of Scientific Management?", options: ["Peter Drucker", "F.W. Taylor", "Henry Fayol", "Adam Smith"], answer: "F.W. Taylor" },
+                { id: 17, question: "A 'Balance Sheet' reports?", options: ["Revenue & Expenses", "Assets & Liabilities", "Cash Flow", "Owner's salary"], answer: "Assets & Liabilities" },
+                { id: 18, question: "PESTEL analysis stands for Political, Economic, Social, Technological, Environmental and?", options: ["Linear", "Legal", "Local", "Logic"], answer: "Legal" },
+                { id: 19, question: "Customer Relationship Management (CRM) is for?", options: ["Managing employees", "Managing customer data", "Managing cash", "Managing social media"], answer: "Managing customer data" },
+                { id: 20, question: "Organizational Culture refers to?", options: ["Office building", "Shared values & beliefs", "Employee salaries", "Product design"], answer: "Shared values & beliefs" }
             ]
         }
     },
@@ -714,7 +904,7 @@ export const courses = [
         category: "Class 6-10",
         description: "Introduction to coding, logic, and digital literacy.",
         duration: "52 Weeks",
-        coverImage: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&q=80&w=800",
+        coverImage: btechItImg,
         topics: [
             {
                 id: "cs-coding",
@@ -741,7 +931,26 @@ export const courses = [
             title: "Junior CS Excellence Exam",
             passingScore: 70,
             questions: [
-                { id: 1, question: "Decision symbol is?", options: ["Circle", "Diamond", "Square", "Arrow"], answer: "Diamond" }
+                { id: 1, question: "Decision symbol in flowchart is?", options: ["Circle", "Diamond", "Square", "Arrow"], answer: "Diamond" },
+                { id: 2, question: "A step-by-step procedure to solve a problem is?", options: ["Software", "Algorithm", "Code", "Data"], answer: "Algorithm" },
+                { id: 3, question: "Full form of RAM?", options: ["Read Access Memory", "Random Access Memory", "Run Action Mode", "Rapid Area Memory"], answer: "Random Access Memory" },
+                { id: 4, question: "1 kilobyte is equal to how many bytes?", options: ["100", "512", "1000", "1024"], answer: "1024" },
+                { id: 5, question: "Brains of the computer is?", options: ["Hard Disk", "Monitor", "CPU", "Motherboard"], answer: "CPU" },
+                { id: 6, question: "Input device among these is?", options: ["Printer", "Monitor", "Mouse", "Speaker"], answer: "Mouse" },
+                { id: 7, question: "Which symbol starts/ends a flowchart?", options: ["Square", "Oval", "Diamond", "Rectangle"], answer: "Oval" },
+                { id: 8, question: "WWW stands for?", options: ["World Wide Web", "World Web Wrap", "Wide World Web", "Web Wide World"], answer: "World Wide Web" },
+                { id: 9, question: "URL stands for?", options: ["Uniform Resource Locator", "Universal Road Link", "United Resource List", "Unique Role Logic"], answer: "Uniform Resource Locator" },
+                { id: 10, question: "Short-cut key for 'Copy' is?", options: ["Ctrl+X", "Ctrl+V", "Ctrl+C", "Ctrl+Z"], answer: "Ctrl+C" },
+                { id: 11, question: "Operating System is an example of?", options: ["Firmware", "Application Software", "System Software", "Hardware"], answer: "System Software" },
+                { id: 12, question: "A set of instructions given to a computer is?", options: ["Data", "Information", "Program", "Output"], answer: "Program" },
+                { id: 13, question: "Which is a permanent storage device?", options: ["RAM", "Cache", "Hard Disk", "Registers"], answer: "Hard Disk" },
+                { id: 14, question: "GUI stands for?", options: ["General User Interface", "Graphical User Interface", "Global Unit Interface", "Gaming User Item"], answer: "Graphical User Interface" },
+                { id: 15, question: "Binary digits are?", options: ["0 and 1", "1 to 10", "A to Z", "All of these"], answer: "0 and 1" },
+                { id: 16, question: "Pixels are related to?", options: ["Sound", "Screen Resolution", "Storage", "Speed"], answer: "Screen Resolution" },
+                { id: 17, question: "A computer on a network is called a?", options: ["Server", "Node", "Hub", "Switch"], answer: "Node" },
+                { id: 18, question: "Malicious software is called?", options: ["Firmware", "Malware", "Hardware", "Freeware"], answer: "Malware" },
+                { id: 19, question: "Which company developed Windows OS?", options: ["Apple", "Google", "Microsoft", "IBM"], answer: "Microsoft" },
+                { id: 20, question: "Short-cut key to 'Undo' is?", options: ["Ctrl+U", "Ctrl+Y", "Ctrl+Z", "Ctrl+N"], answer: "Ctrl+Z" }
             ]
         }
     },
@@ -751,7 +960,7 @@ export const courses = [
         category: "Class 11-12",
         description: "Micro and Macro Economics for senior students.",
         duration: "104 Weeks",
-        coverImage: "https://images.unsplash.com/photo-1434626881859-194d67b2b86f?auto=format&fit=crop&q=80&w=800",
+        coverImage: mbaImg,
         topics: [
             {
                 id: "econ-micro",
@@ -778,7 +987,26 @@ export const courses = [
             title: "Senior Economics Core Exam",
             passingScore: 75,
             questions: [
-                { id: 1, question: "Demand curve slopes?", options: ["Upwards", "Downwards", "Horizontal", "Vertical"], answer: "Downwards" }
+                { id: 1, question: "Demand curve slopes?", options: ["Upwards", "Downwards", "Horizontal", "Vertical"], answer: "Downwards" },
+                { id: 2, question: "Law of Demand shows relationship between?", options: ["Price and Supply", "Price and Demand", "Income and Tax", "Demand and Supply"], answer: "Price and Demand" },
+                { id: 3, question: "What is Macroeconomics?", options: ["Study of individual", "Study of the whole economy", "Study of firm", "Study of household"], answer: "Study of the whole economy" },
+                { id: 4, question: "Father of Economics is?", options: ["Keynes", "Adam Smith", "Marshall", "Robbins"], answer: "Adam Smith" },
+                { id: 5, question: "GDP stands for?", options: ["Gross Domestic Price", "Gross Domestic Product", "Global Domestic Product", "General Data Product"], answer: "Gross Domestic Product" },
+                { id: 6, question: "When price rises, supply usually?", options: ["Falls", "Stays same", "Rises", "Ends"], answer: "Rises" },
+                { id: 7, question: "Inflation means?", options: ["Persistent rise in prices", "Fall in prices", "Steady prices", "No money"], answer: "Persistent rise in prices" },
+                { id: 8, question: "In a 'Perfect Competition', there are?", options: ["Single seller", "Two sellers", "Many sellers", "No sellers"], answer: "Many sellers" },
+                { id: 9, question: "Monopoly means?", options: ["Many sellers", "Few sellers", "Single seller", "Two sellers"], answer: "Single seller" },
+                { id: 10, question: "Opportunity cost is?", options: ["Actual cost", "Sunk cost", "Value of next best alternative", "Future cost"], answer: "Value of next best alternative" },
+                { id: 11, question: "Central Bank of India is?", options: ["SBI", "ICICI", "RBI", "HDFC"], answer: "RBI" },
+                { id: 12, question: "Direct tax among these is?", options: ["GST", "Excise Duty", "Income Tax", "Sales Tax"], answer: "Income Tax" },
+                { id: 13, question: "Human Development Index (HDI) was developed by?", options: ["Adam Smith", "Mahbub ul Haq", "Amartya Sen", "Both B & C"], answer: "Both B & C" },
+                { id: 14, question: "What is a 'Ceteris Paribus' assumption?", options: ["Price changes", "Other things being equal", "No taxes", "Free market"], answer: "Other things being equal" },
+                { id: 15, question: "Fiscal Policy is related to?", options: ["Interest rates", "Govt revenue and expenditure", "Stock market", "Money supply"], answer: "Govt revenue and expenditure" },
+                { id: 16, question: "Utility in economics means?", options: ["Usefulness", "Satisfaction derived", "Work done", "Price paid"], answer: "Satisfaction derived" },
+                { id: 17, question: "Who gave the definition of Economics as 'Scarcity'?", options: ["Adam Smith", "Alfred Marshall", "Lionel Robbins", "Samuelson"], answer: "Lionel Robbins" },
+                { id: 18, question: "Mixed economy is a combination of?", options: ["Public and Private sectors", "Local and Foreign sectors", "Farming and Mining", "Cash and Credit"], answer: "Public and Private sectors" },
+                { id: 19, question: "Balance of Trade is?", options: ["Exports minus Imports", "Taxes minus Spending", "Gold minus Silver", "Cash minus Debt"], answer: "Exports minus Imports" },
+                { id: 20, question: "Consumer equilibrium occurs when?", options: ["Price is low", "MU is zero", "MUx/Px = MUy/Py", "Income is high"], answer: "MUx/Px = MUy/Py" }
             ]
         }
     },
@@ -787,7 +1015,7 @@ export const courses = [
         title: "B.Com (Business Accounting)",
         category: "UG Courses",
         description: "Fundamentals of accounting, commerce, and trade.",
-        coverImage: "https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&q=80&w=800",
+        coverImage: bcomImg,
         topics: [
             {
                 id: "bcom-acc",
@@ -814,7 +1042,26 @@ export const courses = [
             title: "B.Com Accounting Exam",
             passingScore: 70,
             questions: [
-                { id: 1, question: "The rule 'Debit what comes in' is for?", options: ["Personal", "Real", "Nominal", "Cash"], answer: "Real" }
+                { id: 1, question: "The rule 'Debit what comes in' is for?", options: ["Personal", "Real", "Nominal", "Cash"], answer: "Real" },
+                { id: 2, question: "Which equation is correct?", options: ["Assets = L - E", "Assets = L + E", "Equity = A + L", "Liabilities = A + E"], answer: "Assets = L + E" },
+                { id: 3, question: "Cash account is a?", options: ["Personal Account", "Real Account", "Nominal Account", "Valuation Account"], answer: "Real Account" },
+                { id: 4, question: "Goodwill is an example of?", options: ["Tangible Asset", "Intangible Asset", "Current Asset", "Fictitious Asset"], answer: "Intangible Asset" },
+                { id: 5, question: "The book of original entry is?", options: ["Ledger", "Trial Balance", "Journal", "Balance Sheet"], answer: "Journal" },
+                { id: 6, question: "Bank Reconciliation Statement is prepared by?", options: ["Bank", "Account holder", "Auditor", "Government"], answer: "Account holder" },
+                { id: 7, question: "Depreciation is a process of?", options: ["Valuation", "Allocation", "Realization", "Appreciation"], answer: "Allocation" },
+                { id: 8, question: "A 'Trial Balance' is a?", options: ["Statement", "Account", "Book", "Summary"], answer: "Statement" },
+                { id: 9, question: "Which is a liability?", options: ["Cash", "Machinery", "Creditors", "Debtors"], answer: "Creditors" },
+                { id: 10, question: "Double entry system was introduced by?", options: ["Adam Smith", "Luca Pacioli", "Alfred Marshall", "Sumner"], answer: "Luca Pacioli" },
+                { id: 11, question: "Petty cash book is used for?", options: ["Big expenses", "Daily sales", "Small expenses", "Bank loans"], answer: "Small expenses" },
+                { id: 12, question: "Which is a capital expenditure?", options: ["Salary paid", "Purchase of machinery", "Office rent", "Repairs"], answer: "Purchase of machinery" },
+                { id: 13, question: "Current ratio formula is?", options: ["CL / CA", "CA / CL", "Working Capital / CL", "Total Assets / CL"], answer: "CA / CL" },
+                { id: 14, question: "Bad debt is a?", options: ["Revenue", "Gain", "Loss", "Liability"], answer: "Loss" },
+                { id: 15, question: "The main objective of auditing is?", options: ["Detect frauds", "Prevent errors", "Expression of opinion", "Tax calculation"], answer: "Expression of opinion" },
+                { id: 16, question: "Final accounts include Trading, P&L and?", options: ["Trial Balance", "Journal", "Balance Sheet", "Cash Book"], answer: "Balance Sheet" },
+                { id: 17, question: "Stock is valued at?", options: ["Cost", "Market Value", "Lower of Cost or Market", "Higher of Cost or Market"], answer: "Lower of Cost or Market" },
+                { id: 18, question: "Prepaid rent is a?", options: ["Expense", "Liability", "Asset", "Income"], answer: "Asset" },
+                { id: 19, question: "What is 'Drawings' in accounting?", options: ["Sketching", "Owner takes cash for personal use", "Bank loan", "Selling goods"], answer: "Owner takes cash for personal use" },
+                { id: 20, question: "Which is a nominal account?", options: ["Salary Account", "Bank Account", "Stock Account", "Building Account"], answer: "Salary Account" }
             ]
         }
     },
@@ -824,7 +1071,7 @@ export const courses = [
         category: "PG Courses",
         description: "Advanced computational research and application development.",
         duration: "2 Years",
-        coverImage: "/pg-cover.svg",
+        coverImage: btechCsImg,
         topics: [
             {
                 id: "mca-software",
@@ -851,7 +1098,26 @@ export const courses = [
             title: "MCA Professional Exam",
             passingScore: 75,
             questions: [
-                { id: 1, question: "Which SDLC model uses sprints?", options: ["Waterfall", "Agile", "Spiral", "V-Model"], answer: "Agile" }
+                { id: 1, question: "Which SDLC model uses sprints?", options: ["Waterfall", "Agile", "Spiral", "V-Model"], answer: "Agile" },
+                { id: 2, question: "What is the primary focus of Software Engineering?", options: ["Hardware design", "Systematic development of software", "Networking", "Database entry"], answer: "Systematic development of software" },
+                { id: 3, question: "A 'bug' in software is also known as?", options: ["Feature", "Error / Fault", "Logic", "Function"], answer: "Error / Fault" },
+                { id: 4, question: "Which is a black-box testing technique?", options: ["White-box", "Boundary Value Analysis", "Path testing", "Data flow testing"], answer: "Boundary Value Analysis" },
+                { id: 5, question: "What does UML stand for?", options: ["Universal Mark Language", "Unified Modeling Language", "User Mode Logic", "United Memory List"], answer: "Unified Modeling Language" },
+                { id: 6, question: "Coupling in software design should be?", options: ["High", "Low", "Medium", "Zero"], answer: "Low" },
+                { id: 7, question: "Cohesion in software design should be?", options: ["High", "Low", "Medium", "Zero"], answer: "High" },
+                { id: 8, question: "Which model is also called the Classic Life Cycle?", options: ["Agile", "Waterfall", "Spiral", "RAD"], answer: "Waterfall" },
+                { id: 9, question: "Verification answers?", options: ["Are we building the right product?", "Are we building the product right?", "Is the product fast?", "Is the product small?"], answer: "Are we building the product right?" },
+                { id: 10, question: "Validation answers?", options: ["Are we building the right product?", "Are we building the product right?", "Is the product fast?", "Is the product small?"], answer: "Are we building the right product?" },
+                { id: 11, question: "SRS stands for?", options: ["Software Requirement Specification", "System Release Sheet", "Software Risk Solution", "Standard Release System"], answer: "Software Requirement Specification" },
+                { id: 12, question: "Beta testing is done by?", options: ["Developers", "Internal testers", "End users", "Managers"], answer: "End users" },
+                { id: 13, question: "Which model is best for risk-driven projects?", options: ["Waterfall", "V-Model", "Spiral", "Big-Bang"], answer: "Spiral" },
+                { id: 14, question: "Software maintenance that fixes bugs discovered by users is?", options: ["Corrective", "Adaptive", "Perfective", "Preventive"], answer: "Corrective" },
+                { id: 15, question: "In Agile, what is a person responsible for the backlog called?", options: ["Scrum Master", "Product Owner", "Developer", "Tester"], answer: "Product Owner" },
+                { id: 16, question: "What is 'Refactoring'?", options: ["Adding new features", "Fixing bugs", "Restructuring code without changing behavior", "Deleting code"], answer: "Restructuring code without changing behavior" },
+                { id: 17, question: "Unit testing is typically done for?", options: ["Entire system", "Sub-systems", "Smallest testable parts", "User interfaces"], answer: "Smallest testable parts" },
+                { id: 18, question: "The 'Mythical Man-Month' refers to?", options: ["Adding more people to a late project makes it later", "Adding more people speeds up delivery", "One person can do everything", "Project management is easy"], answer: "Adding more people to a late project makes it later" },
+                { id: 19, question: "Which diagram shows the flow of data?", options: ["Class Diagram", "Use Case", "DFD", "ER Diagram"], answer: "DFD" },
+                { id: 20, question: "Version control systems include?", options: ["Git", "SVN", "Mercurial", "All of these"], answer: "All of these" }
             ]
         }
     },
@@ -861,7 +1127,7 @@ export const courses = [
         category: "UG Courses",
         description: "Core concepts of Computer Science including OS, DBMS, and Algorithms.",
         duration: "4 Years",
-        coverImage: "https://images.unsplash.com/photo-1587620962725-abab7fe55159?auto=format&fit=crop&q=80&w=800",
+        coverImage: btechCsImg,
         topics: [
             {
                 id: "cs-os",
@@ -884,7 +1150,26 @@ export const courses = [
             title: "CS Core Mastery Exam",
             passingScore: 75,
             questions: [
-                { id: 1, question: "The heart of an OS is?", options: ["Shell", "Kernel", "UI", "Utility"], answer: "Kernel" }
+                { id: 1, question: "The heart of an OS is?", options: ["Shell", "Kernel", "UI", "Utility"], answer: "Kernel" },
+                { id: 2, question: "Which scheduling algorithm is non-preemptive?", options: ["Round Robin", "SJF", "FCFS", "Priority"], answer: "FCFS" },
+                { id: 3, question: "What is a 'Deadlock'?", options: ["When a process ends", "When processes wait forever for each other", "When memory is full", "High CPU usage"], answer: "When processes wait forever for each other" },
+                { id: 4, question: "Virtual memory is used for?", options: ["Increasing speed", "Running larger programs than RAM", "Saving power", "Graphics"], answer: "Running larger programs than RAM" },
+                { id: 5, question: "Which is a valid page replacement algorithm?", options: ["FIFO", "LRU", "Optimal", "All of these"], answer: "All of these" },
+                { id: 6, question: "The 'Critical Section' problem is related to?", options: ["Memory", "CPU speed", "Process synchronization", "File storage"], answer: "Process synchronization" },
+                { id: 7, question: "What is a 'Semaphore'?", options: ["Variable used for signaling", "Part of CPU", "A file type", "Memory address"], answer: "Variable used for signaling" },
+                { id: 8, question: "Which part of the OS handles I/O?", options: ["Kernel", "Device Drivers", "Users", "Shell"], answer: "Device Drivers" },
+                { id: 9, question: "Memory management unit (MMU) is for?", options: ["Mapping virtual to physical addresses", "Managing files", "Scheduling", "Networking"], answer: "Mapping virtual to physical addresses" },
+                { id: 10, question: "A 'Process' is a?", options: ["Static program", "Program in execution", "A file", "Variable"], answer: "Program in execution" },
+                { id: 11, question: "The command interpreter is also called?", options: ["Kernel", "Drives", "Shell", "Script"], answer: "Shell" },
+                { id: 12, question: "Booting is?", options: ["Shutting down", "Starting the computer", "Deleting files", "Installing OS"], answer: "Starting the computer" },
+                { id: 13, question: "Fragmentation occurs in?", options: ["CPU", "Memory", "I/O", "Registers"], answer: "Memory" },
+                { id: 14, question: "Which file system is native to Windows?", options: ["FAT", "EXT", "NTFS", "HFS"], answer: "NTFS" },
+                { id: 15, question: "Multi-threading allows?", options: ["One task", "Multiple tasks in parallel within a process", "Sequential execution", "Deleting processes"], answer: "Multiple tasks in parallel within a process" },
+                { id: 16, question: "An interrupt is?", options: ["A program", "A signal from hardware/software to CPU", "A bug", "A file"], answer: "A signal from hardware/software to CPU" },
+                { id: 17, question: "Caching is used to?", options: ["Increase capacity", "Reduce access time", "Reduce cost", "Manage users"], answer: "Reduce access time" },
+                { id: 18, question: "Which is a popular Linux distribution?", options: ["Windows 10", "MacOS", "Ubuntu", "Android"], answer: "Ubuntu" },
+                { id: 19, question: "The root directory in Linux is represented by?", options: ["/", "\\", "~", "."], answer: "/" },
+                { id: 20, question: "Kernel mode is also called?", options: ["User mode", "Privileged mode", "Restricted mode", "Slow mode"], answer: "Privileged mode" }
             ]
         }
     }

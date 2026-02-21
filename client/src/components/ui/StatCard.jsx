@@ -22,6 +22,20 @@ const StatCard = ({ title, value, subtitle, icon, trend, trendLabel, variant = '
             border: 'none',
             iconBg: 'rgba(255,255,255,0.2)',
             iconColor: 'white'
+        },
+        'gradient-green': {
+            background: 'linear-gradient(135deg, #059669 0%, #10B981 100%)',
+            color: 'white',
+            border: 'none',
+            iconBg: 'rgba(255,255,255,0.2)',
+            iconColor: 'white'
+        },
+        'solid-blue': {
+            background: '#3B82F6',
+            color: 'white',
+            border: 'none',
+            iconBg: 'rgba(255,255,255,0.2)',
+            iconColor: 'white'
         }
     };
 

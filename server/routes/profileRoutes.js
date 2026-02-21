@@ -6,12 +6,16 @@ const {
     updateProfile, 
     enrollCourse, 
     updateProgress, 
-    saveCertificate 
+    saveCertificate, 
+    unenrollCourse,
+    verifyCertificate
 } = require('../controllers/profileController');
 
+router.get('/verify/:certId', verifyCertificate);
 router.route('/me').get(protect, getMyProfile);
 router.route('/').post(protect, updateProfile);
 router.route('/enroll').post(protect, enrollCourse);
+router.route('/unenroll/:courseId').delete(protect, unenrollCourse);
 router.route('/progress').put(protect, updateProgress);
 router.route('/certificate').post(protect, saveCertificate);
 

@@ -10,11 +10,12 @@ const ProtectedRoute = ({ allowedRoles, children }) => {
     }
 
     if (!user) {
+        console.log("[DEBUG] ProtectedRoute - No user, redirecting to /login");
         return <Navigate to="/login" replace />;
     }
 
-    if (allowedRoles && !allowedRoles.includes(user.role)) {
-        // Redirect to their appropriate dashboard or home if unauthorized for this specific route
+    if (allowedRoles && !allowedRoles.map(r => r.toLowerCase()).includes(user.role?.toLowerCase())) {
+        console.warn("[DEBUG] ProtectedRoute - Role mismatch. User role:", user.role, "Allowed roles:", allowedRoles, "Redirecting to /");
         return <Navigate to="/" replace />;
     }
 

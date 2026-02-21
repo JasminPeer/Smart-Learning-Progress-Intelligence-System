@@ -1,9 +1,10 @@
-import { useRef, useContext } from 'react';
+import { useRef, useContext, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion, useInView } from 'framer-motion';
 import { Sparkles, TrendingUp, BarChart3, Brain, Target, Shield, UserPlus, BookOpen, Zap, ArrowRight, CheckCircle2 } from 'lucide-react';
 import AuthContext from '../auth/AuthContext';
 import Footer from '../components/layout/Footer';
+import logoImg from '../assets/logo.png';
 
 // Scroll Animation Wrapper
 const FadeIn = ({ children, delay = 0, direction = "up" }) => {
@@ -34,9 +35,9 @@ const Index = () => {
     const navigate = useNavigate();
 
     const handleDemoLogin = async () => {
+        console.log("[Hero] Attempting demo login...");
         try {
-            // Use special credentials caught by AuthContext
-            await login('demo@learniq.com', 'demo123');
+            await login('demo@learniq.com', '123456');
             navigate('/dashboard/student');
         } catch (error) {
             console.error("Demo login failed", error);
@@ -50,12 +51,11 @@ const Index = () => {
                 padding: '16px 40px', display: 'flex', justifyContent: 'space-between', alignItems: 'center',
                 position: 'sticky', top: 0, zIndex: 1000, margin: '0 20px 0', marginTop: '20px', borderRadius: '16px'
             }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    <div style={{ width: '40px', height: '40px', color: 'var(--primary)', position: 'relative', cursor: 'pointer' }} onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
-                        <Brain size={36} strokeWidth={2} />
-                        <div style={{ position: 'absolute', top: '-4px', right: '-4px' }}>🎓</div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <div style={{ width: '60px', height: '60px', cursor: 'pointer', display: 'flex', alignItems: 'center' }} onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
+                        <img src={logoImg} alt="LearnIQ Logo" style={{ width: '100%', height: 'auto' }} />
                     </div>
-                    <span style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.5px', cursor: 'pointer' }} onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>LearnIQ</span>
+                    <span style={{ fontSize: '1.6rem', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.5px', cursor: 'pointer' }} onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>LearnIQ</span>
                 </div>
                 <div style={{ display: 'flex', gap: '30px', alignItems: 'center' }}>
                     <span style={{ cursor: 'pointer', color: 'var(--text-secondary)', fontWeight: 600, fontSize: '0.95rem' }} onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>Home</span>
@@ -80,30 +80,26 @@ const Index = () => {
 
                 {/* Floating Elements */}
                 <div style={{ position: 'absolute', top: '20%', left: '10%', animation: 'float 5s infinite' }}>
-                    <div className="card" style={{ padding: '15px', borderRadius: '14px', transform: 'rotate(-5deg)' }}>
-                        <BarChart3 color="var(--primary)" size={32} />
+                    <div className="card" style={{ padding: '15px', borderRadius: '18px', transform: 'rotate(-5deg)', boxShadow: '0 20px 40px rgba(0,0,0,0.05)' }}>
+                        <BarChart3 color="var(--primary)" size={36} />
                     </div>
                 </div>
-                <div style={{ position: 'absolute', top: '25%', right: '20%', animation: 'float 3.5s ease-in-out infinite' }}>
-                    <div style={{ width: '60px', height: '60px', borderRadius: '12px', background: 'white', boxShadow: '0 10px 20px rgba(20, 184, 166, 0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid #E2E8F0' }}>
-                        <Sparkles color="var(--strength-teal)" size={28} />
-                    </div>
-                </div>
+
                 {/* New Icon 1: Book */}
                 <div style={{ position: 'absolute', bottom: '15%', left: '25%', animation: 'float 6s ease-in-out infinite' }}>
-                    <div className="card" style={{ padding: '10px', borderRadius: '12px', transform: 'rotate(-5deg)' }}>
-                        <BookOpen color="var(--calm-blue)" size={24} />
+                    <div className="card" style={{ padding: '12px', borderRadius: '15px', transform: 'rotate(-5deg)', boxShadow: '0 15px 30px rgba(0,0,0,0.05)' }}>
+                        <BookOpen color="var(--calm-blue)" size={28} />
                     </div>
                 </div>
                 {/* New Icon 2: Zap */}
                 <div style={{ position: 'absolute', top: '15%', right: '10%', animation: 'float-reverse 7s infinite' }}>
-                    <div className="card" style={{ padding: '12px', borderRadius: '12px', transform: 'rotate(5deg)' }}>
-                        <Zap color="var(--interest-orange)" size={24} />
+                    <div className="card" style={{ padding: '14px', borderRadius: '15px', transform: 'rotate(5deg)', boxShadow: '0 15px 30px rgba(0,0,0,0.05)' }}>
+                        <Zap color="var(--interest-orange)" size={28} />
                     </div>
                 </div>
                 <div style={{ position: 'absolute', bottom: '20%', right: '10%', animation: 'float-reverse 6s infinite' }}>
-                    <div className="card" style={{ padding: '15px', borderRadius: '14px', transform: 'rotate(5deg)' }}>
-                        <Target color="var(--interest-orange)" size={32} />
+                    <div className="card" style={{ padding: '18px', borderRadius: '18px', transform: 'rotate(5deg)', boxShadow: '0 20px 40px rgba(0,0,0,0.05)' }}>
+                        <Target color="var(--interest-orange)" size={40} />
                     </div>
                 </div>
 
@@ -137,14 +133,38 @@ const Index = () => {
                     </p>
                 </FadeIn>
 
-                <FadeIn delay={0.6}>
-                    <div style={{ display: 'flex', gap: '16px', justifyContent: 'center' }}>
-                        <Link to="/register" className="btn btn-primary" style={{ fontSize: '1.1rem', padding: '16px 40px' }}>Join Now - It's Free</Link>
-                        <button onClick={handleDemoLogin} className="btn" style={{ fontSize: '1.1rem', padding: '16px 30px', backgroundColor: 'white', border: '1px solid var(--border)', color: 'var(--text-primary)' }}>
-                            Explore as Guest
-                        </button>
-                    </div>
-                </FadeIn>
+                <div style={{
+                    display: 'flex',
+                    gap: '16px',
+                    justifyContent: 'center',
+                    position: 'relative',
+                    zIndex: 500,
+                    marginTop: '30px',
+                    pointerEvents: 'auto'
+                }}>
+                    <Link to="/register" className="btn btn-primary" style={{ fontSize: '1.1rem', padding: '16px 40px' }}>Join Now - It's Free</Link>
+                    <button
+                        onClick={handleDemoLogin}
+                        className="btn"
+                        id="guest-login-btn"
+                        style={{
+                            fontSize: '1.1rem',
+                            padding: '16px 30px',
+                            backgroundColor: 'white',
+                            border: '1px solid var(--border)',
+                            color: 'var(--text-primary)',
+                            cursor: 'pointer',
+                            position: 'relative',
+                            zIndex: 501,
+                            transition: 'all 0.2s ease',
+                            pointerEvents: 'auto'
+                        }}
+                        onMouseOver={(e) => e.target.style.backgroundColor = '#F0FDF4'}
+                        onMouseOut={(e) => e.target.style.backgroundColor = 'white'}
+                    >
+                        Explore as Guest
+                    </button>
+                </div>
             </header>
 
             {/* How It Works (3 Steps) */}
@@ -184,16 +204,16 @@ const Index = () => {
             </section>
 
             {/* Features Section */}
-            <section id="features" style={{ padding: '100px 20px', backgroundColor: 'var(--bg-main)' }}>
+            <section id="features" style={{ padding: '150px 20px', backgroundColor: 'var(--bg-main)' }}>
                 <div className="container">
-                    <div style={{ textAlign: 'center', marginBottom: '80px' }}>
+                    <div style={{ textAlign: 'center', marginBottom: '100px' }}>
                         <FadeIn>
-                            <h2 style={{ fontSize: '2.75rem', marginBottom: '16px' }}>Powerful Features</h2>
-                            <p style={{ color: 'var(--text-secondary)', fontSize: '1.1rem' }}>Tools designed to help you succeed.</p>
+                            <h2 style={{ fontSize: '3rem', marginBottom: '20px', fontWeight: 800 }}>Powerful Features</h2>
+                            <p style={{ color: 'var(--text-secondary)', fontSize: '1.2rem', maxWidth: '600px', margin: '0 auto' }}>Explore the tools designed to accelerate your growth.</p>
                         </FadeIn>
                     </div>
 
-                    <div className="grid-cols-3" style={{ gap: '30px', rowGap: '40px', marginTop: '20px' }}>
+                    <div className="grid-cols-3" style={{ gap: '40px', rowGap: '100px' }}>
                         <FeatureCard icon={<BarChart3 />} title="Smart Visualizations" desc="Visualize your academic growth with interactive charts." delay={0.1} />
                         <FeatureCard icon={<Brain />} title="AI Recommendations" desc="Personalized suggestions to improve your grades." delay={0.2} />
                         <FeatureCard icon={<Target />} title="Goal Tracking" desc="Set and achieve weekly study targets." delay={0.3} />
@@ -206,36 +226,35 @@ const Index = () => {
             </section>
 
             {/* CTA Section - Ready to Transform */}
-            <section style={{ padding: '60px 20px', backgroundColor: 'white' }}>
+            <section style={{ padding: '120px 20px', backgroundColor: 'white' }}>
                 <div className="container">
                     <FadeIn>
                         <div style={{
-                            marginTop: '30px',
                             background: 'linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%)',
-                            borderRadius: '30px', padding: '80px 40px', textAlign: 'center', color: 'white',
-                            position: 'relative', overflow: 'hidden'
+                            borderRadius: '40px', padding: '100px 40px', textAlign: 'center', color: 'white',
+                            position: 'relative', overflow: 'hidden', boxShadow: '0 30px 60px rgba(5, 150, 105, 0.2)'
                         }}>
                             {/* Decorative Circles */}
-                            <div style={{ position: 'absolute', top: '-50px', left: '-50px', width: '200px', height: '200px', borderRadius: '50%', background: 'rgba(255,255,255,0.1)' }}></div>
-                            <div style={{ position: 'absolute', bottom: '-50px', right: '-50px', width: '200px', height: '200px', borderRadius: '50%', background: 'rgba(255,255,255,0.1)' }}></div>
+                            <div style={{ position: 'absolute', top: '-50px', left: '-50px', width: '250px', height: '250px', borderRadius: '50%', background: 'rgba(255,255,255,0.1)' }}></div>
+                            <div style={{ position: 'absolute', bottom: '-50px', right: '-50px', width: '250px', height: '250px', borderRadius: '50%', background: 'rgba(255,255,255,0.1)' }}></div>
 
-                            <h2 style={{ fontSize: '3rem', marginBottom: '20px', color: 'white' }}>Ready to Transform Your Learning?</h2>
-                            <p style={{ fontSize: '1.25rem', marginBottom: '40px', opacity: 0.9, maxWidth: '600px', margin: '0 auto 40px' }}>
+                            <h2 style={{ fontSize: '3.5rem', marginBottom: '25px', color: 'white', fontWeight: 800 }}>Ready to Transform Your Learning?</h2>
+                            <p style={{ fontSize: '1.4rem', marginBottom: '50px', opacity: 0.9, maxWidth: '700px', margin: '0 auto' }}>
                                 Join thousands of students who are already achieving their academic goals with LearnIQ.
                             </p>
                             <Link to="/register" style={{
-                                display: 'inline-flex', alignItems: 'center', gap: '10px',
+                                display: 'inline-flex', alignItems: 'center', gap: '12px',
                                 textDecoration: 'none', backgroundColor: 'white', color: 'var(--primary)',
-                                padding: '16px 40px', borderRadius: '12px', fontWeight: 700, fontSize: '1.1rem',
-                                boxShadow: '0 10px 20px rgba(0,0,0,0.1)'
+                                padding: '18px 50px', borderRadius: '14px', fontWeight: 800, fontSize: '1.2rem',
+                                boxShadow: '0 15px 30px rgba(0,0,0,0.15)', transition: 'transform 0.2s'
                             }}>
-                                Get Started Free <ArrowRight size={20} />
+                                Get Started Free <ArrowRight size={24} />
                             </Link>
 
-                            <div style={{ marginTop: '30px', display: 'flex', justifyContent: 'center', gap: '30px', fontSize: '0.9rem', opacity: 0.8 }}>
-                                <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}><CheckCircle2 size={16} /> Free to start</span>
-                                <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}><CheckCircle2 size={16} /> No credit card</span>
-                                <span style={{ display: 'flex', alignItems: 'center', gap: '5px' }}><CheckCircle2 size={16} /> Cancel anytime</span>
+                            <div style={{ marginTop: '50px', display: 'flex', justifyContent: 'center', gap: '40px', fontSize: '1rem', opacity: 0.9 }}>
+                                <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><CheckCircle2 size={20} /> Free to start</span>
+                                <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><CheckCircle2 size={20} /> No credit card</span>
+                                <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><CheckCircle2 size={20} /> Cancel anytime</span>
                             </div>
                         </div>
                     </FadeIn>
@@ -243,7 +262,7 @@ const Index = () => {
             </section>
 
             <Footer />
-        </div>
+        </div >
     );
 };
 

@@ -12,23 +12,28 @@ const seedData = async () => {
         await User.deleteMany();
         
         const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash('123456', salt);
-
-        const users = [
-            { name: 'Admin User', email: 'admin@test.com', password: hashedPassword, role: 'admin' },
-            { name: 'Dr. Sarah Smith', email: 'instructor@test.com', password: hashedPassword, role: 'instructor' },
-            { name: 'Prof. John Doe', email: 'john@test.com', password: hashedPassword, role: 'instructor' },
-            { name: 'Alice Student', email: 'student@test.com', password: hashedPassword, role: 'student' },
-            { name: 'Bob Brown', email: 'bob@test.com', password: hashedPassword, role: 'student' },
-            { name: 'Charlie Green', email: 'charlie@test.com', password: hashedPassword, role: 'student' },
-            { name: 'Daisy White', email: 'daisy@test.com', password: hashedPassword, role: 'student' },
+        
+        const usersData = [
+            { name: 'Admin User', email: 'admin@gmail.com', password: 'admin123', role: 'admin' },
+            { name: 'Haris Student', email: 'haris@gmail.com', password: 'haris123', role: 'student' },
+            { name: 'Peer student', email: 'peer@gmail.com', password: 'peer123', role: 'student' },
+            { name: 'Sameera student', email: 'sameera@gmail.com', password: 'sameera123', role: 'student' },
+            { name: 'Jasmin Admin', email: 'jasmin@gmail.com', password: 'jasmin123', role: 'admin' },
+            { name: 'Fathima student', email: 'fathima@gmail.com', password: 'fathima123', role: 'student' },
+            { name: 'Guest User', email: 'demo@learniq.com', password: '123456', role: 'student' },
+            { name: 'Instructor Sarah', email: 'instructor@test.com', password: '123456', role: 'instructor' },
         ];
 
+        const users = await Promise.all(usersData.map(async (u) => {
+            const hashedPassword = await bcrypt.hash(u.password, salt);
+            return { ...u, password: hashedPassword };
+        }));
+
         await User.insertMany(users);
-        console.log('✅ Data seeded successfully!');
+        console.log('✅ Users with custom passwords seeded successfully!');
         process.exit();
     } catch (error) {
-        console.error('❌ Error seeding data:', error);
+        console.error('❌ Error seeding users:', error);
         process.exit(1);
     }
 };

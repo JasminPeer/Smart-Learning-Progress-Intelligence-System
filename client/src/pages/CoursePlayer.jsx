@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { courses } from '../data/curriculum';
 import { PlayCircle, CheckCircle, ArrowRight, ArrowLeft, Book, Info, Clock, FileText, Download, BookOpen, Youtube } from 'lucide-react';
@@ -7,40 +7,52 @@ import axios from 'axios';
 const CoursePlayer = () => {
     const { courseId } = useParams();
     const navigate = useNavigate();
-    const course = courses.find(c => c.id === courseId);
+    const [course, setCourse] = useState(null);
     const [activeSubtopicId, setActiveSubtopicId] = useState(null);
     const [progress, setProgress] = useState(0);
     const [isCompleted, setIsCompleted] = useState(false);
+    const [certificateId, setCertificateId] = useState(null);
     const [loading, setLoading] = useState(true);
 
-    // Flatten topics into a simple list of subtopics for easier indexing if needed
-    const allSubtopics = course.topics?.flatMap(t => t.subtopics.map(s => ({ ...s, topicTitle: t.title }))) || [];
+    // Flatten topics into a simple list of subtopics - Memoized based on course
+    const allSubtopics = useMemo(() => {
+        return course?.topics?.flatMap(t => t.subtopics.map(s => ({ ...s, topicTitle: t.title }))) || [];
+    }, [course]);
+
     const activeIndex = allSubtopics.findIndex(s => s.id === activeSubtopicId) === -1 ? 0 : allSubtopics.findIndex(s => s.id === activeSubtopicId);
     const activeSubtopic = allSubtopics[activeIndex] || allSubtopics[0];
 
     useEffect(() => {
-        if (allSubtopics.length > 0 && !activeSubtopicId) {
-            setActiveSubtopicId(allSubtopics[0].id);
-        }
-    }, [allSubtopics, activeSubtopicId]);
-
-    useEffect(() => {
-        const fetchProgress = async () => {
+        const loadAllData = async () => {
             try {
+                // 1. Load Course
+                const staticCourse = courses.find(c => c.id === courseId);
+                let currentCourse = staticCourse;
+
+                if (!currentCourse) {
+                    const token = localStorage.getItem('token');
+                    const { data } = await axios.get(`/api/courses/${courseId}`, { headers: { Authorization: `Bearer ${token}` } });
+                    currentCourse = { ...data, id: data._id };
+                }
+                setCourse(currentCourse);
+
+                // 2. Load Progress
                 const token = localStorage.getItem('token');
-                const { data } = await axios.get('/api/profile/me', { headers: { Authorization: `Bearer ${token}` } });
-                const enrolledCourse = data.enrolledCourses.find(c => c.courseId === courseId);
+                const { data: profile } = await axios.get('/api/profile/me', { headers: { Authorization: `Bearer ${token}` } });
+                const enrolledCourse = profile.enrolledCourses.find(c => c.courseId === courseId);
+
                 if (enrolledCourse) {
                     setProgress(enrolledCourse.progress);
                     setIsCompleted(enrolledCourse.completed);
+                    setCertificateId(enrolledCourse.certificateId);
                 }
             } catch (err) {
-                console.error("Progress fetch error", err);
+                console.error("Failed to load player data", err);
             } finally {
                 setLoading(false);
             }
         };
-        fetchProgress();
+        loadAllData();
     }, [courseId]);
 
     if (!course) return <div style={{ padding: '40px', textAlign: 'center' }}>Course not found</div>;
@@ -65,18 +77,15 @@ const CoursePlayer = () => {
 
             setProgress(finalProgress);
 
+            // Award certificate if finished AND (not yet completed due to some other reason)
+            // User requested certificate ONLY after assessment.
+            // So we just mark progress here. The assessment will handle the certificate.
+
             if (isFinished && !isCompleted) {
+                // We keep isCompleted state locally to show "Completed" in UI, 
+                // but we DO NOT call the certificate API here anymore.
                 setIsCompleted(true);
-                // Automatically award certificate/achievement upon completion
-                try {
-                    await axios.post('/api/profile/certificate',
-                        { courseId, courseName: course.title, score: 100 },
-                        { headers: { Authorization: `Bearer ${token}` } }
-                    );
-                    alert("Congratulations! You've mastered this course. A certificate has been added to your achievements!");
-                } catch (certErr) {
-                    console.error("Auto-certificate failed", certErr);
-                }
+                alert("You've completed all lectures! Please take the final exam to earn your certificate.");
             }
         } catch (err) {
             console.error("Progress save failed", err);
@@ -219,7 +228,7 @@ const CoursePlayer = () => {
                                 fontWeight: 700, padding: '12px 28px', display: 'flex', alignItems: 'center', gap: '10px',
                                 border: '1px solid var(--primary-light)', borderRadius: '12px'
                             }}>
-                                {activeIndex === allSubtopics.length - 1 ? "Finish Course" : "Next Lesson"} <ArrowRight size={18} />
+                                {activeIndex === allSubtopics.length - 1 ? "Finish Lectures" : "Next Lesson"} <ArrowRight size={18} />
                             </button>
                         </div>
 

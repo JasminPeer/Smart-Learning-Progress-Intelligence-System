@@ -9,22 +9,30 @@ const Courses = () => {
     const { user } = useContext(AuthContext);
     const navigate = useNavigate();
     const [enrolledCourses, setEnrolledCourses] = useState([]);
+    const [dbCourses, setDbCourses] = useState([]);
     const [loading, setLoading] = useState(true);
 
-    // Fetch Enrolled Courses
+    // Fetch Enrolled Courses & All Course Catalog
     useEffect(() => {
-        const fetchProfile = async () => {
+        const fetchAllData = async () => {
             try {
                 const token = localStorage.getItem('token');
-                const { data } = await axios.get('/api/profile/me', { headers: { Authorization: `Bearer ${token}` } });
-                setEnrolledCourses(data.enrolledCourses || []);
+                const config = { headers: { Authorization: `Bearer ${token}` } };
+
+                const [profileRes, coursesRes] = await Promise.all([
+                    axios.get('/api/profile/me', config),
+                    axios.get('/api/courses', config)
+                ]);
+
+                setEnrolledCourses(profileRes.data.enrolledCourses || []);
+                setDbCourses(coursesRes.data || []);
             } catch (err) {
-                console.error("Failed to fetch profile", err);
+                console.error("Failed to fetch page data", err);
             } finally {
                 setLoading(false);
             }
         };
-        fetchProfile();
+        fetchAllData();
     }, []);
 
     const handleEnroll = async (courseId, courseTitle, e) => {
@@ -48,25 +56,40 @@ const Courses = () => {
                     { courseId, name: courseTitle },
                     { headers: { Authorization: `Bearer ${token}` } }
                 );
-                // Refresh list or redirect
+                // Refresh enrollment status
+                setEnrolledCourses(prev => [...prev, { courseId, name: courseTitle, completed: false }]);
+                alert("Enrollment successful! Redirecting to course player...");
                 navigate(`/learn/${courseId}`);
             } catch (err) {
-                alert("Enrollment failed: " + err.response?.data?.message);
+                alert("Enrollment failed: " + (err.response?.data?.message || err.message));
             }
         }
     };
 
-    // Mapping Curriculum Data to UI format
+    // Mapping All Data to UI format
     const displayCourses = useMemo(() => {
-        return curriculumCourses.map(c => ({
+        const staticFormatted = curriculumCourses.map(c => ({
             ...c,
             instructor: "Academic Expert",
             rating: 4.8,
             students: 120 + Math.floor(Math.random() * 5000),
-            image: c.coverImage || c.image || `https://source.unsplash.com/random/800x600/?education,study`,
-            price: "Free"
+            image: c.coverImage || c.image || '/assets/store/education_placeholder.jpg',
+            price: "Free",
+            isStatic: true
         }));
-    }, []);
+
+        const dbFormatted = dbCourses.map(c => ({
+            ...c,
+            id: c._id, // Normalize ID
+            instructor: "Jasmin Peer",
+            students: 50 + Math.floor(Math.random() * 1000),
+            image: c.image || '/assets/store/education_placeholder.jpg',
+            price: "Free",
+            isStatic: false
+        }));
+
+        return [...staticFormatted, ...dbFormatted];
+    }, [dbCourses]);
 
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('All');
@@ -107,7 +130,7 @@ const Courses = () => {
             <div style={{ display: 'grid', gridTemplateColumns: '250px 1fr', gap: '30px' }}>
 
                 {/* Filters */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '25px' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '25px', position: 'sticky', top: '30px', alignSelf: 'start' }}>
                     <div className="card" style={{ padding: '20px' }}>
                         <h3 style={{ fontSize: '1rem', marginBottom: '15px', color: '#1E293B' }}>Category</h3>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
@@ -132,7 +155,7 @@ const Courses = () => {
                             <div key={course.id} className="card" style={{ padding: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column', border: isCompleted ? '2px solid #10B981' : 'none' }}>
                                 {/* Image Area */}
                                 <div style={{ height: '180px', backgroundColor: '#1E1B4B', overflow: 'hidden', position: 'relative' }}>
-                                    <img src={course.image} alt={course.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                    <img src={course.coverImage || course.image || `/assets/store/${course.category?.toLowerCase().replace(/\s+/g, '_')}_placeholder.jpg`} alt={course.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                                     <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.1)' }}></div>
                                     {isEnrolled && (
                                         <div style={{ position: 'absolute', top: '10px', right: '10px', backgroundColor: isCompleted ? '#10B981' : '#4F46E5', color: 'white', padding: '5px 10px', borderRadius: '6px', fontSize: '0.8rem', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '5px', zIndex: 5 }}>

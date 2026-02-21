@@ -1,92 +1,337 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, Component, useContext } from 'react';
 import { useLocation } from 'react-router-dom';
-import { MessageCircle, X, Send, Bot, User, ChevronRight } from 'lucide-react';
+import { X, Send } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import AuthContext from '../auth/AuthContext';
+import axios from 'axios';
 
-const Chatbot = () => {
-    const location = useLocation();
-    const [isOpen, setIsOpen] = useState(false);
-    const [messages, setMessages] = useState([
-        { text: "Hello! I'm Luna. How can I help you with your studies today?", isBot: true }
-    ]);
-    const [input, setInput] = useState('');
-    const [isTyping, setIsTyping] = useState(false);
+// Error Boundary Component
+class ErrorBoundary extends Component {
+    constructor(props) {
+        super(props);
+        this.state = { hasError: false, error: null };
+    }
+
+    static getDerivedStateFromError(error) {
+        return { hasError: true, error };
+    }
+
+    componentDidCatch(error, errorInfo) {
+        console.error("Chatbot Error Trace:", error, errorInfo);
+    }
+
+    render() {
+        if (this.state.hasError) {
+            return (
+                <div style={{
+                    position: 'fixed', bottom: '120px', right: '40px',
+                    padding: '15px', backgroundColor: 'white', border: '2px solid #fee2e2',
+                    borderRadius: '12px', boxShadow: '0 8px 16px rgba(0,0,0,0.15)',
+                    zIndex: 10001, color: '#b91c1c', maxWidth: '300px'
+                }}>
+                    <h5 style={{ margin: '0 0 5px 0', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <X size={16} />
+                        Chatbot Error
+                    </h5>
+                    <p style={{ fontSize: '11px', margin: '5px 0 10px 0', opacity: 0.8 }}>
+                        {this.state.error?.message || "An unexpected error occurred."}
+                    </p>
+                    <button
+                        onClick={() => {
+                            this.setState({ hasError: false });
+                            window.location.reload();
+                        }}
+                        style={{
+                            width: '100%', padding: '6px',
+                            backgroundColor: '#ef4444', color: 'white',
+                            border: 'none', borderRadius: '4px', cursor: 'pointer',
+                            fontSize: '11px', fontWeight: 'bold'
+                        }}
+                    >
+                        Restart Chatbot
+                    </button>
+                </div>
+            );
+        }
+        return this.props.children;
+    }
+}
+
+// Custom Chat Content Component
+const ChatContent = ({ localMessages, setLocalMessages, isTyping, setIsTyping, aiConfig }) => {
+    const [inputValue, setInputValue] = useState("");
     const messagesEndRef = useRef(null);
 
-    // Close chatbot when route changes
+    // Auto-scroll to bottom
+    useEffect(() => {
+        if (messagesEndRef.current) {
+            messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+        }
+    }, [localMessages, isTyping]);
+
+    const handleSend = async (e) => {
+        if (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        if (!inputValue.trim() || isTyping) return;
+
+        const currentInput = inputValue;
+        setInputValue("");
+
+        const userMsg = {
+            id: 'user-' + Date.now(),
+            text: currentInput,
+            sender: 'user',
+            timestamp: Date.now()
+        };
+
+        // Add user message to state
+        setLocalMessages(prev => [...prev, userMsg]);
+        setIsTyping(true);
+
+        try {
+            const { data } = await axios.post('/api/chatbot/chat', {
+                message: currentInput,
+                history: localMessages.map(m => ({
+                    sender: m.sender === 'user' ? 'user' : 'model',
+                    text: m.text
+                }))
+            });
+
+            const aiMsg = {
+                id: 'ai-' + Date.now(),
+                text: data.text,
+                sender: 'bot',
+                isIncoming: true,
+                timestamp: Date.now()
+            };
+            setLocalMessages(prev => [...prev, aiMsg]);
+        } catch (error) {
+            console.error("Gemini API Error:", error);
+            const errMsg = {
+                id: 'error-' + Date.now(),
+                text: "I'm having trouble connecting to my brain right now. Please try again in a moment!",
+                sender: 'bot',
+                isIncoming: true,
+                timestamp: Date.now(),
+                isError: true
+            };
+            setLocalMessages(prev => [...prev, errMsg]);
+        } finally {
+            setIsTyping(false);
+        }
+    };
+
+    const handleKeyPress = (e) => {
+        if (e.key === 'Enter') handleSend(e);
+    };
+
+    return (
+        <div style={{
+            display: 'flex',
+            flexDirection: 'column',
+            flex: 1,
+            minHeight: 0,
+            backgroundColor: '#f3f4f6'
+        }}>
+            {/* Messages Area */}
+            <div className="chat-messages" style={{
+                flex: 1,
+                overflowY: 'auto',
+                padding: '16px',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '12px',
+                scrollBehavior: 'smooth'
+            }}>
+                {(!localMessages || localMessages.length === 0) && (
+                    <div style={{
+                        textAlign: 'center',
+                        margin: 'auto 0',
+                        color: '#6B7280',
+                        fontSize: '1rem',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '10px',
+                        padding: '20px'
+                    }}>
+                        <motion.div
+                            animate={{ scale: [1, 1.1, 1] }}
+                            transition={{ duration: 2, repeat: Infinity }}
+                            style={{ fontSize: '3rem' }}
+                        >
+                            🐱
+                        </motion.div>
+                        <h4 style={{ color: '#065F46', margin: 0 }}>Hi! I'm {aiConfig.name}.</h4>
+                        <p style={{ margin: 0 }}>{aiConfig.wayOfSpeech.length > 5 ? aiConfig.wayOfSpeech : "I'm here to help with your learning journey."}</p>
+                        <p style={{ fontSize: '0.8rem', opacity: 0.7 }}>Ask me anything about your courses!</p>
+                    </div>
+                )}
+
+                {localMessages.map((msg) => {
+                    const isBot = msg.sender === 'bot';
+                    return (
+                        <div key={msg.id} style={{
+                            alignSelf: isBot ? 'flex-start' : 'flex-end',
+                            maxWidth: '85%',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: isBot ? 'flex-start' : 'flex-end'
+                        }}>
+                            {isBot && (
+                                <span style={{
+                                    fontSize: '0.7rem',
+                                    color: '#065F46',
+                                    marginBottom: '4px',
+                                    marginLeft: '4px',
+                                    fontWeight: 800
+                                }}>
+                                    {aiConfig.name}
+                                </span>
+                            )}
+                            <div style={{
+                                backgroundColor: isBot ? 'white' : '#059669',
+                                color: isBot ? (msg.isError ? '#ef4444' : '#1F2937') : 'white',
+                                padding: '10px 14px',
+                                borderRadius: '12px',
+                                borderBottomLeftRadius: isBot ? '2px' : '12px',
+                                borderBottomRightRadius: isBot ? '12px' : '2px',
+                                boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+                                fontSize: '0.95rem',
+                                lineHeight: '1.4',
+                                wordBreak: 'break-word'
+                            }}>
+                                {msg.text}
+                            </div>
+                        </div>
+                    );
+                })}
+
+                {isTyping && (
+                    <div style={{
+                        alignSelf: 'flex-start',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '4px'
+                    }}>
+                        <span style={{ fontSize: '0.7rem', color: '#6B7280', marginLeft: '4px', fontWeight: 600 }}>
+                            {aiConfig.name} is thinking...
+                        </span>
+                        <div style={{
+                            display: 'flex',
+                            gap: '4px',
+                            padding: '12px 16px',
+                            backgroundColor: 'white',
+                            borderRadius: '12px',
+                            borderBottomLeftRadius: '2px',
+                            boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+                            width: 'fit-content'
+                        }}>
+                            <span className="dot" style={{ width: '6px', height: '6px', backgroundColor: '#9CA3AF', borderRadius: '50%', animation: 'bounce 1s infinite' }}></span>
+                            <span className="dot" style={{ width: '6px', height: '6px', backgroundColor: '#9CA3AF', borderRadius: '50%', animation: 'bounce 1s infinite 0.2s' }}></span>
+                            <span className="dot" style={{ width: '6px', height: '6px', backgroundColor: '#9CA3AF', borderRadius: '50%', animation: 'bounce 1s infinite 0.4s' }}></span>
+                        </div>
+                    </div>
+                )}
+                <div ref={messagesEndRef} />
+            </div>
+
+            {/* Input Area */}
+            <div style={{
+                padding: '12px',
+                backgroundColor: 'white',
+                borderTop: '1px solid #E5E7EB',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                flexShrink: 0
+            }}>
+                <input
+                    type="text"
+                    value={inputValue}
+                    onChange={(e) => setInputValue(e.target.value)}
+                    onKeyPress={handleKeyPress}
+                    placeholder="Type a message..."
+                    disabled={isTyping}
+                    style={{
+                        flexGrow: 1,
+                        padding: '10px 14px',
+                        borderRadius: '20px',
+                        border: '1px solid #D1D5DB',
+                        outline: 'none',
+                        fontSize: '0.95rem'
+                    }}
+                />
+                <button
+                    onClick={handleSend}
+                    disabled={!inputValue.trim() || isTyping}
+                    style={{
+                        backgroundColor: '#059669',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '50%',
+                        width: '40px',
+                        height: '40px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        cursor: (inputValue.trim() && !isTyping) ? 'pointer' : 'default',
+                        opacity: (inputValue.trim() && !isTyping) ? 1 : 0.6,
+                        transition: 'all 0.2s'
+                    }}
+                >
+                    <Send size={18} />
+                </button>
+            </div>
+            <div style={{ padding: '4px 12px', backgroundColor: 'white', textAlign: 'center', borderTop: '1px solid #F3F4F6' }}>
+                <span style={{ fontSize: '0.65rem', color: '#9CA3AF', fontWeight: 500, letterSpacing: '0.05em' }}>
+                    POWERED BY GOOGLE GEMINI AI
+                </span>
+            </div>
+
+            <style>{`
+                @keyframes bounce {
+                    0%, 100% { transform: translateY(0); }
+                    50% { transform: translateY(-4px); }
+                }
+            `}</style>
+        </div>
+    );
+};
+
+const ChatbotInner = () => {
+    const location = useLocation();
+    const { user } = useContext(AuthContext);
+    const [isOpen, setIsOpen] = useState(false);
+    const [localMessages, setLocalMessages] = useState([]);
+    const [isTyping, setIsTyping] = useState(false);
+    const [aiConfig, setAiConfig] = useState({ name: 'Luna-AI', wayOfSpeech: '' });
+
+    // Fetch AI Config on mount
+    useEffect(() => {
+        const fetchConfig = async () => {
+            try {
+                const { data } = await axios.get('/api/chatbot/config');
+                setAiConfig(data);
+            } catch (err) {
+                console.warn("[Chatbot] Failed to fetch config, using defaults.");
+            }
+        };
+        fetchConfig();
+    }, []);
+
+    // Close on route change
     useEffect(() => {
         setIsOpen(false);
     }, [location.pathname]);
 
-    const scrollToBottom = () => {
-        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-    };
-
-    useEffect(() => {
-        scrollToBottom();
-    }, [messages]);
-
-    const handleSend = async (e) => {
-        e.preventDefault();
-        if (!input.trim()) return;
-
-        const userMessage = { role: 'user', text: input };
-        setMessages(prev => [...prev, userMessage]);
-        setInput('');
-        setIsTyping(true);
-
-        // Core EduGuide AI Logic - Professional, Teacher-like, Structured
-        setTimeout(() => {
-            let botResponse = "";
-            const query = input.toLowerCase();
-
-            // Behavior rules: Polite, no slang, structured (Intro -> Explanation -> Example -> Closing)
-
-            if (query.includes("newton") || query.includes("law")) {
-                botResponse = "Certainly! I would be pleased to explain Newton's First Law of Motion.\n\n" +
-                    "This fundamental law states that an object will remain at rest or continue to move at a constant velocity in a straight line unless it is compelled to change that state by an external, unbalanced force. This concept is often referred to as inertia.\n\n" +
-                    "For example, consider a book resting on a table. It will not move until you apply force by pushing it. Similarly, a ball rolling on a frictionless floor would continue indefinitely unless stopped by an obstacle.\n\n" +
-                    "I hope this explanation clarifies the concept of inertia for you. Please let me know if you would like to explore this further.";
-            } else if (query.includes("ug") || query.includes("bca") || query.includes("software")) {
-                botResponse = "That is a very pertinent question regarding your academic path.\n\n" +
-                    "If you intend to pursue a career in software development, undergraduate programs such as BTech in Computer Science, BCA (Bachelor of Computer Applications), or BSc in Information Technology are excellent choices. These courses provide a rigorous foundation in algorithms, system architecture, and modern programming languages.\n\n" +
-                    "A common example is the BTech curriculum, which often includes hands-on projects that bridge the gap between theoretical computing and industry requirements.\n\n" +
-                    "I am available to help you compare the specifics of these programs if you require more detail.";
-            } else if (query.includes("neet") || query.includes("jee")) {
-                botResponse = "Preparing for NEET or JEE requires a highly structured and disciplined approach to learning.\n\n" +
-                    "Our platform provides specialized modules designed to address the complex requirements of these examinations. For JEE, we emphasize deep conceptual understanding of Physics and Mathematics, while our NEET modules focus on comprehensive Biology and Chemistry preparation using evidence-based teaching methods.\n\n" +
-                    "An example of our strategy involves diagnostic assessments that identify your specific areas of academic vulnerability before recommending revision paths.\n\n" +
-                    "I encourage you to begin with the introductory modules in our Course Catalog to build your confidence.";
-            } else if (query.includes("certificate") || query.includes("how to earn")) {
-                botResponse = "Earning a certificate of achievement is a commendable way to validate your academic progress.\n\n" +
-                    "On the LearnIQ platform, you can earn a certificate by successfully completing all lesson modules within a course and achieving a passing grade on the final comprehensive assessment. Your progress is tracked in real-time on your student dashboard.\n\n" +
-                    "Once you have fulfilled these requirements, the system will automatically generate your certificate, which will be accessible in your 'Achievements' gallery.\n\n" +
-                    "I am here to support you in every step of your certification process.";
-            } else if (query.includes("who are you") || query.includes("what is your name")) {
-                botResponse = "I am Luna AI, an intelligent academic assistant designed for this online education platform.\n\n" +
-                    "My primary role is to answer your academic inquiries clearly and professionally, adapting my explanations to your specific level of study, whether you are in School, preparing for NEET/JEE, or pursuing UG/PG degrees.\n\n" +
-                    "I function much like a dedicated teacher, providing step-by-step guidance and encouragement to ensure your learning objectives are met.\n\n" +
-                    "How may I assist you with your studies at this time?";
-            } else if (query.includes("hello") || query.includes("hi") || query.includes("greetings")) {
-                botResponse = "Greetings! I am Luna AI, your academic companion.\n\n" +
-                    "I am here to ensure that your experience on the LearnIQ platform is intellectually rewarding and efficient. I can help with subject doubts, course guidance, and preparation strategies for various competitive exams.\n\n" +
-                    "For instance, if you are struggling with a specific mathematical proof, I can break it down into manageable steps for you.\n\n" +
-                    "Please let me know which subject or topic we should address today.";
-            } else if (query.includes("b.com") || query.includes("btech") || query.includes("mba")) {
-                botResponse = "Indeed, the platform offers comprehensive curricula for B.Com, B.Tech, and MBA programs.\n\n" +
-                    "These courses are structured to provide both foundational knowledge and advanced practical skills relevant to their respective industries. Our B.Com modules cover financial accounting and business law, while the MBA tracks focus on strategic management and leadership.\n\n" +
-                    "You can view the full curriculum for each of these degrees in our main Course Catalog section.\n\n" +
-                    "Is there a specific program details you would like me to elaborate on?";
-            } else {
-                botResponse = `Thank you for your inquiry regarding "${input}".\n\n` +
-                    "While I am primarily specialized in the LearnIQ curriculum and general academic concepts, I will endeavor to provide guidance. If your question lies outside the current syllabus, I recommend consulting our Help Center or the relevant course documentation for more precise information.\n\n" +
-                    "As an example, many students find that navigating the 'System' or 'Courses' documentation provides immediate answers to procedural questions.\n\n" +
-                    "I remain at your service for any further academic assistance.";
-            }
-
-            setMessages(prev => [...prev, { role: 'bot', text: botResponse }]);
-            setIsTyping(false);
-        }, 1200);
+    const toggleBot = (e) => {
+        if (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        setIsOpen(!isOpen);
     };
 
     return (
@@ -100,209 +345,213 @@ const Chatbot = () => {
             <AnimatePresence>
                 {isOpen && (
                     <motion.div
-                        initial={{ opacity: 0, scale: 0.8, y: 20 }}
-                        animate={{ opacity: 1, scale: 1, y: 0 }}
-                        exit={{ opacity: 0, scale: 0.8, y: 20 }}
+                        initial={{ opacity: 0, scale: 0 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0 }}
+                        transition={{ type: "spring", stiffness: 400, damping: 30 }}
                         style={{
-                            width: '380px', // Slightly wider for professional text
-                            height: '520px',
+                            position: 'absolute',
+                            bottom: '90px',
+                            right: '0',
+                            width: '360px',
+                            height: '550px',
                             backgroundColor: 'white',
                             borderRadius: '24px',
-                            boxShadow: '0 25px 50px -12px rgba(0,0,0,0.15)',
+                            boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)',
                             display: 'flex',
                             flexDirection: 'column',
                             overflow: 'hidden',
-                            marginBottom: '15px',
-                            border: '1px solid #E2E8F0'
+                            border: '1px solid rgba(0,0,0,0.05)',
+                            transformOrigin: 'calc(100% - 36px) bottom'
                         }}
+                        onClick={(e) => e.stopPropagation()}
                     >
                         {/* Header */}
                         <div style={{
-                            padding: '20px',
-                            background: 'linear-gradient(135deg, #065F46 0%, #059669 100%)',
+                            padding: '16px 20px',
+                            background: 'linear-gradient(135deg, #064E3B 0%, #059669 100%)',
                             color: 'white',
                             display: 'flex',
+                            flexDirection: 'row',
                             alignItems: 'center',
-                            justifyContent: 'space-between'
+                            justifyContent: 'center',
+                            position: 'relative',
+                            flexShrink: 0
                         }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                                <div style={{
-                                    width: '50px',
-                                    height: '50px',
-                                    backgroundColor: 'white',
-                                    borderRadius: '50%',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    padding: '6px',
-                                    boxShadow: '0 0 15px rgba(255,255,255,0.5)',
-                                    border: '2px solid #D1FAE5',
-                                    overflow: 'hidden'
-                                }}>
-                                    <img src="/luna-bot.svg" alt="Luna" style={{ width: '35px', height: '35px' }} />
-                                </div>
-                                <div>
-                                    <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: 800 }}>Luna AI</h3>
-                                    <span style={{ fontSize: '0.7rem', opacity: 0.9 }}>Professional Learning Assistant</span>
-                                </div>
-                            </div>
-                            <button onClick={() => setIsOpen(false)} style={{ background: 'none', border: 'none', color: 'white', cursor: 'pointer', padding: '5px' }}>
-                                <X size={24} />
+                            <button
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    setIsOpen(false);
+                                }}
+                                style={{
+                                    position: 'absolute',
+                                    top: '50%',
+                                    right: '20px',
+                                    transform: 'translateY(-50%)',
+                                    background: 'none',
+                                    border: 'none',
+                                    color: 'white',
+                                    cursor: 'pointer',
+                                    padding: '5px',
+                                    zIndex: 10
+                                }}
+                            >
+                                <X size={20} />
                             </button>
-                        </div>
 
-                        {/* Messages Area */}
-                        <div style={{
-                            flexGrow: 1,
-                            padding: '20px',
-                            overflowY: 'auto',
-                            display: 'flex',
-                            flexDirection: 'column',
-                            gap: '20px',
-                            backgroundColor: '#FBFDFF'
-                        }}>
-                            {messages.map((msg, index) => (
-                                <div key={index} style={{
-                                    alignSelf: msg.role === 'user' ? 'flex-end' : 'flex-start',
-                                    maxWidth: '90%',
+                            <div style={{
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                gap: '8px',
+                                width: '100%',
+                                textAlign: 'center',
+                                position: 'relative'
+                            }}>
+                                <div style={{
+                                    width: '100%',
                                     display: 'flex',
-                                    gap: '10px',
-                                    flexDirection: msg.role === 'user' ? 'row-reverse' : 'row'
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    padding: '10px 0'
                                 }}>
-                                    {msg.role === 'bot' && (
-                                        <div style={{
-                                            width: '32px',
-                                            height: '32px',
-                                            backgroundColor: '#ECFDF5',
-                                            borderRadius: '50%',
-                                            display: 'flex',
+                                    <motion.div
+                                        animate={{
+                                            boxShadow: [
+                                                "0 0 10px rgba(52, 211, 153, 0.3)",
+                                                "0 0 25px rgba(52, 211, 153, 0.6)",
+                                                "0 0 10px rgba(52, 211, 153, 0.3)"
+                                            ],
+                                            borderColor: [
+                                                "rgba(255, 255, 255, 0.4)",
+                                                "rgba(255, 255, 255, 0.8)",
+                                                "rgba(255, 255, 255, 0.4)"
+                                            ]
+                                        }}
+                                        transition={{ duration: 2, repeat: Infinity }}
+                                        style={{
+                                            position: 'relative',
+                                            display: 'inline-flex',
+                                            flexDirection: 'column',
                                             alignItems: 'center',
                                             justifyContent: 'center',
-                                            padding: '4px',
-                                            flexShrink: 0,
-                                            border: '1px solid #D1FAE5',
-                                            boxShadow: '0 2px 8px rgba(5, 150, 105, 0.1)'
+                                            width: '100px',
+                                            height: '100px',
+                                            borderRadius: '50%',
+                                            border: '2px solid rgba(255,255,255,0.4)',
+                                            background: 'rgba(255,255,255,0.05)',
+                                            backdropFilter: 'blur(4px)',
+                                            zIndex: 2
+                                        }}
+                                    >
+                                        <div style={{
+                                            position: 'relative',
+                                            display: 'flex',
+                                            flexDirection: 'column',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            padding: '10px'
                                         }}>
-                                            <img src="/luna-bot.svg" alt="Luna" style={{ width: '100%', borderRadius: '50%' }} />
+                                            <div style={{
+                                                width: '56px',
+                                                height: '56px',
+                                                backgroundColor: 'white',
+                                                borderRadius: '50%',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                padding: '6px',
+                                                marginBottom: '8px',
+                                                boxShadow: '0 4px 10px rgba(0,0,0,0.1)',
+                                                border: '2px solid rgba(52, 211, 153, 0.3)'
+                                            }}>
+                                                <img src="/luna-bot.svg" alt="Luna" style={{ width: '38px', height: '38px', display: 'block' }} />
+                                            </div>
+                                            <motion.h3
+                                                animate={{
+                                                    textShadow: [
+                                                        "0 0 5px #fff, 0 0 10px #059669",
+                                                        "0 0 15px #fff, 0 0 25px #059669",
+                                                        "0 0 5px #fff, 0 0 10px #059669"
+                                                    ]
+                                                }}
+                                                transition={{ duration: 2, repeat: Infinity }}
+                                                style={{
+                                                    margin: 0,
+                                                    fontSize: '1rem',
+                                                    fontWeight: 900,
+                                                    lineHeight: '1.2',
+                                                    color: 'white',
+                                                    textAlign: 'center',
+                                                    zIndex: 5
+                                                }}
+                                            >
+                                                {aiConfig.name}
+                                            </motion.h3>
                                         </div>
-                                    )}
-                                    <div style={{
-                                        padding: '12px 16px',
-                                        borderRadius: msg.role === 'user' ? '16px 16px 2px 16px' : '2px 16px 16px 16px',
-                                        backgroundColor: msg.role === 'user' ? '#059669' : 'white',
-                                        color: msg.role === 'user' ? 'white' : '#334155',
-                                        fontSize: '0.875rem',
-                                        lineHeight: '1.6',
-                                        boxShadow: '0 1px 2px rgba(0,0,0,0.05)',
-                                        border: '1px solid #F1F5F9',
-                                        whiteSpace: 'pre-line' // Preserve line breaks for structure
-                                    }}>
-                                        {msg.text}
-                                    </div>
+
+                                        {[...Array(8)].map((_, i) => (
+                                            <motion.div
+                                                key={i}
+                                                style={{
+                                                    position: 'absolute',
+                                                    width: '4px',
+                                                    height: '4px',
+                                                    backgroundColor: '#fbbf24',
+                                                    borderRadius: '50%',
+                                                    top: '50%',
+                                                    left: '50%',
+                                                }}
+                                                animate={{
+                                                    x: [0, Math.cos(i * (Math.PI / 4)) * 70],
+                                                    y: [0, Math.sin(i * (Math.PI / 4)) * 70],
+                                                    opacity: [1, 0],
+                                                    scale: [1, 0]
+                                                }}
+                                                transition={{
+                                                    duration: 2,
+                                                    repeat: Infinity,
+                                                    delay: i * 0.2,
+                                                    ease: "easeOut"
+                                                }}
+                                            />
+                                        ))}
+
+                                        <span style={{
+                                            fontSize: '0.6rem',
+                                            opacity: 0.9,
+                                            textTransform: 'uppercase',
+                                            letterSpacing: '0.1em',
+                                            marginTop: '6px',
+                                            color: '#D1FAE5',
+                                            fontWeight: 700
+                                        }}>
+                                            Online
+                                        </span>
+                                    </motion.div>
                                 </div>
-                            ))}
-                            {isTyping && (
-                                <div style={{ alignSelf: 'flex-start', display: 'flex', gap: '8px', alignItems: 'center' }}>
-                                    <div style={{
-                                        width: '32px',
-                                        height: '32px',
-                                        backgroundColor: '#ECFDF5',
-                                        borderRadius: '50%',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        padding: '4px',
-                                        border: '1px solid #D1FAE5'
-                                    }}>
-                                        <img src="/luna-bot.svg" alt="Luna" style={{ width: '100%', borderRadius: '50%' }} />
-                                    </div>
-                                    <div style={{ display: 'flex', gap: '4px' }}>
-                                        <div style={{ width: '5px', height: '5px', backgroundColor: '#059669', borderRadius: '50%', animation: 'bounce 1s infinite' }}></div>
-                                        <div style={{ width: '5px', height: '5px', backgroundColor: '#059669', borderRadius: '50%', animation: 'bounce 1.2s infinite' }}></div>
-                                        <div style={{ width: '5px', height: '5px', backgroundColor: '#059669', borderRadius: '50%', animation: 'bounce 1.4s infinite' }}></div>
-                                    </div>
-                                </div>
-                            )}
-                            <div ref={messagesEndRef} />
+                            </div>
                         </div>
 
-                        {/* Quick Actions / Suggestion Chips */}
-                        <div style={{
-                            padding: '12px 20px',
-                            display: 'flex',
-                            gap: '10px',
-                            overflowX: 'auto',
-                            backgroundColor: 'white',
-                            borderTop: '1px solid #F1F5F9'
-                        }}>
-                            {[
-                                { label: "📘 Subject Doubt", text: "I have a question about a specific subject concept." },
-                                { label: "🧪 NEET/JEE Help", text: "Can you provide guidance for NEET/JEE preparation?" },
-                                { label: "🎓 UG/PG Paths", text: "What are the recommended paths for UG/PG students?" },
-                                { label: "📝 Exam Tips", text: "Can you offer effective strategies for exam preparation?" }
-                            ].map((suggest, i) => (
-                                <button
-                                    key={i}
-                                    onClick={() => setInput(suggest.text)}
-                                    style={{
-                                        padding: '8px 16px',
-                                        borderRadius: '12px',
-                                        border: '1px solid #059669',
-                                        color: '#059669',
-                                        backgroundColor: '#F0FDF4',
-                                        fontSize: '0.75rem',
-                                        fontWeight: 700,
-                                        cursor: 'pointer',
-                                        whiteSpace: 'nowrap',
-                                        transition: 'all 0.2s'
-                                    }}
-                                >
-                                    {suggest.label}
-                                </button>
-                            ))}
-                        </div>
-
-                        {/* Input Area */}
-                        <form onSubmit={handleSend} style={{ padding: '15px 20px', borderTop: '1px solid #F1F5F9', display: 'flex', gap: '12px', backgroundColor: 'white' }}>
-                            <input
-                                type="text"
-                                value={input}
-                                onChange={(e) => setInput(e.target.value)}
-                                placeholder="State your academic query..."
-                                style={{
-                                    flex: 1,
-                                    border: 'none',
-                                    outline: 'none',
-                                    fontSize: '0.9rem',
-                                    color: '#334155'
-                                }}
+                        {/* Chat Content */}
+                        <ErrorBoundary>
+                            <ChatContent
+                                localMessages={localMessages}
+                                setLocalMessages={setLocalMessages}
+                                isTyping={isTyping}
+                                setIsTyping={setIsTyping}
+                                aiConfig={aiConfig}
                             />
-                            <button type="submit" style={{
-                                backgroundColor: '#059669',
-                                color: 'white',
-                                border: 'none',
-                                borderRadius: '12px',
-                                padding: '8px 16px',
-                                cursor: 'pointer',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center'
-                            }}>
-                                <Send size={20} />
-                            </button>
-                        </form>
+                        </ErrorBoundary>
+
                     </motion.div>
                 )}
             </AnimatePresence>
 
-            {/* Floating Toggle Button */}
-            <div style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                gap: '8px', // Closer
-                position: 'relative'
-            }}>
+            {/* Toggle Button Container */}
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', position: 'relative' }}>
                 {!isOpen && (
                     <motion.div
                         initial={{ opacity: 0, y: 10 }}
@@ -314,66 +563,139 @@ const Chatbot = () => {
                             textTransform: 'uppercase',
                             letterSpacing: '0.15em',
                             pointerEvents: 'none',
-                            whiteSpace: 'nowrap',
                             backgroundColor: 'white',
-                            padding: '4px 12px',
-                            borderRadius: '12px',
-                            boxShadow: '0 4px 12px rgba(6, 95, 70, 0.15)',
-                            border: '1px solid #ECFDF5'
+                            padding: '6px 16px',
+                            borderRadius: '20px',
+                            boxShadow: '0 4px 15px rgba(0,0,0,0.1)',
+                            marginBottom: '10px',
+                            border: '1px solid #ECFDF5',
+                            position: 'relative'
                         }}
                     >
-                        Luna
-                    </motion.div>
-                )}
-                <motion.button
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
-                    animate={{
-                        y: [0, -10, 0],
-                        boxShadow: [
-                            '0 0 25px rgba(5, 150, 105, 0.4)',
-                            '0 0 50px rgba(5, 150, 105, 0.6)',
-                            '0 0 25px rgba(5, 150, 105, 0.4)'
-                        ]
-                    }}
-                    transition={{
-                        y: { duration: 4, repeat: Infinity, ease: 'easeInOut' },
-                        boxShadow: { duration: 2.5, repeat: Infinity, ease: 'easeInOut' }
-                    }}
-                    onClick={() => setIsOpen(!isOpen)}
-                    style={{
-                        width: '82px',
-                        height: '82px',
-                        borderRadius: '50%', // Circle Toggle
-                        backgroundColor: 'white',
-                        border: '3px solid #D1FAE5',
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        overflow: 'hidden',
-                        position: 'relative',
-                        boxShadow: '0 8px 30px rgba(0,0,0,0.15)'
-                    }}
-                >
-                    {isOpen ? (
-                        <X size={38} color="#065F46" />
-                    ) : (
-                        <div style={{ padding: '10px' }}>
-                            <img
-                                src="/luna-bot.svg"
-                                alt="Luna"
+                        <motion.span
+                            animate={{
+                                textShadow: [
+                                    "0 0 2px #fff, 0 0 5px #059669",
+                                    "0 0 5px #fff, 0 0 10px #059669",
+                                    "0 0 2px #fff, 0 0 5px #059669"
+                                ]
+                            }}
+                            transition={{ duration: 2, repeat: Infinity }}
+                        >
+                            {aiConfig.name}
+                        </motion.span>
+
+                        {[...Array(6)].map((_, i) => (
+                            <motion.div
+                                key={i}
                                 style={{
-                                    width: '55px',
-                                    height: '55px',
-                                    objectFit: 'contain'
+                                    position: 'absolute',
+                                    width: '3px',
+                                    height: '3px',
+                                    backgroundColor: '#fbbf24',
+                                    borderRadius: '50%',
+                                    top: '50%',
+                                    left: '50%',
+                                }}
+                                animate={{
+                                    x: [0, (i % 2 === 0 ? 1 : -1) * (Math.random() * 30 + 15)],
+                                    y: [0, (i < 3 ? 1 : -1) * (Math.random() * 30 + 15)],
+                                    opacity: [1, 0],
+                                    scale: [1.5, 0]
+                                }}
+                                transition={{
+                                    duration: 1.2,
+                                    repeat: Infinity,
+                                    delay: i * 0.2,
+                                    ease: "easeOut"
                                 }}
                             />
-                        </div>
+                        ))}
+                    </motion.div>
+                )}
+
+                <div style={{ position: 'relative' }}>
+                    {!isOpen && (
+                        <>
+                            <motion.div
+                                animate={{
+                                    scale: [1, 1.6],
+                                    opacity: [0.6, 0]
+                                }}
+                                transition={{
+                                    duration: 2,
+                                    repeat: Infinity,
+                                    ease: "easeOut"
+                                }}
+                                style={{
+                                    position: 'absolute',
+                                    top: 0, left: 0, right: 0, bottom: 0,
+                                    borderRadius: '50%',
+                                    backgroundColor: 'rgba(5, 150, 105, 0.4)',
+                                    zIndex: 0
+                                }}
+                            />
+                            <motion.div
+                                animate={{
+                                    scale: [1, 1.4],
+                                    opacity: [0.4, 0]
+                                }}
+                                transition={{
+                                    duration: 2,
+                                    repeat: Infinity,
+                                    ease: "easeOut",
+                                    delay: 0.5
+                                }}
+                                style={{
+                                    position: 'absolute',
+                                    top: 0, left: 0, right: 0, bottom: 0,
+                                    borderRadius: '50%',
+                                    backgroundColor: 'rgba(5, 150, 105, 0.3)',
+                                    zIndex: 0
+                                }}
+                            />
+                        </>
                     )}
-                </motion.button>
+
+                    <motion.button
+                        whileHover={{ scale: 1.1, boxShadow: '0 0 25px rgba(5, 150, 105, 0.6)' }}
+                        whileTap={{ scale: 0.9 }}
+                        onClick={toggleBot}
+                        style={{
+                            width: '72px',
+                            height: '72px',
+                            borderRadius: '50%',
+                            backgroundColor: 'white',
+                            border: '4px solid #D1FAE5',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            boxShadow: '0 0 15px rgba(5, 150, 105, 0.4), 0 8px 30px rgba(0,0,0,0.2)',
+                            zIndex: 10,
+                            position: 'relative',
+                            overflow: 'hidden'
+                        }}
+                    >
+                        {isOpen ? (
+                            <X size={32} color="#065F46" />
+                        ) : (
+                            <div style={{ padding: '4px', width: '50px', height: '50px' }}>
+                                <img src="/luna-bot.svg" alt="Luna" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                            </div>
+                        )}
+                    </motion.button>
+                </div>
             </div>
         </div>
+    );
+};
+
+const Chatbot = () => {
+    return (
+        <ErrorBoundary>
+            <ChatbotInner />
+        </ErrorBoundary>
     );
 };
 

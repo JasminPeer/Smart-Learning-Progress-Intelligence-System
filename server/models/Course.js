@@ -1,6 +1,10 @@
 const mongoose = require('mongoose');
 
 const courseSchema = mongoose.Schema({
+    id: {
+        type: String,
+        unique: true
+    },
     title: {
         type: String,
         required: [true, 'Please add a course title']
@@ -8,6 +12,14 @@ const courseSchema = mongoose.Schema({
     description: {
         type: String,
         required: [true, 'Please add a description']
+    },
+    detailedDescription: {
+        type: String,
+        default: ''
+    },
+    theory: {
+        type: String,
+        default: ''
     },
     category: {
         type: String,
@@ -20,6 +32,20 @@ const courseSchema = mongoose.Schema({
     image: {
         type: String
     },
+    introVideoUrl: {
+        type: String,
+        default: ''
+    },
+    rating: {
+        type: Number,
+        default: 0
+    },
+    resources: [
+        {
+            title: { type: String },
+            url: { type: String }
+        }
+    ],
     instructorId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
@@ -57,7 +83,15 @@ const courseSchema = mongoose.Schema({
                 answer: { type: String }
             }
         ]
-    }
+    },
+    reviews: [
+        {
+            user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+            rating: { type: Number },
+            comment: { type: String },
+            createdAt: { type: Date, default: Date.now }
+        }
+    ]
 }, {
     timestamps: true
 });

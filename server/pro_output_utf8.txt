@@ -1,0 +1,30 @@
+﻿[dotenv@17.3.1] injecting env (4) from .env -- tip: ΓÜÖ∩╕Å  suppress all logs with { quiet: true }
+node : PRO FAIL: {
+At line:1 char:1
++ node test_pro.js > 
+pro_output.txt 2>&1
++ ~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~
+    + CategoryInfo        
+      : NotSpecified: (P  
+  RO FAIL: {:String) []   
+ , RemoteException
+    + FullyQualifiedError 
+   Id : NativeCommandErr  
+  or
+ 
+  error: {
+    code: 404,
+    message: 
+'models/gemini-pro is not 
+found for API version 
+v1beta, or is not 
+supported for 
+generateContent. Call 
+ListModels to see the 
+list of available models 
+and their supported 
+methods.',
+    status: 'NOT_FOUND'
+  }
+}

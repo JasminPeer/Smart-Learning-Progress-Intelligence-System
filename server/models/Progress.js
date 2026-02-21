@@ -7,9 +7,8 @@ const progressSchema = mongoose.Schema({
         ref: 'User'
     },
     courseId: {
-        type: mongoose.Schema.Types.ObjectId,
-        required: true,
-        ref: 'Course'
+        type: String,
+        required: true
     },
     score: {
         type: Number,

@@ -1,0 +1,5 @@
+This file was created by the AI Assistant on 2026-02-18 at 12:06 PM.
+If you see this file, you are in the correct directory: C:\Users\Lenovo\Smart_Learning_intell
+
+Please ensure your terminal is running 'npm run dev' or 'node server.js' from THIS directory.
+If you are running from F:\Smart_Learning_intell, you are running the OLD code.

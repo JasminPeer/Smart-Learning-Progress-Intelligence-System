@@ -1,0 +1,22 @@
+﻿--- TOTAL DIAGNOSTIC START ---
+Axios required successfully. Version: 1.13.5
+[dotenv@17.2.4] injecting env (4) from .env -- tip: ≡ƒùé∩╕Å backup and recover secrets: https://dotenvx.com/ops
+Env loaded from: C:\Users\Lenovo\Smart_Learning_intell\server\.env
+PORT: 5000
+MONGO_URI: HIDDEN (exists)
+GEMINI_API_KEY: HIDDEN (exists)
+MongoDB Connected.
+Found Users: 9
+ - demo@learniq.com (student)
+ - admin@test.com (admin)
+ - instructor@test.com (instructor)
+ - john@test.com (instructor)
+ - student@test.com (student)
+ - bob@test.com (student)
+ - charlie@test.com (student)
+ - daisy@test.com (student)
+ - jasminpeer006@gmail.com (student)
+Image class-11-12-chem.jpg: EXISTS, Size: 113969 bytes
+Image class-11-12-physics.jpg: EXISTS, Size: 64026 bytes
+Image pg-data-science.jpg: EXISTS, Size: 118831 bytes
+--- TOTAL DIAGNOSTIC END ---

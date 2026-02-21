@@ -11,18 +11,19 @@ const Contact = () => {
         e.preventDefault();
         setStatus('sending');
 
-        const formData = new FormData(form.current);
-        const name = formData.get('user_name');
-        const email = formData.get('user_email');
-        const mobile = formData.get('user_mobile');
-        const message = formData.get('message');
-
-        const body = `Name: ${name}%0D%0AEmail: ${email}%0D%0AMobile: ${mobile}%0D%0A%0D%0AMessage:%0D%0A${message}`;
-        window.location.href = `mailto:jasminpeer006@gmail.com?subject=Contact Message from ${name}&body=${body}`;
-
-        setStatus('success');
-        e.target.reset();
-        setTimeout(() => setStatus(''), 5000);
+        // emailjs.sendForm('service_iq1rf99', 'template_9na3xwd', form.current, 'HzuKL2FNiYy6D-IGF')
+        emailjs.sendForm('service_iq1rf99', 'template_9na3xwd', form.current, 'HzuKL2FNiYy6D-IGF')
+            .then((result) => {
+                console.log("Message sent successfully");
+                setStatus('success');
+                e.target.reset();
+                setTimeout(() => setStatus(''), 5000);
+            }, (error) => {
+                console.error("EmailJS Error:", error);
+                setStatus('error');
+                // Auto-reset error status after 7 seconds
+                setTimeout(() => setStatus(''), 7000);
+            });
     };
 
     return (
@@ -94,8 +95,19 @@ const Contact = () => {
                                 {status === 'sending' ? 'Sending...' : <><Send size={18} style={{ marginRight: '8px' }} /> Send Message</>}
                             </button>
 
-                            {status === 'success' && <div style={{ marginTop: '15px', color: 'var(--success)', textAlign: 'center' }}>Message sent successfully!</div>}
-                            {status === 'error' && <div style={{ marginTop: '15px', color: 'var(--error)', textAlign: 'center' }}>Failed to send message. Please try again.</div>}
+                            {status === 'success' && <div style={{ marginTop: '15px', color: 'var(--success)', textAlign: 'center', padding: '10px', backgroundColor: '#F0FDF4', borderRadius: '8px' }}>✅ Message sent successfully! We will get back to you soon.</div>}
+                            {status === 'error' && (
+                                <div style={{ marginTop: '15px', color: 'var(--error)', textAlign: 'center', padding: '15px', backgroundColor: '#FEF2F2', borderRadius: '12px', border: '1px solid #FCA5A5' }}>
+                                    <div style={{ fontWeight: 700, marginBottom: '5px' }}>❌ Failed to send message.</div>
+                                    <div style={{ fontSize: '0.85rem', opacity: 0.9 }}>
+                                        This might be due to an invalid EmailJS Service ID or Template ID.
+                                        Please check your <b>Service ID (service_iq1rf99)</b> and <b>Template ID (template_9na3xwd)</b> in your EmailJS dashboard.
+                                    </div>
+                                    <div style={{ marginTop: '10px', fontSize: '0.9rem' }}>
+                                        Or contact us directly: <a href="mailto:jasminpeer006@gmail.com" style={{ color: '#B91C1C', textDecoration: 'underline' }}>jasminpeer006@gmail.com</a>
+                                    </div>
+                                </div>
+                            )}
                         </form>
                     </div>
                 </div>

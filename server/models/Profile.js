@@ -38,7 +38,8 @@ const ProfileSchema = new mongoose.Schema({
         {
             title: { type: String },
             date: { type: Date, default: Date.now },
-            icon: { type: String }
+            icon: { type: String },
+            certificateId: { type: String }
         }
     ],
     theme: {

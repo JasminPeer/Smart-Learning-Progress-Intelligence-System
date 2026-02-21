@@ -6,9 +6,10 @@ import StatCard from '../components/ui/StatCard';
 import RecommendationCard from '../components/ui/RecommendationCard';
 import SubjectCard from '../dashboards/SubjectCard';
 import GoalCard from '../dashboards/GoalCard';
-import { TrendingUp, BookOpen, Clock, Target, Flame, Plus, X, Award, ArrowRight, Settings, MessageSquare } from 'lucide-react';
+import { TrendingUp, BookOpen, Clock, Target, Flame, Plus, X, Award, ArrowRight, Settings, Trash2, Sparkles } from 'lucide-react';
 import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
+import LeaderboardCard from './LeaderboardCard';
 
 const Dashboard = () => {
     const { user } = useContext(AuthContext);
@@ -16,9 +17,6 @@ const Dashboard = () => {
     const [loading, setLoading] = useState(true);
     const [profile, setProfile] = useState(null);
     const [showGoalModal, setShowGoalModal] = useState(false);
-    const [showFeedbackModal, setShowFeedbackModal] = useState(false);
-    const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
-
     // Persistent State for Goals
     const [goals, setGoals] = useState(() => {
         const saved = localStorage.getItem('learniq_goals');
@@ -27,6 +25,27 @@ const Dashboard = () => {
             { title: "Study 20 Hours This Week", current: 20, target: 20 }
         ];
     });
+
+    const handleUnenroll = async (courseId, e) => {
+        e.stopPropagation();
+        if (!window.confirm("Are you sure you want to unenroll from this course? Your progress will be lost.")) return;
+
+        try {
+            const token = localStorage.getItem('token');
+            await axios.delete(`/api/profile/unenroll/${courseId}`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            // Update local state immediately
+            setProfile(prev => ({
+                ...prev,
+                enrolledCourses: prev.enrolledCourses.filter(c => c.courseId !== courseId)
+            }));
+            alert("Course removed successfully.");
+        } catch (err) {
+            console.error("Unenrollment failed:", err);
+            alert("Failed to unenroll. Please try again.");
+        }
+    };
 
     const [newGoalTitle, setNewGoalTitle] = useState('');
     const [newGoalTarget, setNewGoalTarget] = useState(10);
@@ -64,14 +83,6 @@ const Dashboard = () => {
         localStorage.setItem('learniq_goals', JSON.stringify(goals));
     }, [goals]);
 
-    const toggleTheme = () => {
-        const newTheme = theme === 'light' ? 'dark' : 'light';
-        setTheme(newTheme);
-        localStorage.setItem('theme', newTheme);
-        // Apply theme classes to body for global influence
-        document.body.className = newTheme === 'dark' ? 'dark-mode' : '';
-    };
-
     const handleAction = (action) => {
         if (user?.isDemo) {
             window.location.href = '/register';
@@ -91,9 +102,37 @@ const Dashboard = () => {
 
     if (loading) return <div style={{ padding: '50px', textAlign: 'center', color: 'var(--primary)' }}>Loading Dashboard...</div>;
 
-    const overallScore = profile?.subjects?.length > 0
-        ? Math.round((profile.subjects.reduce((a, b) => a + b.currentMarks, 0) / profile.subjects.reduce((a, b) => a + (b.totalMarks || 100), 0)) * 100)
+    // Demo Data Concept - Populate if demo user has no real data
+    const isDemoMode = user?.isDemo;
+
+    // Logic: If demo mode is on, we show mock data ONLY IF there are no real enrollments or subjects.
+    // However, if the user has actually enrolled in something, we should probably prefer showing real data
+    // or a blend. To be safe and helpful, we'll show real data if enrolledCourses length > 0.
+    const hasRealData = profile && (profile.subjects?.length > 0 || profile.enrolledCourses?.length > 0);
+
+    const displayProfile = (isDemoMode && !hasRealData) ? {
+        subjects: [
+            { name: 'Mathematics', currentMarks: 85, totalMarks: 100 },
+            { name: 'Physics', currentMarks: 72, totalMarks: 100 },
+            { name: 'Chemistry', currentMarks: 91, totalMarks: 100 },
+            { name: 'Biology', currentMarks: 64, totalMarks: 100 }
+        ],
+        enrolledCourses: [
+            { courseId: 'demo-1', name: 'Advanced Calculus II', progress: 65 },
+            { courseId: 'demo-2', name: 'Quantum Physics Intro', progress: 42 },
+            { courseId: 'demo-3', name: 'Organic Chemistry Masterclass', progress: 88 }
+        ],
+        achievements: [
+            { title: 'Fast Learner', date: new Date() },
+            { title: 'Quiz Master', date: new Date() }
+        ]
+    } : profile;
+
+    const overallScore = displayProfile?.subjects?.length > 0
+        ? Math.round((displayProfile.subjects.reduce((a, b) => a + b.currentMarks, 0) / displayProfile.subjects.reduce((a, b) => a + (b.totalMarks || 100), 0)) * 100)
         : 0;
+
+    const currentProfile = displayProfile;
 
     return (
         <div style={{ maxWidth: '1600px', margin: '0 auto', width: '100%' }}>
@@ -103,12 +142,35 @@ const Dashboard = () => {
                     <h1 style={{ marginBottom: '10px', fontSize: '2rem' }}>Welcome back, {user?.name?.split(' ')[0] || 'Learner'}!</h1>
                     <p style={{ color: '#64748B' }}>Here's your learning progress for today.</p>
                 </div>
-                <div style={{ display: 'flex', gap: '15px' }}>
-                    <button onClick={toggleTheme} className="btn" style={{ backgroundColor: '#F1F5F9', color: '#1E293B', padding: '10px 15px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <Settings size={18} /> Settings
-                    </button>
-                </div>
             </div>
+
+            {/* Demo Mode Concept Banner */}
+            {isDemoMode && (
+                <div className="card" style={{
+                    marginBottom: '40px',
+                    background: 'linear-gradient(135deg, #064E3B 0%, #059669 100%)',
+                    color: 'white',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    padding: '30px 40px',
+                    overflow: 'hidden',
+                    position: 'relative'
+                }}>
+                    <div style={{ position: 'relative', zIndex: 1 }}>
+                        <h2 style={{ color: 'white', fontSize: '1.75rem', marginBottom: '10px' }}>Experience LearnIQ Concept</h2>
+                        <p style={{ color: '#D1FAE5', fontSize: '1.1rem', maxWidth: '600px', margin: 0 }}>
+                            You are exploring the **Platform Vision**. This dashboard showcases how real-time analytics, AI recommendations, and progress tracking transform the learning journey.
+                        </p>
+                        <button onClick={() => navigate('/register')} className="btn btn-primary" style={{ marginTop: '20px', backgroundColor: 'white', color: '#064E3B' }}>
+                            Unlock Full Access <ArrowRight size={18} style={{ marginLeft: '8px' }} />
+                        </button>
+                    </div>
+                    <div style={{ position: 'absolute', right: '-20px', top: '-10px', opacity: 0.1 }}>
+                        <Sparkles size={240} />
+                    </div>
+                </div>
+            )}
 
             {/* Stats Row */}
             <div style={{
@@ -133,8 +195,8 @@ const Dashboard = () => {
                 <div style={{ flex: '1 1 250px', minWidth: '240px' }}>
                     <StatCard
                         title="Courses Enrolled"
-                        value={profile?.enrolledCourses?.length || 0}
-                        subtitle={`${profile?.enrolledCourses?.filter(c => !c.completed).length || 0} in progress`}
+                        value={currentProfile?.enrolledCourses?.length || 0}
+                        subtitle={`${currentProfile?.enrolledCourses?.filter(c => !c.completed).length || 0} in progress`}
                         icon={<BookOpen size={24} />}
                         variant="default"
                     />
@@ -199,7 +261,7 @@ const Dashboard = () => {
                     </div>
                 </div>
 
-                {/* Right Column: Streak & Goals */}
+                {/* Right Column: Streak & Leaderboard (Conceptual for Demo) */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '30px', marginTop: '20px' }}>
                     <div className="card" style={{
                         background: 'linear-gradient(135deg, #F97316 0%, #FB923C 100%)',
@@ -221,21 +283,25 @@ const Dashboard = () => {
                         <p style={{ opacity: 0.9, fontSize: '1rem' }}>Personal Best: 21 days</p>
                     </div>
 
-                    <div className="card" style={{ border: 'none', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-                            <h3 style={{ margin: 0, fontSize: '1.2rem' }}>Learning Goals</h3>
-                            <button onClick={() => handleAction('Add Goal')} className="btn" style={{ padding: '8px 16px', fontSize: '0.85rem', backgroundColor: '#F3F4F6', color: '#1E293B' }}>+ Add Goal</button>
+                    {isDemoMode ? (
+                        <LeaderboardCard />
+                    ) : (
+                        <div className="card" style={{ border: 'none', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                                <h3 style={{ margin: 0, fontSize: '1.2rem' }}>Learning Goals</h3>
+                                <button onClick={() => handleAction('Add Goal')} className="btn" style={{ padding: '8px 16px', fontSize: '0.85rem', backgroundColor: '#F3F4F6', color: '#1E293B' }}>+ Add Goal</button>
+                            </div>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '40px' }}>
+                                {goals.map((g, i) => (
+                                    <GoalCard key={i} title={g.title} current={g.current} target={g.target} />
+                                ))}
+                            </div>
                         </div>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '40px' }}>
-                            {goals.map((g, i) => (
-                                <GoalCard key={i} title={g.title} current={g.current} target={g.target} />
-                            ))}
-                        </div>
-                    </div>
+                    )}
                 </div>
             </div>
 
-            {/* Bottom Section: Subjects & Progress */}
+            {/* Bottom Section: Subjects, Leaderboard, & Progress */}
             <div style={{
                 display: 'grid',
                 gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))',
@@ -244,7 +310,7 @@ const Dashboard = () => {
                 <div>
                     <h3 style={{ marginBottom: '20px' }}>Subject Performance</h3>
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '40px' }}>
-                        {profile?.subjects?.length > 0 ? profile.subjects.map((sub, idx) => {
+                        {currentProfile?.subjects?.length > 0 ? currentProfile.subjects.map((sub, idx) => {
                             let risk = 'low';
                             const perc = Math.round((sub.currentMarks / (sub.totalMarks || 100)) * 100);
                             if (perc < 50) risk = 'high';
@@ -264,10 +330,24 @@ const Dashboard = () => {
                         )}
                     </div>
 
+                    {/* Move Goals here for Demo Mode so they aren't hidden by Leaderboard */}
+                    {isDemoMode && (
+                        <div style={{ marginTop: '50px' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                                <h3 style={{ margin: 0 }}>Learning Goals</h3>
+                            </div>
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px' }}>
+                                {goals.map((g, i) => (
+                                    <GoalCard key={i} title={g.title} current={g.current} target={g.target} />
+                                ))}
+                            </div>
+                        </div>
+                    )}
+
                     <div style={{ marginTop: '50px' }}>
                         <h3 style={{ marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '10px' }}><Award color="var(--primary)" /> Your Achievements</h3>
                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px' }}>
-                            {profile?.achievements?.length > 0 ? profile.achievements.map((ach, idx) => (
+                            {currentProfile?.achievements?.length > 0 ? currentProfile.achievements.map((ach, idx) => (
                                 <div key={idx} className="card" style={{ padding: '20px', display: 'flex', alignItems: 'center', gap: '15px', border: '1px solid #E2E8F0' }}>
                                     <div style={{ backgroundColor: '#F0FDF4', padding: '12px', borderRadius: '12px' }}>
                                         <Award size={24} color="#10B981" />
@@ -290,11 +370,22 @@ const Dashboard = () => {
                 <div>
                     <h3 style={{ marginBottom: '20px' }}>Course Progress</h3>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '30px', marginBottom: '40px' }}>
-                        {profile?.enrolledCourses?.filter(c => !c.completed).length > 0 ? profile.enrolledCourses.filter(c => !c.completed).map((ec, idx) => (
-                            <div key={idx} className="card" style={{ padding: '25px', cursor: 'pointer' }} onClick={() => navigate(`/learn/${ec.courseId}`)}>
+                        {currentProfile?.enrolledCourses?.filter(c => !c.completed).length > 0 ? currentProfile.enrolledCourses.filter(c => !c.completed).map((ec, idx) => (
+                            <div key={idx} className="card" style={{ padding: '25px', cursor: 'pointer', position: 'relative' }} onClick={() => navigate(`/learn/${ec.courseId}`)}>
                                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '15px' }}>
                                     <h4 style={{ margin: 0 }}>{ec.name}</h4>
-                                    <span style={{ fontSize: '0.8rem', color: 'var(--primary)', fontWeight: 700 }}>CONTINUE</span>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+                                        <button
+                                            onClick={(e) => handleUnenroll(ec.courseId, e)}
+                                            style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#EF4444', display: 'flex', alignItems: 'center', opacity: 0.6 }}
+                                            onMouseOver={(e) => e.currentTarget.style.opacity = 1}
+                                            onMouseOut={(e) => e.currentTarget.style.opacity = 0.6}
+                                            title="Unenroll from course"
+                                        >
+                                            <Trash2 size={18} />
+                                        </button>
+                                        <span style={{ fontSize: '0.8rem', color: 'var(--primary)', fontWeight: 700 }}>CONTINUE</span>
+                                    </div>
                                 </div>
                                 <div style={{ height: '8px', backgroundColor: '#E2E8F0', borderRadius: '4px', overflow: 'hidden', marginBottom: '10px' }}>
                                     <div style={{ width: `${ec.progress}%`, height: '100%', backgroundColor: 'var(--primary)', transition: 'width 0.5s' }}></div>
@@ -312,7 +403,7 @@ const Dashboard = () => {
                     {/* Completed Courses / Expert In section */}
                     <h3 style={{ marginBottom: '20px' }}>Mastery & Expertise</h3>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', marginBottom: '40px' }}>
-                        {profile?.enrolledCourses?.filter(c => c.completed).length > 0 ? profile.enrolledCourses.filter(c => c.completed).map((ec, idx) => (
+                        {currentProfile?.enrolledCourses?.filter(c => c.completed).length > 0 ? currentProfile.enrolledCourses.filter(c => c.completed).map((ec, idx) => (
                             <div key={idx} className="card" style={{ padding: '20px', display: 'flex', alignItems: 'center', gap: '15px', border: '1px solid #10B981', backgroundColor: '#F0FDF4' }}>
                                 <Award color="#10B981" size={24} />
                                 <div>
@@ -329,7 +420,7 @@ const Dashboard = () => {
 
                     <h3 style={{ marginBottom: '20px' }}>Personal Learning Path</h3>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '25px', marginBottom: '40px' }}>
-                        {profile?.subjects?.some(s => (s.currentMarks / (s.totalMarks || 100)) < 0.5) && (
+                        {currentProfile?.subjects?.some(s => (s.currentMarks / (s.totalMarks || 100)) < 0.5) && (
                             <RecommendationCard
                                 title="Academic Alert!"
                                 description="Your grades in some subjects are below 50%. Focus on revision videos."
@@ -354,106 +445,7 @@ const Dashboard = () => {
                 </div>
             </div>
 
-            {/* Floating Feedback Toggle - New Circle Design */}
-            <motion.button
-                whileHover={{ scale: 1.1, rotate: 5 }}
-                whileTap={{ scale: 0.9 }}
-                animate={{
-                    y: [0, -8, 0],
-                }}
-                transition={{
-                    duration: 3,
-                    repeat: Infinity,
-                    ease: "easeInOut"
-                }}
-                onClick={() => setShowFeedbackModal(true)}
-                style={{
-                    position: 'fixed',
-                    bottom: '100px',
-                    left: '30px',
-                    width: '60px',
-                    height: '60px',
-                    borderRadius: '50%',
-                    backgroundColor: '#22C55E', // Pale Green
-                    color: 'white',
-                    border: '4px solid white',
-                    cursor: 'pointer',
-                    boxShadow: '0 10px 30px rgba(34, 197, 94, 0.4)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    zIndex: 999
-                }}
-            >
-                <div style={{ position: 'relative' }}>
-                    <MessageSquare size={26} />
-                    <div style={{ position: 'absolute', top: '-12px', right: '-12px', width: '18px', height: '18px', backgroundColor: '#FDE047', borderRadius: '50%', border: '2px solid white' }}></div>
-                </div>
-            </motion.button>
-
-            {/* Feedback Modal */}
-            <AnimatePresence>
-                {showFeedbackModal && (
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        style={{
-                            position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-                            backgroundColor: 'rgba(15, 23, 42, 0.8)', backdropFilter: 'blur(4px)',
-                            display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 10000
-                        }}
-                    >
-                        <motion.div
-                            initial={{ scale: 0.9, y: 20 }}
-                            animate={{ scale: 1, y: 0 }}
-                            exit={{ scale: 0.9, y: 20 }}
-                            className="card" style={{ width: '450px', padding: '40px', position: 'relative' }}
-                        >
-                            <button onClick={() => setShowFeedbackModal(false)} style={{ position: 'absolute', top: '20px', right: '20px', background: 'none', border: 'none', cursor: 'pointer', color: '#64748B' }}><X size={24} /></button>
-
-                            <div style={{ textAlign: 'center', marginBottom: '30px' }}>
-                                <div style={{ backgroundColor: '#EEF2FF', width: '60px', height: '60px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 15px' }}>
-                                    <MessageSquare color="#4F46E5" size={30} />
-                                </div>
-                                <h2 style={{ margin: 0, fontSize: '1.5rem', color: '#1E293B' }}>Share Your Thoughts</h2>
-                                <p style={{ color: '#64748B', fontSize: '0.9rem', marginTop: '5px' }}>Your feedback helps Luna grow smarter!</p>
-                            </div>
-
-                            <form onSubmit={(e) => {
-                                e.preventDefault();
-                                const name = e.target.name.value;
-                                const comment = e.target.comment.value;
-                                window.location.href = `mailto:jasminpeer006@gmail.com?subject=Feedback from ${name}&body=${encodeURIComponent(comment)}`;
-                                setShowFeedbackModal(false);
-                                alert("Thank you! Opening your email client to send the feedback.");
-                            }} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                                <div>
-                                    <label style={{ display: 'block', marginBottom: '8px', fontWeight: 600, fontSize: '0.9rem' }}>Full Name</label>
-                                    <input
-                                        name="name"
-                                        type="text"
-                                        defaultValue={user?.name}
-                                        required
-                                        placeholder="Enter your name"
-                                        style={{ width: '100%', padding: '12px', borderRadius: '10px', border: '1px solid #E2E8F0', outline: 'none' }}
-                                    />
-                                </div>
-                                <div>
-                                    <label style={{ display: 'block', marginBottom: '8px', fontWeight: 600, fontSize: '0.9rem' }}>Your Comment</label>
-                                    <textarea
-                                        name="comment"
-                                        required
-                                        placeholder="What's on your mind?"
-                                        style={{ width: '100%', minHeight: '120px', padding: '12px', borderRadius: '10px', border: '1px solid #E2E8F0', outline: 'none', resize: 'none' }}
-                                    ></textarea>
-                                </div>
-                                <button type="submit" className="btn btn-primary" style={{ padding: '14px', fontSize: '1rem', fontWeight: 700, backgroundColor: '#22C55E', border: 'none' }}>Submit Feedback</button>
-                            </form>
-                        </motion.div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
+            {/* Add Goal Modal */}
 
             {/* Add Goal Modal */}
             {showGoalModal && (

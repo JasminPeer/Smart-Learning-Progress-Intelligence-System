@@ -37,6 +37,17 @@
   --sidebar-hover: #047857;
 }
 
+[data-theme='dark'] {
+  --bg-main: #064E3B;
+  --bg-card: #022C22;
+  --text-primary: #ECFDF5;
+  --text-secondary: #D1FAE5;
+  --border: #059669;
+  --sidebar-bg: #022C22;
+  --sidebar-hover: #065F46;
+  --glass: rgba(6, 78, 59, 0.7);
+}
+
 body {
   margin: 0;
   font-family: 'Inter', system-ui, -apple-system, sans-serif;

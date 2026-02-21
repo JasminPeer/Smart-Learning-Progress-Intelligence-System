@@ -7,30 +7,42 @@ import axios from 'axios';
 const CourseDetail = () => {
     const { id: courseId } = useParams();
     const navigate = useNavigate();
+    const [course, setCourse] = useState(null);
     const [activeTab, setActiveTab] = useState('overview');
     const [enrolled, setEnrolled] = useState(false);
     const [loading, setLoading] = useState(true);
 
-    const course = curriculumCourses.find(c => c.id === courseId);
-
     useEffect(() => {
-        const checkEnrollment = async () => {
+        const fetchCourseData = async () => {
             try {
+                // 1. Try static first
+                const staticCourse = curriculumCourses.find(c => c.id === courseId);
+                if (staticCourse) {
+                    setCourse(staticCourse);
+                } else {
+                    // 2. Fetch from DB
+                    const token = localStorage.getItem('token');
+                    const { data } = await axios.get(`/api/courses/${courseId}`, { headers: { Authorization: `Bearer ${token}` } });
+                    setCourse({ ...data, id: data._id }); // Normalize ID
+                }
+
+                // 3. Check enrollment
                 const token = localStorage.getItem('token');
                 if (token) {
-                    const { data } = await axios.get('/api/profile/me', { headers: { Authorization: `Bearer ${token}` } });
-                    const isEnrolled = data.enrolledCourses?.some(c => c.courseId === courseId);
+                    const { data: profile } = await axios.get('/api/profile/me', { headers: { Authorization: `Bearer ${token}` } });
+                    const isEnrolled = profile.enrolledCourses?.some(c => c.courseId === courseId);
                     setEnrolled(isEnrolled);
                 }
             } catch (err) {
-                console.error("Enrollment check failed", err);
+                console.error("Failed to load course details", err);
             } finally {
                 setLoading(false);
             }
         };
-        checkEnrollment();
+        fetchCourseData();
     }, [courseId]);
 
+    if (loading) return <div style={{ padding: '100px', textAlign: 'center' }}><h2>Loading course details...</h2></div>;
     if (!course) return <div style={{ padding: '100px', textAlign: 'center' }}><h2>Course Not Found</h2><button onClick={() => navigate('/courses')} className="btn">Back to Courses</button></div>;
 
     const handleEnrollClick = async () => {
@@ -50,6 +62,7 @@ const CourseDetail = () => {
                 { headers: { Authorization: `Bearer ${token}` } }
             );
             setEnrolled(true);
+            alert(`Successfully enrolled in ${course.title}!`);
             navigate(`/learn/${courseId}`);
         } catch (err) {
             alert("Enrollment failed: " + (err.response?.data?.message || err.message));
@@ -67,7 +80,7 @@ const CourseDetail = () => {
             {/* Hero Section */}
             <div className="card" style={{ padding: 0, overflow: 'hidden', marginBottom: '30px', position: 'relative', borderRadius: '24px', border: 'none', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)' }}>
                 <div style={{ height: '400px', width: '100%', position: 'relative' }}>
-                    <img src={course.image || `https://source.unsplash.com/random/1200x800/?${course.category}`} alt={course.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    <img src={course.coverImage || course.image || `/assets/store/education_placeholder.jpg`} alt={course.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                     <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(15, 23, 42, 0.95) 0%, rgba(15, 23, 42, 0.4) 50%, transparent 100%)' }}></div>
 
                     <div style={{ position: 'absolute', bottom: '40px', left: '40px', right: '40px', color: 'white' }}>
@@ -181,20 +194,28 @@ const CourseDetail = () => {
                             </div>
                         )}
 
-                        {activeTab === 'reviews' && (
+                        {activeTab === 'resources' && (
                             <div className="card" style={{ padding: '40px', borderRadius: '24px' }}>
-                                <h2 style={{ fontSize: '1.8rem', fontWeight: 800, marginBottom: '25px', color: 'var(--primary-dark)' }}>Student Success Stories</h2>
-                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '25px' }}>
-                                    {[1, 2].map(i => (
-                                        <div key={i} style={{ padding: '25px', backgroundColor: '#F8FAFC', borderRadius: '20px', border: '1px solid #F1F5F9' }}>
-                                            <div style={{ color: '#FACC15', marginBottom: '10px' }}>★★★★★</div>
-                                            <p style={{ fontStyle: 'italic', color: '#475569', marginBottom: '15px' }}>"This course completely changed my perspective on the subject. The nested structure makes it so easy to follow!"</p>
-                                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                                                <div style={{ width: '32px', height: '32px', borderRadius: '50%', backgroundColor: '#E2E8F0' }}></div>
-                                                <span style={{ fontWeight: 700, fontSize: '0.9rem' }}>Student {i}</span>
-                                            </div>
+                                <h2 style={{ fontSize: '1.8rem', fontWeight: 800, marginBottom: '25px', color: 'var(--primary-dark)' }}>Additional Resources</h2>
+                                <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '30px' }}>
+                                    <div style={{ padding: '30px', backgroundColor: '#F8FAFC', borderRadius: '24px', border: '1px solid #E2E8F0', display: 'flex', alignItems: 'center', gap: '25px' }}>
+                                        <div style={{ backgroundColor: '#FEE2E2', width: '70px', height: '70px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                                            <PlayCircle size={36} color="#EF4444" />
                                         </div>
-                                    ))}
+                                        <div style={{ flexGrow: 1 }}>
+                                            <h3 style={{ margin: '0 0 5px 0', fontSize: '1.4rem' }}>Official YouTube Channel</h3>
+                                            <p style={{ margin: '0 0 15px 0', color: '#64748B' }}>Subscribe to our official channel for topic-wise deep dives and expert sessions.</p>
+                                            <a
+                                                href="https://www.youtube.com/@jasminpeer006"
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="btn"
+                                                style={{ backgroundColor: '#EF4444', color: 'white', display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '10px 20px', fontSize: '0.95rem' }}
+                                            >
+                                                Subscribe to Channel <ArrowRight size={18} />
+                                            </a>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         )}

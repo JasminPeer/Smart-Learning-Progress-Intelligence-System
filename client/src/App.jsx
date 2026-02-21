@@ -1,9 +1,14 @@
-import { useState, useEffect } from 'react';
+import { useContext, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AuthProvider } from './auth/AuthContext';
+import AuthContext from './auth/AuthContext';
 import ProtectedRoute from './routes/ProtectedRoute';
 import DashboardLayout from './components/layout/DashboardLayout';
 import Chatbot from './components/Chatbot';
+import GlobalAlerts from './components/GlobalAlerts';
+
+// UI Components
+import LockedConceptPage from './components/ui/LockedConceptPage';
 
 // Public Pages
 import Index from './pages/Index';
@@ -28,6 +33,7 @@ import Assessment from './pages/Assessment';
 import Progress from './pages/Progress';
 import Achievements from './pages/Achievements';
 import Settings from './pages/Settings';
+import VerifyCertificate from './pages/VerifyCertificate';
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -37,57 +43,130 @@ function ScrollToTop() {
   return null;
 }
 
+function DashboardIndexRedirect() {
+  const { user, loading } = useContext(AuthContext);
+  console.log("[DEBUG] DashboardIndexRedirect render - loading:", loading, "user:", user?.email, "role:", user?.role);
+
+  if (loading) return null;
+  if (!user) {
+    console.log("[DEBUG] DashboardIndexRedirect - No user, redirecting to /login");
+    return <Navigate to="/login" replace />;
+  }
+
+  const roleLower = user.role?.toLowerCase();
+  if (roleLower === 'admin') {
+    console.log("[DEBUG] DashboardIndexRedirect - Admin role, redirecting to /admin");
+    return <Navigate to="/admin" replace />;
+  }
+  if (roleLower === 'instructor') {
+    console.log("[DEBUG] DashboardIndexRedirect - Instructor role, redirecting to /dashboard/instructor");
+    return <Navigate to="/dashboard/instructor" replace />;
+  }
+  console.log("[DEBUG] DashboardIndexRedirect - Default/Student role, redirecting to /dashboard/student");
+  return <Navigate to="/dashboard/student" replace />;
+}
+
+function AppContent() {
+  const { user } = useContext(AuthContext);
+  console.log("[DEBUG] AppContent render - current user:", user?.email, "role:", user?.role);
+
+  return (
+    <>
+      <ScrollToTop />
+      <Routes>
+        {/* Public Routes */}
+        <Route path="/" element={<Index />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+
+        {/* Support & Legal */}
+        <Route path="/help" element={<HelpCenter />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/privacy" element={<Privacy />} />
+        <Route path="/terms" element={<Terms />} />
+        <Route path="/cookies" element={<Cookies />} />
+        <Route path="/verify/:certId" element={<VerifyCertificate />} />
+
+        {/* Protected Routes */}
+        <Route path="/onboarding" element={<ProtectedRoute><Onboarding /></ProtectedRoute>} />
+        <Route path="/dashboard" element={<ProtectedRoute />}>
+          <Route index element={<DashboardIndexRedirect />} />
+          <Route path="student" element={<DashboardLayout role="student"><StudentDashboard /></DashboardLayout>} />
+          <Route path="instructor" element={<DashboardLayout role="instructor"><div>Instructor Dashboard Placeholder</div></DashboardLayout>} />
+        </Route>
+
+        <Route path="/admin" element={<ProtectedRoute allowedRoles={['admin']} />}>
+          <Route element={<DashboardLayout role="admin" />}>
+            <Route index element={<AdminDashboard activeSection="overview" />} />
+            <Route path="users" element={<AdminDashboard activeSection="users" />} />
+            <Route path="system" element={<AdminDashboard activeSection="system" />} />
+            <Route path="courses" element={<AdminDashboard activeSection="courses" />} />
+            <Route path="progress" element={<AdminDashboard activeSection="progress" />} />
+            <Route path="ai" element={<AdminDashboard activeSection="ai" />} />
+          </Route>
+        </Route>
+
+        {/* Shared Internal Pages - Locked for Demo */}
+        <Route path="/profile" element={
+          <ProtectedRoute>
+            <DashboardLayout>{user?.isDemo ? <Navigate to="/register" replace /> : <Profile />}</DashboardLayout>
+          </ProtectedRoute>
+        } />
+        <Route path="/courses" element={
+          <ProtectedRoute>
+            <DashboardLayout>{user?.isDemo ? <Navigate to="/register" replace /> : <Courses />}</DashboardLayout>
+          </ProtectedRoute>
+        } />
+        <Route path="/courses/:id" element={
+          <ProtectedRoute>
+            <DashboardLayout>{user?.isDemo ? <Navigate to="/register" replace /> : <CourseDetail />}</DashboardLayout>
+          </ProtectedRoute>
+        } />
+
+        {/* Learning Platform - Locked for Demo */}
+        <Route path="/learn/:courseId" element={
+          <ProtectedRoute>
+            {user?.isDemo ? <Navigate to="/register" replace /> : <CoursePlayer />}
+          </ProtectedRoute>
+        } />
+        <Route path="/assessment/:courseId" element={
+          <ProtectedRoute>
+            {user?.isDemo ? <Navigate to="/register" replace /> : <Assessment />}
+          </ProtectedRoute>
+        } />
+
+        {/* Settings & Achievement Aliases - Locked for Demo */}
+        <Route path="/settings" element={
+          <ProtectedRoute>
+            <DashboardLayout>{user?.isDemo ? <Navigate to="/register" replace /> : <Settings />}</DashboardLayout>
+          </ProtectedRoute>
+        } />
+        <Route path="/achievements" element={
+          <ProtectedRoute>
+            <DashboardLayout>{user?.isDemo ? <Navigate to="/register" replace /> : <Achievements />}</DashboardLayout>
+          </ProtectedRoute>
+        } />
+        <Route path="/progress" element={
+          <ProtectedRoute>
+            <DashboardLayout>{user?.isDemo ? <Navigate to="/register" replace /> : <Progress />}</DashboardLayout>
+          </ProtectedRoute>
+        } />
+
+        {/* Fallback */}
+        <Route path="/404" element={<NotFound />} />
+        <Route path="*" element={<Navigate to="/404" replace />} />
+      </Routes>
+      <Chatbot />
+      <GlobalAlerts />
+    </>
+  );
+}
+
 function App() {
   return (
     <AuthProvider>
       <Router>
-        <ScrollToTop />
-        <Routes>
-          {/* Public Routes */}
-          <Route path="/" element={<Index />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-
-          {/* Support & Legal */}
-          <Route path="/help" element={<HelpCenter />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/privacy" element={<Privacy />} />
-          <Route path="/terms" element={<Terms />} />
-          <Route path="/cookies" element={<Cookies />} />
-
-          {/* Protected Routes */}
-          <Route path="/onboarding" element={<ProtectedRoute><Onboarding /></ProtectedRoute>} />
-          <Route path="/dashboard" element={<ProtectedRoute />}>
-            <Route index element={<Navigate to="/dashboard/student" replace />} />
-            <Route path="student" element={<DashboardLayout role="student"><StudentDashboard /></DashboardLayout>} />
-            <Route path="admin" element={<DashboardLayout role="admin" />}>
-              <Route index element={<AdminDashboard activeSection="overview" />} />
-              <Route path="users" element={<AdminDashboard activeSection="users" />} />
-              <Route path="system" element={<AdminDashboard activeSection="system" />} />
-              <Route path="courses" element={<AdminDashboard activeSection="courses" />} />
-              <Route path="progress" element={<AdminDashboard activeSection="progress" />} />
-            </Route>
-          </Route>
-
-          {/* Shared Internal Pages */}
-          <Route path="/profile" element={<ProtectedRoute><DashboardLayout><Profile /></DashboardLayout></ProtectedRoute>} />
-          <Route path="/courses" element={<ProtectedRoute><DashboardLayout><Courses /></DashboardLayout></ProtectedRoute>} />
-          <Route path="/courses/:id" element={<ProtectedRoute><DashboardLayout><CourseDetail /></DashboardLayout></ProtectedRoute>} />
-
-          {/* Learning Platform */}
-          <Route path="/learn/:courseId" element={<ProtectedRoute><CoursePlayer /></ProtectedRoute>} />
-          <Route path="/assessment/:courseId" element={<ProtectedRoute><Assessment /></ProtectedRoute>} />
-
-          {/* Settings & Achievement Aliases */}
-          <Route path="/settings" element={<ProtectedRoute><DashboardLayout><Settings /></DashboardLayout></ProtectedRoute>} />
-          <Route path="/achievements" element={<ProtectedRoute><DashboardLayout><Achievements /></DashboardLayout></ProtectedRoute>} />
-          <Route path="/progress" element={<ProtectedRoute><DashboardLayout><Progress /></DashboardLayout></ProtectedRoute>} />
-
-          {/* Fallback */}
-          <Route path="/404" element={<NotFound />} />
-          <Route path="*" element={<Navigate to="/404" replace />} />
-        </Routes>
-        <Chatbot />
+        <AppContent />
       </Router>
     </AuthProvider>
   );
