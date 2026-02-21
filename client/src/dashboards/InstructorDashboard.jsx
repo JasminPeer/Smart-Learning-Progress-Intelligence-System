@@ -12,7 +12,7 @@ const InstructorDashboard = () => {
         try {
             const token = localStorage.getItem('token');
             const config = { headers: { Authorization: `Bearer ${token}` } };
-            const { data } = await axios.get('http://localhost:5000/api/courses', config);
+            const { data } = await axios.get('https://smart-learning-progress-intelligence.onrender.com/api/courses', config);
             setCourses(data);
         } catch (error) {
             console.error(error);
@@ -28,7 +28,7 @@ const InstructorDashboard = () => {
         try {
             const token = localStorage.getItem('token');
             const config = { headers: { Authorization: `Bearer ${token}` } };
-            await axios.post('http://localhost:5000/api/courses', newCourse, config);
+            await axios.post('https://smart-learning-progress-intelligence.onrender.com/api/courses', newCourse, config);
             setMessage('Course created successfully!');
             setNewCourse({ title: '', description: '' });
             fetchCourses();
