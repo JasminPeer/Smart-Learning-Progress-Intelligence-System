@@ -15,20 +15,10 @@ app.use(cors());
 
 // ─── EXTREME DIAGNOSTICS (RENDER TROUBLESHOOTING) ──────────────────────────
 app.use((req, res, next) => {
-    // Intercept res.json to log what we're sending
-    const originalJson = res.json;
-    res.json = function(body) {
-        if (req.url.startsWith('/api')) {
-            console.log(`[OUTGOING DIAGNOSTIC] ${req.method} ${req.url} -> Response:`, JSON.stringify(body));
-        }
-        return originalJson.call(this, body);
-    };
-
     if (req.url.startsWith('/api')) {
-        console.log(`[INCOMING DIAGNOSTIC] ${req.method} ${req.url}`);
-        console.log(`[INCOMING DIAGNOSTIC] Headers:`, JSON.stringify(req.headers));
+        console.log(`[INCOMING] ${req.method} ${req.url}`);
         if (req.method === 'POST') {
-            console.log(`[INCOMING DIAGNOSTIC] Body Content:`, JSON.stringify(req.body));
+            console.log(`[INCOMING BODY]`, JSON.stringify(req.body));
         }
     }
     next();

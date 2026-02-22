@@ -130,14 +130,8 @@ const loginUser = asyncHandler(async (req, res) => {
                 avatar: user.avatar,
                 token: token,
                 success: true,
-                debug_info: `Backend Success - Role: ${user.role}, ID: ${user._id}`
-            };
-
-            console.log(`[DEBUG] Final response for ${email}:`, { 
-                role: responseData.role, 
-                hasToken: !!responseData.token,
-                isDemo: responseData.isDemo 
-            });
+            console.log(`[AUTH] Final check for ${email}:`);
+            console.table(responseData);
 
             // CRITICAL: Ensure we are actually sending the JSON
             return res.status(200).json(responseData);
