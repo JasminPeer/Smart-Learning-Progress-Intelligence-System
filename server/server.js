@@ -87,8 +87,11 @@ if (fs.existsSync(clientBuildPath)) {
     // Catch-all: any route that is NOT /api/* serves the React app
     // This is what makes React Router work on Render (page refresh, direct URL)
     app.get('*', (req, res) => {
-        if (!req.path.startsWith('/api')) {
+        if (!req.url.startsWith('/api')) {
             res.sendFile(path.join(clientBuildPath, 'index.html'));
+        } else {
+            // If it's an /api route but didn't match any handlers, return 404
+            res.status(404).json({ message: `API Endpint not found: ${req.url}` });
         }
     });
 } else {

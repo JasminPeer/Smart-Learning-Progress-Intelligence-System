@@ -9,8 +9,8 @@ const ProtectedRoute = ({ allowedRoles, children }) => {
         return <div>Loading...</div>;
     }
 
-    if (!user) {
-        console.log("[DEBUG] ProtectedRoute - No user, redirecting to /login");
+    if (!user || !user.role) {
+        console.log("[DEBUG] ProtectedRoute - No user or missing role, redirecting to /login");
         return <Navigate to="/login" replace />;
     }
 

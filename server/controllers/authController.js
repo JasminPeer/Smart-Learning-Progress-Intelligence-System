@@ -88,11 +88,12 @@ const registerUser = asyncHandler(async (req, res) => {
 // @access  Public
 const loginUser = asyncHandler(async (req, res) => {
     const { email, password } = req.body;
+    console.log(`[AUTH] Login attempt for: ${email}`);
 
     try {
         if (!email || !password) {
             res.status(400);
-            return res.json({ message: 'Please provide email and password' });
+            return res.json({ message: 'Please provide email and password', success: false });
         }
 
         const user = await User.findOne({ email });
@@ -100,49 +101,53 @@ const loginUser = asyncHandler(async (req, res) => {
         if (!user) {
             console.warn(`[AUTH] Login Failed: User ${email} not found.`);
             res.status(401);
-            return res.json({ message: 'Invalid email or password' });
+            return res.json({ message: 'Invalid email or password', success: false });
         }
 
         const isMatch = await bcrypt.compare(password, user.password);
-        console.log(`[AUTH] Login Debug for ${email}:`, { 
-            found: !!user, 
-            hasPassword: !!user?.password, 
-            matches: isMatch,
-            rawPassProvided: password.substring(0, 2) + "***" // Log prefix only for safety
-        });
+        console.log(`[AUTH] Password check for ${email}: ${isMatch ? 'MATCH' : 'FAIL'}`);
 
         if (isMatch) {
             // Update last login
             user.lastLogin = new Date();
             await user.save();
 
+            const token = generateToken(user._id.toString());
+            
             const responseData = {
                 _id: user.id,
                 name: user.name,
+                email: user.email,
                 educationLevel: user.educationLevel,
                 category: user.category,
-                role: user.role ? user.role : 'student', // Explicit check
+                role: user.role || 'student', // Absolute fallback
                 isDemo: user.email.toLowerCase() === 'demo@learniq.com',
                 avatar: user.avatar,
-                token: generateToken(user._id.toString()),
+                token: token,
+                success: true,
+                debug_info: `Backend Success - Role: ${user.role}, ID: ${user._id}`
             };
 
-            console.log(`[DEBUG] authController - Successful login for ${user.email}`);
-            console.log(`[DEBUG] authController - User Role from DB: '${user.role}'`);
-            console.log(`[DEBUG] authController - Response Data Role: '${responseData.role}'`);
-            console.log("[DEBUG] authController - Full response keys:", Object.keys(responseData));
+            console.log(`[DEBUG] Final response for ${email}:`, { 
+                role: responseData.role, 
+                hasToken: !!responseData.token,
+                isDemo: responseData.isDemo 
+            });
 
-            return res.json(responseData);
+            // CRITICAL: Ensure we are actually sending the JSON
+            return res.status(200).json(responseData);
         } else {
+            console.warn(`[AUTH] Password mismatch for ${email}`);
             res.status(401);
-            return res.json({ message: 'Invalid email or password' });
+            return res.json({ message: 'Invalid email or password', success: false });
         }
     } catch (error) {
-        console.error("LOGIN ERROR:", error);
+        console.error("CRITICAL LOGIN ERROR:", error);
         res.status(500).json({ 
-            message: "Authentication Service Error", 
+            message: "Internal Authentication Error", 
             error: error.message,
-            stack: process.env.NODE_ENV === 'production' ? null : error.stack
+            success: false,
+            stack: process.env.NODE_ENV === 'production' ? 'Redacted' : error.stack
         });
     }
 });

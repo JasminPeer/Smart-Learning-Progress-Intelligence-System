@@ -58,10 +58,18 @@ export const AuthProvider = ({ children }) => {
         try {
             const { data } = await axios.post('/api/auth/login', { email, password });
             console.log("[DEBUG] AuthContext - Login response data:", data);
-            console.log("[DEBUG] AuthContext - Login response data keys:", Object.keys(data));
-            if (!data.role) {
-                console.error("[DEBUG] AuthContext - CRITICAL: Login response is missing 'role' field!");
+
+            // STRICTOR VALIDATION
+            if (!data || Object.keys(data).length === 0) {
+                console.error("[DEBUG] AuthContext - CRITICAL: Login response is an EMPTY object!");
+                throw new Error("Server returned an empty response. This might be a database or routing issue.");
             }
+
+            if (!data.role) {
+                console.error("[DEBUG] AuthContext - CRITICAL: Login response is missing 'role' field!", data);
+                throw new Error("User role not received from server. Please contact support.");
+            }
+
             localStorage.setItem('token', data.token);
             // Handle both wrapped { user: {...}, token } and flat response shapes
             const userData = data.user || data;
