@@ -53,15 +53,24 @@ export const AuthProvider = ({ children }) => {
     }, []);
 
     const login = async (email, password) => {
-        console.log("Login attempt in AuthContext:", { email, password });
+        console.log("[DEBUG] AuthContext - Starting login attempt for:", email);
 
         try {
-            const { data } = await axios.post('/api/auth/login', { email, password });
-            console.log("[DEBUG] AuthContext - Login response data:", data);
+            const response = await axios.post('/api/auth/login', { email, password });
+            const { data, status, headers } = response;
+
+            console.log("[DEBUG] AuthContext - Login Result:", {
+                status,
+                headers,
+                dataType: typeof data,
+                dataKeys: Object.keys(data || {}),
+                dataContent: JSON.stringify(data)
+            });
 
             // STRICTOR VALIDATION
             if (!data || Object.keys(data).length === 0) {
                 console.error("[DEBUG] AuthContext - CRITICAL: Login response is an EMPTY object!");
+                console.log("[DEBUG] AuthContext - Full raw response:", response);
                 throw new Error("Server returned an empty response. This might be a database or routing issue.");
             }
 
@@ -76,7 +85,12 @@ export const AuthProvider = ({ children }) => {
             setUser({ ...userData, token: data.token }); // role comes strictly from backend
             return data;
         } catch (error) {
-            console.error("Login Error:", error.response?.data || error.message);
+            console.error("[DEBUG] AuthContext - Login Error Trace:", {
+                message: error.message,
+                status: error.response?.status,
+                data: error.response?.data,
+                headers: error.response?.headers
+            });
             throw error;
         }
     };
