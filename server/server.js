@@ -15,13 +15,20 @@ app.use(cors());
 
 // ─── EXTREME DIAGNOSTICS (RENDER TROUBLESHOOTING) ──────────────────────────
 app.use((req, res, next) => {
+    // Intercept res.json to log what we're sending
+    const originalJson = res.json;
+    res.json = function(body) {
+        if (req.url.startsWith('/api')) {
+            console.log(`[OUTGOING DIAGNOSTIC] ${req.method} ${req.url} -> Response:`, JSON.stringify(body));
+        }
+        return originalJson.call(this, body);
+    };
+
     if (req.url.startsWith('/api')) {
-        console.log(`[DIAGNOSTIC] ${req.method} ${req.url}`);
-        console.log(`[DIAGNOSTIC] Headers:`, JSON.stringify(req.headers));
+        console.log(`[INCOMING DIAGNOSTIC] ${req.method} ${req.url}`);
+        console.log(`[INCOMING DIAGNOSTIC] Headers:`, JSON.stringify(req.headers));
         if (req.method === 'POST') {
-            console.log(`[DIAGNOSTIC] Body Type: ${typeof req.body}`);
-            console.log(`[DIAGNOSTIC] Body Keys:`, Object.keys(req.body || {}));
-            console.log(`[DIAGNOSTIC] Body Content:`, JSON.stringify(req.body));
+            console.log(`[INCOMING DIAGNOSTIC] Body Content:`, JSON.stringify(req.body));
         }
     }
     next();
@@ -76,6 +83,11 @@ const syncProgressData = async () => {
 setTimeout(syncProgressData, 5000);
 
 // Routes
+app.post('/api/echo', (req, res) => {
+    console.log("[ECHO] Body:", req.body);
+    res.json({ echo: req.body, method: req.method, url: req.url });
+});
+
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/admin', require('./routes/adminRoutes'));
 app.use('/api/courses', require('./routes/courseRoutes'));

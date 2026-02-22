@@ -31,16 +31,23 @@ const FadeIn = ({ children, delay = 0, direction = "up" }) => {
 };
 
 const Index = () => {
+    const [isLoggingIn, setIsLoggingIn] = useState(false);
     const { login } = useContext(AuthContext);
     const navigate = useNavigate();
 
     const handleDemoLogin = async () => {
+        if (isLoggingIn) return;
+        setIsLoggingIn(true);
         console.log("[Hero] Attempting demo login...");
         try {
-            await login('demo@learniq.com', '123456');
+            const data = await login('demo@learniq.com', '123456');
+            console.log("[Hero] Demo login success, role:", data.role);
             navigate('/dashboard/student');
         } catch (error) {
             console.error("Demo login failed", error);
+            alert("Guest login is currently unavailable. Please try again in 1 minute while the server wakes up.");
+        } finally {
+            setIsLoggingIn(false);
         }
     };
 
