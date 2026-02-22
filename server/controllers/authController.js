@@ -131,8 +131,9 @@ const loginUser = asyncHandler(async (req, res) => {
                 token: token,
                 success: true
             };
-            console.log(`[AUTH] Final check complete for ${email}. Sending response...`);
-            return res.json(responseData);
+            console.log(`[AUTH] Final check complete for ${email}. Sending RAW response...`);
+            res.setHeader('Content-Type', 'application/json');
+            return res.status(200).send(JSON.stringify(responseData));
         } else {
             console.warn(`[AUTH] Password mismatch for ${email}`);
             res.status(401);

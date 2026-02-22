@@ -140,23 +140,9 @@ const Login = () => {
 
                             <div style={{ marginTop: '30px', padding: '20px', backgroundColor: '#F9FAFB', borderRadius: '12px', border: '1px solid #E5E7EB' }}>
                                 <strong style={{ display: 'block', marginBottom: '15px', color: 'var(--text-primary)' }}>Quick Access (Demo):</strong>
-                                <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '10px' }}>
-                                    <button
-                                        type="button"
-                                        className="btn btn-primary"
-                                        style={{ width: '100%', padding: '12px', fontSize: '1rem' }}
-                                        onClick={() => {
-                                            setFormData({ email: 'demo@learniq.com', password: '123456' });
-                                            // Optional: Show a small hint that they can now click Sign In
-                                            setError("");
-                                        }}
-                                    >
-                                        Explore as Guest (Sets Demo)
-                                    </button>
-                                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-                                        <button className="btn" type="button" style={{ fontSize: '0.75rem', padding: '8px', backgroundColor: '#E0E7FF', color: '#4338CA' }} onClick={() => setFormData({ email: 'student@test.com', password: '123456' })}>Student Role</button>
-                                        <button className="btn" type="button" style={{ fontSize: '0.75rem', padding: '8px', backgroundColor: '#FEF3C7', color: '#B45309' }} onClick={() => setFormData({ email: 'admin@test.com', password: '123456' })}>Admin Role</button>
-                                    </div>
+                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                                    <button className="btn" type="button" style={{ fontSize: '0.75rem', padding: '8px', backgroundColor: '#E0E7FF', color: '#4338CA' }} onClick={() => setFormData({ email: 'student@test.com', password: '123456' })}>Student Role</button>
+                                    <button className="btn" type="button" style={{ fontSize: '0.75rem', padding: '8px', backgroundColor: '#FEF3C7', color: '#B45309' }} onClick={() => setFormData({ email: 'admin@test.com', password: '123456' })}>Admin Role</button>
                                 </div>
                             </div>
                         </div>
