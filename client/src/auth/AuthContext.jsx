@@ -61,16 +61,13 @@ export const AuthProvider = ({ children }) => {
 
             console.log("[DEBUG] AuthContext - Login Result:", {
                 status,
-                headers,
                 dataType: typeof data,
-                dataKeys: Object.keys(data || {}),
-                dataContent: JSON.stringify(data)
+                dataContent: typeof data === 'string' ? `"${data}"` : 'object'
             });
 
             // STRICTOR VALIDATION
-            if (!data || Object.keys(data).length === 0) {
-                console.error("[DEBUG] AuthContext - CRITICAL: Login response is an EMPTY object!");
-                console.log("[DEBUG] AuthContext - Full raw response:", response);
+            if (!data || (typeof data === 'object' && Object.keys(data).length === 0) || (typeof data === 'string' && data.trim() === "")) {
+                console.error("[DEBUG] AuthContext - CRITICAL: Login response is an EMPTY body!", { data, status });
                 throw new Error("Server returned an empty response. This might be a database or routing issue.");
             }
 

@@ -10,26 +10,21 @@ connectDB();
 
 const app = express();
 
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors());
 
-// ─── EXTREME DIAGNOSTICS (RENDER TROUBLESHOOTING) ──────────────────────────
+// ─── SAFE DIAGNOSTICS (RENDER TROUBLESHOOTING) ──────────────────────────
 app.use((req, res, next) => {
-    // Intercept res.json to log what we're sending
-    const originalJson = res.json;
-    res.json = function(body) {
-        if (req.url.startsWith('/api')) {
-            console.log(`[OUTGOING] ${req.method} ${req.url} -> Status: ${res.statusCode} -> Body:`, JSON.stringify(body));
-        }
-        return originalJson.call(this, body);
-    };
-
     if (req.url.startsWith('/api')) {
         console.log(`[INCOMING] ${req.method} ${req.url}`);
         if (req.method === 'POST') {
             console.log(`[INCOMING BODY]`, JSON.stringify(req.body));
         }
+        
+        res.on('finish', () => {
+            console.log(`[OUTGOING] ${req.method} ${req.url} -> ${res.statusCode}`);
+        });
     }
     next();
 });
