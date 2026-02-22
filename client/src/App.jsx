@@ -45,20 +45,18 @@ function ScrollToTop() {
 
 function DashboardIndexRedirect() {
   const { user, loading } = useContext(AuthContext);
-  console.log("[DEBUG] DashboardIndexRedirect render - loading:", loading, "user:", user?.email, "role:", user?.role);
+  console.log("[DEBUG] DashboardIndexRedirect render - 123 - loading:", loading, "user:", user?.email, "role:", user?.role);
 
   if (loading) return null;
-  if (!user) {
-    console.log("[DEBUG] DashboardIndexRedirect - No user, redirecting to /login");
+  if (!user || !user.role) {
+    console.log("[DEBUG] DashboardIndexRedirect - No user or missing role, redirecting to /login");
     return <Navigate to="/login" replace />;
   }
 
-  const roleLower = user.role?.toLowerCase();
+  const roleLower = user.role.toLowerCase();
   if (roleLower === 'admin') {
-    console.log("[DEBUG] DashboardIndexRedirect - Admin role, redirecting to /admin");
     return <Navigate to="/admin" replace />;
   }
-  console.log("[DEBUG] DashboardIndexRedirect - Student role, redirecting to /dashboard/student");
   return <Navigate to="/dashboard/student" replace />;
 }
 
@@ -67,9 +65,11 @@ function DashboardIndexRedirect() {
 function LoginRedirect() {
   const { user, loading } = useContext(AuthContext);
   if (loading) return null;
-  // Allow demo users and unauthenticated users to see the login form
-  if (!user || user.isDemo) return <Login />;
-  const roleLower = user.role?.toLowerCase();
+
+  // IF user is null, OR user is demo, OR user has NO role -> stay on login
+  if (!user || user.isDemo || !user.role) return <Login />;
+
+  const roleLower = user.role.toLowerCase();
   if (roleLower === 'admin') return <Navigate to="/admin" replace />;
   return <Navigate to="/dashboard/student" replace />;
 }

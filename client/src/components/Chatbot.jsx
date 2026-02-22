@@ -91,6 +91,7 @@ const ChatContent = ({ localMessages, setLocalMessages, isTyping, setIsTyping, a
         setIsTyping(true);
 
         try {
+            console.log("[DEBUG] Chatbot - Sending message:", currentInput);
             const { data } = await axios.post('/api/chatbot/chat', {
                 message: currentInput,
                 history: localMessages.map(m => ({
@@ -98,6 +99,12 @@ const ChatContent = ({ localMessages, setLocalMessages, isTyping, setIsTyping, a
                     text: m.text
                 }))
             });
+            console.log("[DEBUG] Chatbot - Received response:", data);
+
+            if (!data || !data.text) {
+                console.error("[DEBUG] Chatbot - Response missing text:", data);
+                throw new Error("No response text from AI");
+            }
 
             const aiMsg = {
                 id: 'ai-' + Date.now(),
@@ -108,7 +115,7 @@ const ChatContent = ({ localMessages, setLocalMessages, isTyping, setIsTyping, a
             };
             setLocalMessages(prev => [...prev, aiMsg]);
         } catch (error) {
-            console.error("Gemini API Error:", error);
+            console.error("Gemini API Error Detail:", error.response?.data || error.message);
             const errMsg = {
                 id: 'error-' + Date.now(),
                 text: "I'm having trouble connecting to my brain right now. Please try again in a moment!",
