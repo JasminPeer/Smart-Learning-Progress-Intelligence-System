@@ -100,10 +100,15 @@ const Dashboard = () => {
         setShowGoalModal(false);
     };
 
+    useEffect(() => {
+        console.log("[DEBUG] StudentDashboard - Rendered. User:", user?.email, "Role:", user?.role, "Loading:", loading);
+    }, [user, loading]);
+
     if (loading) return <div style={{ padding: '50px', textAlign: 'center', color: 'var(--primary)' }}>Loading Dashboard...</div>;
 
     // Demo Data Concept - Populate if demo user has no real data
     const isDemoMode = user?.isDemo;
+    console.log("[DEBUG] StudentDashboard - isDemoMode:", isDemoMode);
 
     // Logic: If demo mode is on, we show mock data ONLY IF there are no real enrollments or subjects.
     // However, if the user has actually enrolled in something, we should probably prefer showing real data
@@ -129,7 +134,7 @@ const Dashboard = () => {
     } : profile;
 
     const overallScore = displayProfile?.subjects?.length > 0
-        ? Math.round((displayProfile.subjects.reduce((a, b) => a + b.currentMarks, 0) / displayProfile.subjects.reduce((a, b) => a + (b.totalMarks || 100), 0)) * 100)
+        ? Math.round((displayProfile.subjects.reduce((a, b) => a + (Number(b.currentMarks) || 0), 0) / displayProfile.subjects.reduce((a, b) => a + (Number(b.totalMarks) || 100), 0)) * 100)
         : 0;
 
     const currentProfile = displayProfile;

@@ -313,7 +313,9 @@ const ChatbotInner = () => {
         const fetchConfig = async () => {
             try {
                 const { data } = await axios.get('/api/chatbot/config');
-                setAiConfig(data);
+                if (data && typeof data === 'object') {
+                    setAiConfig(prev => ({ ...prev, ...data }));
+                }
             } catch (err) {
                 console.warn("[Chatbot] Failed to fetch config, using defaults.");
             }
