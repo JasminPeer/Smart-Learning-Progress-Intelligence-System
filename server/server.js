@@ -76,10 +76,12 @@ app.use('/api/profile', require('./routes/profileRoutes'));
 app.use('/api/chatbot', require('./routes/chatbotRoutes')); 
 app.use('/api/notifications', require('./routes/notificationRoutes'));
 
-// ─── Serve React client in production ───────────────────────────────────────
-if (process.env.NODE_ENV === 'production') {
+// ─── Serve React client (always active when built) ──────────────────────────
+const clientBuildPath = path.join(__dirname, '..', 'client', 'dist');
+const fs = require('fs');
+
+if (fs.existsSync(clientBuildPath)) {
     // Serve static files from the React build output
-    const clientBuildPath = path.join(__dirname, '..', 'client', 'dist');
     app.use(express.static(clientBuildPath));
 
     // Catch-all: any route that is NOT /api/* serves the React app
@@ -90,7 +92,7 @@ if (process.env.NODE_ENV === 'production') {
         }
     });
 } else {
-    // In development, just show a friendly 404 for unknown routes
+    // In development (no dist folder), show helpful 404 for unknown routes
     app.use((req, res, next) => {
         const error = new Error(`Not Found - ${req.originalUrl}`);
         res.status(404);
