@@ -73,9 +73,22 @@ const syncProgressData = async () => {
 setTimeout(syncProgressData, 5000);
 
 // Routes
-app.post('/api/echo', (req, res) => {
-    console.log("[ECHO] Body:", req.body);
-    res.json({ echo: req.body, method: req.method, url: req.url });
+app.get('/api/health-check', (req, res) => {
+    res.json({
+        status: 'online',
+        timestamp: new Date().toISOString(),
+        env: process.env.NODE_ENV,
+        message: 'Guaranteed non-empty response'
+    });
+});
+
+app.post('/api/test-echo', (req, res) => {
+    console.log("[ECHO TEST] Body Received:", JSON.stringify(req.body));
+    res.json({
+        echo: req.body,
+        receivedAt: new Date().toISOString(),
+        headers: req.headers['content-type']
+    });
 });
 
 app.use('/api/auth', require('./routes/authRoutes'));
