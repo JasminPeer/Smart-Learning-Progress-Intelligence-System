@@ -137,7 +137,7 @@ const Dashboard = () => {
     return (
         <div style={{ maxWidth: '1600px', margin: '0 auto', width: '100%' }}>
 
-            <div style={{ marginBottom: '40px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div style={{ marginBottom: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <div>
                     <h1 style={{ marginBottom: '10px', fontSize: '2rem' }}>Welcome back, {user?.name?.split(' ')[0] || 'Learner'}!</h1>
                     <p style={{ color: '#64748B' }}>Here's your learning progress for today.</p>

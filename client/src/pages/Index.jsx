@@ -69,7 +69,7 @@ const Index = () => {
             {/* Hero Section */}
             <header style={{
                 display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center',
-                padding: '100px 20px 80px', position: 'relative', overflow: 'hidden'
+                padding: '50px 20px 80px', position: 'relative', overflow: 'hidden'
             }}>
                 <div style={{
                     position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
@@ -142,7 +142,7 @@ const Index = () => {
                     marginTop: '30px',
                     pointerEvents: 'auto'
                 }}>
-                    <Link to="/register" className="btn btn-primary" style={{ fontSize: '1.1rem', padding: '16px 40px' }}>Join Now - It's Free</Link>
+                    <Link to="/register" className="btn btn-primary" style={{ fontSize: '1.1rem', padding: '16px 40px' }}>Join Free Now</Link>
                     <button
                         onClick={handleDemoLogin}
                         className="btn"

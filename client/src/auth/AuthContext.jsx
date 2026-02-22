@@ -18,7 +18,9 @@ export const AuthProvider = ({ children }) => {
                 };
                 // Verify token and get latest user details
                 const { data } = await axios.get('/api/auth/me', config);
-                setUser({ ...data, token }); // user object from backend + token
+                // Handle both wrapped { user: {...} } and flat response shapes
+                const userData = data.user || data;
+                setUser({ ...userData, token }); // user object from backend + token
             } catch (error) {
                 console.error("Token invalid", error);
                 localStorage.removeItem('token');
@@ -61,7 +63,9 @@ export const AuthProvider = ({ children }) => {
                 console.error("[DEBUG] AuthContext - CRITICAL: Login response is missing 'role' field!");
             }
             localStorage.setItem('token', data.token);
-            setUser({ ...data, role: data.role || 'student' }); // Safety fallback in UI state too
+            // Handle both wrapped { user: {...}, token } and flat response shapes
+            const userData = data.user || data;
+            setUser({ ...userData, token: data.token }); // role comes strictly from backend
             return data;
         } catch (error) {
             console.error("Login Error:", error.response?.data || error.message);
@@ -79,7 +83,8 @@ export const AuthProvider = ({ children }) => {
             const { data } = await axios.post('/api/auth/register', { name, category, educationLevel: category, mobileNumber, email, password, role });
             console.log("Registration success:", data);
             localStorage.setItem('token', data.token);
-            setUser(data);
+            const regUserData = data.user || data;
+            setUser({ ...regUserData, token: data.token });
             return data;
         } catch (error) {
             console.error("Registration Error Detail:", error.response?.data || error.message);

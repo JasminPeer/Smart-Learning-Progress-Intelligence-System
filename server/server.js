@@ -76,12 +76,27 @@ app.use('/api/profile', require('./routes/profileRoutes'));
 app.use('/api/chatbot', require('./routes/chatbotRoutes')); 
 app.use('/api/notifications', require('./routes/notificationRoutes'));
 
-// 404 Handler
-app.use((req, res, next) => {
-    const error = new Error(`Not Found - ${req.originalUrl}`);
-    res.status(404);
-    next(error);
-});
+// ─── Serve React client in production ───────────────────────────────────────
+if (process.env.NODE_ENV === 'production') {
+    // Serve static files from the React build output
+    const clientBuildPath = path.join(__dirname, '..', 'client', 'dist');
+    app.use(express.static(clientBuildPath));
+
+    // Catch-all: any route that is NOT /api/* serves the React app
+    // This is what makes React Router work on Render (page refresh, direct URL)
+    app.get('*', (req, res) => {
+        if (!req.path.startsWith('/api')) {
+            res.sendFile(path.join(clientBuildPath, 'index.html'));
+        }
+    });
+} else {
+    // In development, just show a friendly 404 for unknown routes
+    app.use((req, res, next) => {
+        const error = new Error(`Not Found - ${req.originalUrl}`);
+        res.status(404);
+        next(error);
+    });
+}
 
 // Global Error Middleware
 app.use((err, req, res, next) => {

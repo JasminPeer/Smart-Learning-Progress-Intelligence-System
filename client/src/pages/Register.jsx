@@ -20,9 +20,10 @@ const Register = () => {
         // ... code truncated ...
         e.preventDefault();
         try {
-            await register(name, category, mobileNumber, email, password, role);
-            if (role === 'admin') navigate('/admin');
-            else navigate('/onboarding');
+            const regData = await register(name, category, mobileNumber, email, password, role);
+            const registeredRole = String(regData?.role || regData?.user?.role || 'student').toLowerCase();
+            if (registeredRole === 'admin') navigate('/admin');
+            else navigate('/dashboard/student');
         } catch (err) {
             const msg = err.response?.data?.message || 'Registration failed. Please check your network connection.';
             console.error("Register Page Error:", msg);

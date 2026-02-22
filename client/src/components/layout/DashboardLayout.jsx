@@ -36,8 +36,10 @@ const DashboardLayout = ({ role, children }) => {
     }
 
     if (role && user.role?.toLowerCase() !== role.toLowerCase()) {
-        console.warn("[DEBUG] DashboardLayout - Role mismatch. Expected:", role, "User role:", user.role, "Redirecting to /");
-        return <Navigate to="/" replace />;
+        const userRoleLower = user.role?.toLowerCase();
+        const fallback = userRoleLower === 'admin' ? '/admin' : '/dashboard/student';
+        console.warn("[DEBUG] DashboardLayout - Role mismatch. Expected:", role, "User role:", user.role, "Redirecting to", fallback);
+        return <Navigate to={fallback} replace />;
     }
 
     const toggleSidebar = () => setSidebarOpen(!isSidebarOpen);
@@ -207,7 +209,7 @@ const DashboardLayout = ({ role, children }) => {
                 </header>
 
                 {/* Scrollable Main Content */}
-                <main style={{ flexGrow: 1, padding: '30px', overflowY: 'auto' }}>
+                <main style={{ flexGrow: 1, padding: '15px 30px 30px', overflowY: 'auto' }}>
                     {children ? children : <Outlet />}
                 </main>
 

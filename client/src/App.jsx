@@ -58,11 +58,19 @@ function DashboardIndexRedirect() {
     console.log("[DEBUG] DashboardIndexRedirect - Admin role, redirecting to /admin");
     return <Navigate to="/admin" replace />;
   }
-  if (roleLower === 'instructor') {
-    console.log("[DEBUG] DashboardIndexRedirect - Instructor role, redirecting to /dashboard/instructor");
-    return <Navigate to="/dashboard/instructor" replace />;
-  }
-  console.log("[DEBUG] DashboardIndexRedirect - Default/Student role, redirecting to /dashboard/student");
+  console.log("[DEBUG] DashboardIndexRedirect - Student role, redirecting to /dashboard/student");
+  return <Navigate to="/dashboard/student" replace />;
+}
+
+// Redirects already-logged-in REAL users away from /login to their dashboard
+// Demo users (isDemo:true) are treated as guests — they see the login form
+function LoginRedirect() {
+  const { user, loading } = useContext(AuthContext);
+  if (loading) return null;
+  // Allow demo users and unauthenticated users to see the login form
+  if (!user || user.isDemo) return <Login />;
+  const roleLower = user.role?.toLowerCase();
+  if (roleLower === 'admin') return <Navigate to="/admin" replace />;
   return <Navigate to="/dashboard/student" replace />;
 }
 
@@ -76,7 +84,7 @@ function AppContent() {
       <Routes>
         {/* Public Routes */}
         <Route path="/" element={<Index />} />
-        <Route path="/login" element={<Login />} />
+        <Route path="/login" element={<LoginRedirect />} />
         <Route path="/register" element={<Register />} />
 
         {/* Support & Legal */}
@@ -91,7 +99,7 @@ function AppContent() {
         <Route path="/onboarding" element={<ProtectedRoute><Onboarding /></ProtectedRoute>} />
         <Route path="/dashboard" element={<ProtectedRoute />}>
           <Route index element={<DashboardIndexRedirect />} />
-          <Route path="student" element={<DashboardLayout role="student"><StudentDashboard /></DashboardLayout>} />
+          <Route path="student" element={<ProtectedRoute allowedRoles={['student']}><DashboardLayout role="student"><StudentDashboard /></DashboardLayout></ProtectedRoute>} />
           <Route path="instructor" element={<DashboardLayout role="instructor"><div>Instructor Dashboard Placeholder</div></DashboardLayout>} />
         </Route>
 

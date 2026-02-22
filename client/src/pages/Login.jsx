@@ -22,15 +22,11 @@ const Login = () => {
             const data = await login(email, password);
             console.log("[DEBUG] Login successful, role:", data.role);
 
-            // Defensive coding: Force string and lower case, default to student if undefined
-            const userRole = data.role ? String(data.role).toLowerCase() : 'student';
+            const userRole = String(data.role || '').toLowerCase();
 
             if (userRole === 'admin') {
                 console.log("[DEBUG] Navigating to /admin");
                 navigate('/admin');
-            } else if (userRole === 'instructor') {
-                console.log("[DEBUG] Navigating to /dashboard/instructor");
-                navigate('/dashboard/instructor');
             } else {
                 console.log("[DEBUG] Navigating to /dashboard/student");
                 navigate('/dashboard/student');

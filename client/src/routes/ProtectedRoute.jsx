@@ -15,8 +15,10 @@ const ProtectedRoute = ({ allowedRoles, children }) => {
     }
 
     if (allowedRoles && !allowedRoles.map(r => r.toLowerCase()).includes(user.role?.toLowerCase())) {
-        console.warn("[DEBUG] ProtectedRoute - Role mismatch. User role:", user.role, "Allowed roles:", allowedRoles, "Redirecting to /");
-        return <Navigate to="/" replace />;
+        const roleLower = user.role?.toLowerCase();
+        const fallback = roleLower === 'admin' ? '/admin' : '/dashboard/student';
+        console.warn("[DEBUG] ProtectedRoute - Role mismatch. User role:", user.role, "Allowed roles:", allowedRoles, "Redirecting to", fallback);
+        return <Navigate to={fallback} replace />;
     }
 
     return children ? children : <Outlet />;
