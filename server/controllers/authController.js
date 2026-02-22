@@ -129,7 +129,8 @@ const loginUser = asyncHandler(async (req, res) => {
                 isDemo: user.email.toLowerCase() === 'demo@learniq.com',
                 avatar: user.avatar,
                 token: token,
-                success: true,
+                success: true
+            };
             console.log(`[AUTH] Final check for ${email}:`);
             console.table(responseData);
 

@@ -150,27 +150,6 @@ const Index = () => {
                     pointerEvents: 'auto'
                 }}>
                     <Link to="/register" className="btn btn-primary" style={{ fontSize: '1.1rem', padding: '16px 40px' }}>Join Free Now</Link>
-                    <button
-                        onClick={handleDemoLogin}
-                        className="btn"
-                        id="guest-login-btn"
-                        style={{
-                            fontSize: '1.1rem',
-                            padding: '16px 30px',
-                            backgroundColor: 'white',
-                            border: '1px solid var(--border)',
-                            color: 'var(--text-primary)',
-                            cursor: 'pointer',
-                            position: 'relative',
-                            zIndex: 501,
-                            transition: 'all 0.2s ease',
-                            pointerEvents: 'auto'
-                        }}
-                        onMouseOver={(e) => e.target.style.backgroundColor = '#F0FDF4'}
-                        onMouseOut={(e) => e.target.style.backgroundColor = 'white'}
-                    >
-                        Explore as Guest
-                    </button>
                 </div>
             </header>
 
