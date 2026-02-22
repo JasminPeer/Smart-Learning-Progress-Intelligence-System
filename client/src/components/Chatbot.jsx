@@ -58,7 +58,7 @@ class ErrorBoundary extends Component {
 }
 
 // Custom Chat Content Component
-const ChatContent = ({ localMessages, setLocalMessages, isTyping, setIsTyping, aiConfig }) => {
+const ChatContent = ({ localMessages, setLocalMessages, isTyping, setIsTyping, aiConfig, isFreeMode, setIsFreeMode }) => {
     const [inputValue, setInputValue] = useState("");
     const messagesEndRef = useRef(null);
 
@@ -100,6 +100,9 @@ const ChatContent = ({ localMessages, setLocalMessages, isTyping, setIsTyping, a
                 }))
             });
             console.log("[DEBUG] Chatbot - Received response:", data);
+
+            // Set Free Mode status based on fallback flag
+            if (setIsFreeMode) setIsFreeMode(!!data.isFallback);
 
             if (!data || !data.text) {
                 console.error("[DEBUG] Chatbot - Response missing text:", data);
@@ -314,6 +317,7 @@ const ChatbotInner = () => {
     const [localMessages, setLocalMessages] = useState([]);
     const [isTyping, setIsTyping] = useState(false);
     const [aiConfig, setAiConfig] = useState({ name: 'Luna-AI', wayOfSpeech: '' });
+    const [isFreeMode, setIsFreeMode] = useState(false);
 
     // Fetch AI Config on mount
     useEffect(() => {
@@ -534,10 +538,10 @@ const ChatbotInner = () => {
                                             textTransform: 'uppercase',
                                             letterSpacing: '0.1em',
                                             marginTop: '6px',
-                                            color: '#D1FAE5',
+                                            color: isFreeMode ? '#fbbf24' : '#D1FAE5',
                                             fontWeight: 700
                                         }}>
-                                            Online
+                                            {isFreeMode ? 'Free Mode (Offline)' : 'Premium AI (Online)'}
                                         </span>
                                     </motion.div>
                                 </div>
@@ -552,6 +556,8 @@ const ChatbotInner = () => {
                                 isTyping={isTyping}
                                 setIsTyping={setIsTyping}
                                 aiConfig={aiConfig}
+                                isFreeMode={isFreeMode}
+                                setIsFreeMode={setIsFreeMode}
                             />
                         </ErrorBoundary>
 

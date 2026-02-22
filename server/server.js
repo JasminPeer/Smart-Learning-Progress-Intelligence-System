@@ -13,6 +13,20 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
+// ─── EXTREME DIAGNOSTICS (RENDER TROUBLESHOOTING) ──────────────────────────
+app.use((req, res, next) => {
+    if (req.url.startsWith('/api')) {
+        console.log(`[DIAGNOSTIC] ${req.method} ${req.url}`);
+        console.log(`[DIAGNOSTIC] Headers:`, JSON.stringify(req.headers));
+        if (req.method === 'POST') {
+            console.log(`[DIAGNOSTIC] Body Type: ${typeof req.body}`);
+            console.log(`[DIAGNOSTIC] Body Keys:`, Object.keys(req.body || {}));
+            console.log(`[DIAGNOSTIC] Body Content:`, JSON.stringify(req.body));
+        }
+    }
+    next();
+});
+
 // Data Healing / Migration logic
 const syncProgressData = async () => {
     try {
@@ -61,12 +75,6 @@ const syncProgressData = async () => {
 // Run healing after a short delay to ensure DB is fully ready
 setTimeout(syncProgressData, 5000);
 
-// Debug logger
-app.use((req, res, next) => {
-    console.log(`[DEBUG] ${req.method} ${req.url}`);
-    next();
-});
-
 // Routes
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/admin', require('./routes/adminRoutes'));
@@ -76,7 +84,7 @@ app.use('/api/profile', require('./routes/profileRoutes'));
 app.use('/api/chatbot', require('./routes/chatbotRoutes')); 
 app.use('/api/notifications', require('./routes/notificationRoutes'));
 
-// ─── Serve React client (always active when built) ──────────────────────────
+// ─── Serve React client (method-agnostic SPA fallback) ──────────────────────
 const clientBuildPath = path.join(__dirname, '..', 'client', 'dist');
 const fs = require('fs');
 
@@ -84,17 +92,16 @@ if (fs.existsSync(clientBuildPath)) {
     // Serve static files from the React build output
     app.use(express.static(clientBuildPath));
 
-    // Catch-all: any route that is NOT /api/* serves the React app
-    // This is what makes React Router work on Render (page refresh, direct URL)
-    app.get('*', (req, res) => {
-        if (!req.url.startsWith('/api')) {
+    // Improved SPA Fallback: Only serve index.html for GET requests to non-API routes
+    app.use((req, res, next) => {
+        if (req.method === 'GET' && !req.url.startsWith('/api') && !req.url.includes('.')) {
             res.sendFile(path.join(clientBuildPath, 'index.html'));
         } else {
-            // If it's an /api route but didn't match any handlers, return 404
-            res.status(404).json({ message: `API Endpint not found: ${req.url}` });
+            next();
         }
     });
-} else {
+}
+ else {
     // In development (no dist folder), show helpful 404 for unknown routes
     app.use((req, res, next) => {
         const error = new Error(`Not Found - ${req.originalUrl}`);

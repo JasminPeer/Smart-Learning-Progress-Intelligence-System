@@ -87,8 +87,13 @@ const registerUser = asyncHandler(async (req, res) => {
 // @route   POST /api/auth/login
 // @access  Public
 const loginUser = asyncHandler(async (req, res) => {
-    const { email, password } = req.body;
-    console.log(`[AUTH] Login attempt for: ${email}`);
+    // DIAGNOSTIC CHECK
+    if (!req.body || Object.keys(req.body).length === 0) {
+        console.error("[AUTH] CRITICAL: Login request body is EMPTY or MISSING!");
+    }
+
+    const { email, password } = req.body || {};
+    console.log(`[AUTH] Login attempt for: ${email || 'UNKNOWN'}`);
 
     try {
         if (!email || !password) {

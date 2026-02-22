@@ -175,7 +175,7 @@ Guidelines:
                         { timeout: 8000 }
                     );
                     const aiResponse = response.data.candidates[0].content.parts[0].text;
-                    return res.json({ text: aiResponse });
+                    return res.json({ text: aiResponse, isFallback: false });
                 } catch (err) {
                     console.warn(`[Chatbot] ${model} failed: ${err.response?.status || err.message}`);
                     // If quota exceeded on ALL models, break and use offline
@@ -185,8 +185,9 @@ Guidelines:
         }
 
         // Always-available offline fallback (no error, smart responses)
+        console.log(`[Chatbot] Gemini API unavailable or limited. Switching to Offline Fallback for: ${message}`);
         const offlineResponse = generateOfflineResponse(message, aiName, history);
-        return res.json({ text: offlineResponse });
+        return res.json({ text: offlineResponse, isFallback: true });
 
     } catch (error) {
         console.error('Chatbot Error:', error.message);
