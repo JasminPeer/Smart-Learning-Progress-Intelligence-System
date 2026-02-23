@@ -125,33 +125,21 @@ const possiblePaths = [
     path.resolve(process.cwd(), 'dist')
 ];
 
-// ─── Serve React client (SPA Fallback Middleware) ───────────────────────────
-const fs = require('fs');
+// ─── Serve React client (Production SPA Fallback) ──────────────────────────
+const clientBuildPath = possiblePaths.find(p => fs.existsSync(p));
 
 if (clientBuildPath) {
     global.logEvent(`[FS] Serving frontend from: ${clientBuildPath}`);
     app.use(express.static(clientBuildPath));
 
-    // Express 5 compatible catch-all: Use middleware to avoid path-to-regexp parsing errors
-    app.use((req, res, next) => {
-        // Skip API routes
-        if (req.path.startsWith('/api')) {
-            return res.status(404).json({ message: "API endpoint not found" });
-        }
-        
-        // Serve index.html for all other GET requests (SPA)
-        if (req.method === 'GET') {
-            return res.sendFile(path.join(clientBuildPath, 'index.html'));
-        }
-        
-        next();
+    app.get('*', (req, res) => {
+        if (req.url.startsWith('/api')) return res.status(404).json({ message: "API endpoint not found" });
+        res.sendFile(path.join(clientBuildPath, 'index.html'));
     });
 } else {
     global.logEvent("[FS] ERROR: Frontend build folder NOT found in any known locations.");
-    app.use((req, res) => {
-        if (req.path.startsWith('/api')) {
-            return res.status(404).json({ message: "API endpoint not found" });
-        }
+    app.get('*', (req, res) => {
+        if (req.url.startsWith('/api')) return res.status(404).json({ message: "API endpoint not found" });
         res.status(500).send(`
             <h1>Environment Configuration Error</h1>
             <p>The frontend build folder was not found in any expected location.</p>
