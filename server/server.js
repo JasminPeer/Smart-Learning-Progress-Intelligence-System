@@ -14,6 +14,17 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// ─── DIAGNOSTIC EVENT LOGGING ────────────────────────────────────────
+global.recentEvents = [];
+const logEvent = (msg) => {
+    const entry = `[${new Date().toISOString()}] ${msg}`;
+    global.recentEvents.push(entry);
+    if (global.recentEvents.length > 50) global.recentEvents.shift();
+    console.log(entry);
+};
+global.logEvent = logEvent;
+logEvent("Server initialized");
+
 // ─── DEEP DIAGNOSTICS (PAYLOAD TRACKING) ──────────────────────────────
 app.use((req, res, next) => {
     if (req.url.startsWith('/api')) {

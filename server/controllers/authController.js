@@ -88,10 +88,12 @@ const registerUser = asyncHandler(async (req, res) => {
 // @access  Public
 const loginUser = asyncHandler(async (req, res) => {
     const { email, password } = req.body || {};
-    console.log(`[AUTH] Login attempt for: ${email || 'UNKNOWN'}`);
+    const log = global.logEvent || console.log;
+    log(`[AUTH] Login attempt for: ${email || 'UNKNOWN'}`);
 
     try {
         if (!email || !password) {
+            log(`[AUTH] Missing credentials for ${email}`);
             res.status(400);
             return res.json({ message: 'Please provide email and password', success: false });
         }
@@ -99,16 +101,15 @@ const loginUser = asyncHandler(async (req, res) => {
         const user = await User.findOne({ email });
         
         if (!user) {
-            console.warn(`[AUTH] Login Failed: User ${email} not found.`);
+            log(`[AUTH] User ${email} not found in DB`);
             res.status(401);
             return res.json({ message: 'Invalid email or password', success: false });
         }
 
         const isMatch = await bcrypt.compare(password, user.password);
-        console.log(`[AUTH] Password check for ${email}: ${isMatch ? 'MATCH' : 'FAIL'}`);
+        log(`[AUTH] Password check for ${email}: ${isMatch ? 'MATCH' : 'FAIL'}`);
 
         if (isMatch) {
-            // Update last login
             user.lastLogin = new Date();
             await user.save();
 
@@ -118,30 +119,24 @@ const loginUser = asyncHandler(async (req, res) => {
                 _id: user.id,
                 name: user.name,
                 email: user.email,
-                educationLevel: user.educationLevel,
-                category: user.category,
                 role: user.role || 'student',
-                isDemo: user.email.toLowerCase() === 'demo@learniq.com',
-                avatar: user.avatar,
                 token: token,
                 success: true
             };
 
             const jsonResponse = JSON.stringify(responseData);
-            console.log(`[AUTH] Final Payload Size: ${jsonResponse.length} bytes`);
+            log(`[AUTH] Login success for ${email}. Size: ${jsonResponse.length} bytes`);
             
-            // SLEDGEHAMMER: Use primitive end() to avoid framework interference
             res.status(200);
             res.setHeader('Content-Type', 'application/json');
-            res.setHeader('Content-Length', Buffer.byteLength(jsonResponse));
-            return res.end(jsonResponse);
+            return res.send(jsonResponse); // Switching to res.send for better Express integration
         } else {
-            console.warn(`[AUTH] Password mismatch for ${email}`);
+            log(`[AUTH] Password mismatch for ${email}`);
             res.status(401);
             return res.json({ message: 'Invalid email or password', success: false });
         }
     } catch (error) {
-        console.error("CRITICAL LOGIN ERROR:", error);
+        log(`[AUTH] CRITICAL ERROR for ${email}: ${error.message}`);
         console.error("CRITICAL LOGIN ERROR:", error);
         res.status(500).json({ 
             message: "Internal Authentication Error", 
