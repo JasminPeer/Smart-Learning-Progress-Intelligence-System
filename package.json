@@ -2,7 +2,7 @@
     "name": "smart-learning-intelligence-system",
     "version": "1.0.0",
     "scripts": {
-        "build": "npm install --prefix client --include=dev && npm run build --prefix client && npm install --prefix server",
+        "build": "echo '--- SYSTEM INFO ---' && node -v && npm -v && echo '--- CLIENT INSTALL ---' && cd client && npm install --production=false && echo '--- CLIENT BUILD ---' && npm run build && echo '--- VERIFY DIST ---' && ls -R dist && echo '--- SERVER INSTALL ---' && cd ../server && npm install && echo '--- BUILD FINISHED ---'",
         "start": "node server/server.js"
     },
     "engines": {
