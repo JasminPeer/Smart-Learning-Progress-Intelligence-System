@@ -86,7 +86,8 @@ export const AuthProvider = ({ children }) => {
                 message: error.message,
                 status: error.response?.status,
                 data: error.response?.data,
-                headers: error.response?.headers
+                headers: error.response?.headers,
+                allHeaders: error.response?.headers // Explicitly log for inspection
             });
             throw error;
         }

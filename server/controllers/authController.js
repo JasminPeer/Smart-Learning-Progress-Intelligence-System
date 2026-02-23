@@ -127,11 +127,14 @@ const loginUser = asyncHandler(async (req, res) => {
                 success: true
             };
 
-            console.log(`[AUTH] Login successful for ${email}. Sending manual JSON response...`);
+            const jsonResponse = JSON.stringify(responseData);
+            console.log(`[AUTH] Final Payload Size: ${jsonResponse.length} bytes`);
             
-            // ROBUST RESPONSE: Set headers manually and send stringified JSON
+            // SLEDGEHAMMER: Use primitive end() to avoid framework interference
+            res.status(200);
             res.setHeader('Content-Type', 'application/json');
-            return res.status(200).send(JSON.stringify(responseData));
+            res.setHeader('Content-Length', Buffer.byteLength(jsonResponse));
+            return res.end(jsonResponse);
         } else {
             console.warn(`[AUTH] Password mismatch for ${email}`);
             res.status(401);

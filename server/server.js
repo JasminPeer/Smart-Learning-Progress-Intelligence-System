@@ -14,6 +14,19 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// ─── DEEP DIAGNOSTICS (PAYLOAD TRACKING) ──────────────────────────────
+app.use((req, res, next) => {
+    if (req.url.startsWith('/api')) {
+        const oldEnd = res.end;
+        res.end = function(chunk, encoding) {
+            const size = chunk ? (typeof chunk === 'string' ? Buffer.byteLength(chunk) : chunk.length) : 0;
+            console.log(`[DIAG] Response: ${req.method} ${req.url} | Status: ${res.statusCode} | Size: ${size} bytes`);
+            oldEnd.apply(res, arguments);
+        };
+    }
+    next();
+});
+
 // Data Healing / Migration logic
 const syncProgressData = async () => {
     try {
