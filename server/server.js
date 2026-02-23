@@ -115,38 +115,43 @@ app.use('/api/chatbot', require('./routes/chatbotRoutes'));
 app.use('/api/notifications', require('./routes/notificationRoutes'));
 
 // ─── Serve React client (method-agnostic SPA fallback) ──────────────────────
-const clientBuildPath = path.join(__dirname, '..', 'client', 'dist');
+const clientBuildPath = path.resolve(__dirname, '..', 'client', 'dist');
 const fs = require('fs');
 
+global.logEvent(`[FS] Server __dirname: ${__dirname}`);
+global.logEvent(`[FS] Server Working Dir: ${process.cwd()}`);
 global.logEvent(`[FS] Checking for client build at: ${clientBuildPath}`);
 
 // Debug route to see what's happening in the server environment
 app.get('/api/debug/fs', (req, res) => {
     try {
-        const rootItems = fs.readdirSync(path.join(__dirname, '..'));
-        const clientItems = fs.existsSync(path.join(__dirname, '..', 'client')) 
-            ? fs.readdirSync(path.join(__dirname, '..', 'client')) 
-            : ['client folder missing'];
+        const rootPath = path.resolve(__dirname, '..');
+        const clientPath = path.resolve(__dirname, '..', 'client');
+        
+        const rootItems = fs.existsSync(rootPath) ? fs.readdirSync(rootPath) : ['root missing'];
+        const clientItems = fs.existsSync(clientPath) ? fs.readdirSync(clientPath) : ['client missing'];
+        const distItems = fs.existsSync(clientBuildPath) ? fs.readdirSync(clientBuildPath) : ['dist missing'];
         
         res.json({
             dirname: __dirname,
+            cwd: process.cwd(),
             clientBuildPath,
             exists: fs.existsSync(clientBuildPath),
             rootItems,
             clientItems,
-            cwd: process.cwd()
+            distItems,
+            env: process.env.NODE_ENV,
+            nodeVersion: process.version
         });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        res.status(500).json({ error: err.message, stack: err.stack });
     }
 });
 
 if (fs.existsSync(clientBuildPath)) {
     global.logEvent("[FS] Client build found. Serving static files.");
-    // Serve static files from the React build output
     app.use(express.static(clientBuildPath));
 
-    // Improved SPA Fallback: Only serve index.html for GET requests to non-API routes
     app.use((req, res, next) => {
         if (req.method === 'GET' && !req.url.startsWith('/api') && !req.url.includes('.')) {
             res.sendFile(path.join(clientBuildPath, 'index.html'));
@@ -155,17 +160,19 @@ if (fs.existsSync(clientBuildPath)) {
         }
     });
 } else {
-    global.logEvent("[FS] Client build NOT found. SPA fallback disabled.");
-    // Fallback for missing frontend
+    global.logEvent("[FS] ERROR: Client build NOT found. Checked: " + clientBuildPath);
     app.get('/', (req, res) => {
-        res.send("Backend is RUNNING, but Frontend build (dist) is missing. Check build logs.");
+        res.status(500).send(`
+            <h1>Configuration Error</h1>
+            <p>The frontend build folder was not found on the server.</p>
+            <p>Path checked: <code>${clientBuildPath}</code></p>
+            <p>Please check your build logs on Render.</p>
+        `);
     });
 
     app.use((req, res, next) => {
         if (req.url.startsWith('/api')) return next();
-        const error = new Error(`Not Found - ${req.originalUrl} (Frontend missing)`);
-        res.status(404);
-        next(error);
+        res.status(404).json({ message: "Frontend build missing", path: clientBuildPath });
     });
 }
 
