@@ -88,6 +88,7 @@ const registerUser = asyncHandler(async (req, res) => {
 // @access  Public
 const loginUser = asyncHandler(async (req, res) => {
     const { email, password } = req.body || {};
+    console.log(`[AUTH] Login attempt for: ${email || 'UNKNOWN'}`);
 
     try {
         if (!email || !password) {
@@ -98,11 +99,13 @@ const loginUser = asyncHandler(async (req, res) => {
         const user = await User.findOne({ email });
         
         if (!user) {
+            console.warn(`[AUTH] Login Failed: User ${email} not found.`);
             res.status(401);
             return res.json({ message: 'Invalid email or password', success: false });
         }
 
         const isMatch = await bcrypt.compare(password, user.password);
+        console.log(`[AUTH] Password check for ${email}: ${isMatch ? 'MATCH' : 'FAIL'}`);
 
         if (isMatch) {
             // Update last login
@@ -111,7 +114,7 @@ const loginUser = asyncHandler(async (req, res) => {
 
             const token = generateToken(user._id.toString());
             
-            res.status(200).json({
+            const responseData = {
                 _id: user.id,
                 name: user.name,
                 email: user.email,
@@ -122,12 +125,20 @@ const loginUser = asyncHandler(async (req, res) => {
                 avatar: user.avatar,
                 token: token,
                 success: true
-            });
+            };
+
+            console.log(`[AUTH] Login successful for ${email}. Sending manual JSON response...`);
+            
+            // ROBUST RESPONSE: Set headers manually and send stringified JSON
+            res.setHeader('Content-Type', 'application/json');
+            return res.status(200).send(JSON.stringify(responseData));
         } else {
+            console.warn(`[AUTH] Password mismatch for ${email}`);
             res.status(401);
             return res.json({ message: 'Invalid email or password', success: false });
         }
     } catch (error) {
+        console.error("CRITICAL LOGIN ERROR:", error);
         console.error("CRITICAL LOGIN ERROR:", error);
         res.status(500).json({ 
             message: "Internal Authentication Error", 
