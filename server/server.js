@@ -115,10 +115,21 @@ app.use('/api/chatbot', require('./routes/chatbotRoutes'));
 app.use('/api/notifications', require('./routes/notificationRoutes'));
 
 // ─── Serve React client (Production SPA Fallback) ──────────────────────────
-const clientBuildPath = path.resolve(__dirname, '..', 'client', 'dist');
 const fs = require('fs');
+const path = require('path');
 
-if (fs.existsSync(clientBuildPath)) {
+// Stronger Search: Look for dist in multiple suspected Render paths
+const possiblePaths = [
+    path.resolve(__dirname, '..', 'client', 'dist'),
+    path.resolve(__dirname, '..', 'client', 'build'),
+    path.resolve(process.cwd(), 'client', 'dist'),
+    path.resolve(process.cwd(), 'dist')
+];
+
+let clientBuildPath = possiblePaths.find(p => fs.existsSync(p));
+
+if (clientBuildPath) {
+    global.logEvent(`[FS] Serving frontend from: ${clientBuildPath}`);
     app.use(express.static(clientBuildPath));
 
     app.get('*', (req, res) => {
@@ -126,9 +137,15 @@ if (fs.existsSync(clientBuildPath)) {
         res.sendFile(path.join(clientBuildPath, 'index.html'));
     });
 } else {
+    global.logEvent("[FS] ERROR: Frontend build folder NOT found in any known locations.");
     app.get('*', (req, res) => {
         if (req.url.startsWith('/api')) return res.status(404).json({ message: "API endpoint not found" });
-        res.status(500).send("Frontend build missing. Please run 'npm run build' first.");
+        res.status(500).send(`
+            <h1>Environment Configuration Error</h1>
+            <p>The frontend build folder was not found in any expected location.</p>
+            <p>Paths searched: <code>${possiblePaths.join(', ')}</code></p>
+            <p><b>Please ensure your build command is running successfully on Render.</b></p>
+        `);
     });
 }
 
