@@ -131,13 +131,13 @@ if (clientBuildPath) {
     global.logEvent(`[FS] Serving frontend from: ${clientBuildPath}`);
     app.use(express.static(clientBuildPath));
 
-    app.get('(.*)', (req, res) => {
+    app.get('/:any*', (req, res) => {
         if (req.url.startsWith('/api')) return res.status(404).json({ message: "API endpoint not found" });
         res.sendFile(path.join(clientBuildPath, 'index.html'));
     });
 } else {
     global.logEvent("[FS] ERROR: Frontend build folder NOT found in any known locations.");
-    app.get('(.*)', (req, res) => {
+    app.get('/:any*', (req, res) => {
         if (req.url.startsWith('/api')) return res.status(404).json({ message: "API endpoint not found" });
         res.status(500).send(`
             <h1>Environment Configuration Error</h1>
