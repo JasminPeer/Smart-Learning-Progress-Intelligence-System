@@ -118,7 +118,31 @@ app.use('/api/notifications', require('./routes/notificationRoutes'));
 const clientBuildPath = path.join(__dirname, '..', 'client', 'dist');
 const fs = require('fs');
 
+global.logEvent(`[FS] Checking for client build at: ${clientBuildPath}`);
+
+// Debug route to see what's happening in the server environment
+app.get('/api/debug/fs', (req, res) => {
+    try {
+        const rootItems = fs.readdirSync(path.join(__dirname, '..'));
+        const clientItems = fs.existsSync(path.join(__dirname, '..', 'client')) 
+            ? fs.readdirSync(path.join(__dirname, '..', 'client')) 
+            : ['client folder missing'];
+        
+        res.json({
+            dirname: __dirname,
+            clientBuildPath,
+            exists: fs.existsSync(clientBuildPath),
+            rootItems,
+            clientItems,
+            cwd: process.cwd()
+        });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
 if (fs.existsSync(clientBuildPath)) {
+    global.logEvent("[FS] Client build found. Serving static files.");
     // Serve static files from the React build output
     app.use(express.static(clientBuildPath));
 
@@ -130,11 +154,16 @@ if (fs.existsSync(clientBuildPath)) {
             next();
         }
     });
-}
- else {
-    // In development (no dist folder), show helpful 404 for unknown routes
+} else {
+    global.logEvent("[FS] Client build NOT found. SPA fallback disabled.");
+    // Fallback for missing frontend
+    app.get('/', (req, res) => {
+        res.send("Backend is RUNNING, but Frontend build (dist) is missing. Check build logs.");
+    });
+
     app.use((req, res, next) => {
-        const error = new Error(`Not Found - ${req.originalUrl}`);
+        if (req.url.startsWith('/api')) return next();
+        const error = new Error(`Not Found - ${req.originalUrl} (Frontend missing)`);
         res.status(404);
         next(error);
     });
