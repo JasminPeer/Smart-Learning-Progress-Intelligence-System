@@ -124,19 +124,15 @@ const loginUser = asyncHandler(async (req, res) => {
                 success: true
             };
 
-            const jsonResponse = JSON.stringify(responseData);
-            log(`[AUTH] Login success for ${email}. Size: ${jsonResponse.length} bytes`);
-            
-            res.status(200);
-            res.setHeader('Content-Type', 'application/json');
-            return res.send(jsonResponse); // Switching to res.send for better Express integration
+            log(`[AUTH] Login success: ${email}`);
+            return res.json(responseData);
         } else {
-            log(`[AUTH] Password mismatch for ${email}`);
+            log(`[AUTH] Password mismatch: ${email}`);
             res.status(401);
             return res.json({ message: 'Invalid email or password', success: false });
         }
     } catch (error) {
-        log(`[AUTH] CRITICAL ERROR for ${email}: ${error.message}`);
+        log(`[AUTH] ERROR: ${error.message}`);
         console.error("CRITICAL LOGIN ERROR:", error);
         res.status(500).json({ 
             message: "Internal Authentication Error", 
