@@ -87,13 +87,7 @@ const registerUser = asyncHandler(async (req, res) => {
 // @route   POST /api/auth/login
 // @access  Public
 const loginUser = asyncHandler(async (req, res) => {
-    // DIAGNOSTIC CHECK
-    if (!req.body || Object.keys(req.body).length === 0) {
-        console.error("[AUTH] CRITICAL: Login request body is EMPTY or MISSING!");
-    }
-
     const { email, password } = req.body || {};
-    console.log(`[AUTH] Login attempt for: ${email || 'UNKNOWN'}`);
 
     try {
         if (!email || !password) {
@@ -104,13 +98,11 @@ const loginUser = asyncHandler(async (req, res) => {
         const user = await User.findOne({ email });
         
         if (!user) {
-            console.warn(`[AUTH] Login Failed: User ${email} not found.`);
             res.status(401);
             return res.json({ message: 'Invalid email or password', success: false });
         }
 
         const isMatch = await bcrypt.compare(password, user.password);
-        console.log(`[AUTH] Password check for ${email}: ${isMatch ? 'MATCH' : 'FAIL'}`);
 
         if (isMatch) {
             // Update last login
@@ -119,23 +111,19 @@ const loginUser = asyncHandler(async (req, res) => {
 
             const token = generateToken(user._id.toString());
             
-            const responseData = {
+            res.status(200).json({
                 _id: user.id,
                 name: user.name,
                 email: user.email,
                 educationLevel: user.educationLevel,
                 category: user.category,
-                role: user.role || 'student', // Absolute fallback
+                role: user.role || 'student',
                 isDemo: user.email.toLowerCase() === 'demo@learniq.com',
                 avatar: user.avatar,
                 token: token,
                 success: true
-            };
-            console.log(`[AUTH] Final check complete for ${email}. Sending RAW response...`);
-            res.setHeader('Content-Type', 'application/json');
-            return res.status(200).send(JSON.stringify(responseData));
+            });
         } else {
-            console.warn(`[AUTH] Password mismatch for ${email}`);
             res.status(401);
             return res.json({ message: 'Invalid email or password', success: false });
         }

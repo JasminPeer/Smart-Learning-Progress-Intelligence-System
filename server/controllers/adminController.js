@@ -152,7 +152,7 @@ const deleteCourse = asyncHandler(async (req, res) => {
 // @access  Private/Admin
 const getAllStudentProgress = asyncHandler(async (req, res) => {
     const progress = await Progress.find({})
-        .populate('userId', 'name email');
+        .populate('studentId', 'name email');
     
     // Manual course lookup helper
     const allCourses = await Course.find({}).select('id title');
@@ -184,7 +184,7 @@ const getAllStudentProgress = asyncHandler(async (req, res) => {
                 id: p.courseId,
                 title: title
             },
-            studentName: p.userId ? p.userId.name : 'Unknown Student' // Add student name here
+            studentName: p.studentId ? p.studentId.name : 'Unknown Student'
         };
     });
 
