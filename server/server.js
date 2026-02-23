@@ -67,8 +67,9 @@ app.get('/api/health-check', (req, res) => {
     res.json({
         status: 'online',
         timestamp: new Date().toISOString(),
+        deployment_id: 'V1.0.1-ROBUST-JSON-FIX',
         env: process.env.NODE_ENV,
-        message: 'Guaranteed non-empty response'
+        message: 'Guaranteed non-empty response - DEPLOYMENT VERIFIED'
     });
 });
 
