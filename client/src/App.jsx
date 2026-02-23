@@ -100,7 +100,6 @@ function AppContent() {
         <Route path="/dashboard" element={<ProtectedRoute />}>
           <Route index element={<DashboardIndexRedirect />} />
           <Route path="student" element={<ProtectedRoute allowedRoles={['student']}><DashboardLayout role="student"><StudentDashboard /></DashboardLayout></ProtectedRoute>} />
-          <Route path="instructor" element={<DashboardLayout role="instructor"><div>Instructor Dashboard Placeholder</div></DashboardLayout>} />
         </Route>
 
         <Route path="/admin" element={<ProtectedRoute allowedRoles={['admin']} />}>

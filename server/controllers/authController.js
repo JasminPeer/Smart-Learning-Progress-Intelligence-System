@@ -120,6 +120,7 @@ const loginUser = asyncHandler(async (req, res) => {
                 name: user.name,
                 email: user.email,
                 role: user.role || 'student',
+                isDemo: user.email.toLowerCase() === 'demo@learniq.com',
                 token: token,
                 success: true
             };
