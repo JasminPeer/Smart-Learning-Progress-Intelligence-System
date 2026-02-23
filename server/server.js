@@ -115,7 +115,6 @@ app.use('/api/chatbot', require('./routes/chatbotRoutes'));
 app.use('/api/notifications', require('./routes/notificationRoutes'));
 
 // ─── Serve React client (Production SPA Fallback) ──────────────────────────
-const fs = require('fs');
 
 // Stronger Search: Look for dist in multiple suspected Render paths
 const possiblePaths = [
@@ -125,20 +124,20 @@ const possiblePaths = [
     path.resolve(process.cwd(), 'dist')
 ];
 
-// ─── Serve React client (Production SPA Fallback) ──────────────────────────
 const clientBuildPath = possiblePaths.find(p => fs.existsSync(p));
 
 if (clientBuildPath) {
     global.logEvent(`[FS] Serving frontend from: ${clientBuildPath}`);
     app.use(express.static(clientBuildPath));
 
-    app.get('*', (req, res) => {
+    // Using RegExp literal for catch-all to ensure version-agnostic compatibility
+    app.get(/.*/, (req, res) => {
         if (req.url.startsWith('/api')) return res.status(404).json({ message: "API endpoint not found" });
         res.sendFile(path.join(clientBuildPath, 'index.html'));
     });
 } else {
     global.logEvent("[FS] ERROR: Frontend build folder NOT found in any known locations.");
-    app.get('*', (req, res) => {
+    app.get(/.*/, (req, res) => {
         if (req.url.startsWith('/api')) return res.status(404).json({ message: "API endpoint not found" });
         res.status(500).send(`
             <h1>Environment Configuration Error</h1>
