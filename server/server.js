@@ -116,7 +116,6 @@ app.use('/api/notifications', require('./routes/notificationRoutes'));
 
 // ─── Serve React client (Production SPA Fallback) ──────────────────────────
 const fs = require('fs');
-const path = require('path');
 
 // Stronger Search: Look for dist in multiple suspected Render paths
 const possiblePaths = [
