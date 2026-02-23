@@ -1,6 +1,7 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const path = require('path');
+const fs = require('fs');
 const cors = require('cors');
 const connectDB = require('./config/db');
 
@@ -130,15 +131,18 @@ if (clientBuildPath) {
     global.logEvent(`[FS] Serving frontend from: ${clientBuildPath}`);
     app.use(express.static(clientBuildPath));
 
-    // Using RegExp literal for catch-all to ensure version-agnostic compatibility
-    app.get(/.*/, (req, res) => {
-        if (req.url.startsWith('/api')) return res.status(404).json({ message: "API endpoint not found" });
-        res.sendFile(path.join(clientBuildPath, 'index.html'));
+    // Absolute safest catch-all for SPA: Use app.use without a path pattern
+    app.use((req, res, next) => {
+        if (req.path.startsWith('/api')) return res.status(404).json({ message: "API endpoint not found" });
+        if (req.method === 'GET') {
+            return res.sendFile(path.join(clientBuildPath, 'index.html'));
+        }
+        next();
     });
 } else {
     global.logEvent("[FS] ERROR: Frontend build folder NOT found in any known locations.");
-    app.get(/.*/, (req, res) => {
-        if (req.url.startsWith('/api')) return res.status(404).json({ message: "API endpoint not found" });
+    app.use((req, res) => {
+        if (req.path.startsWith('/api')) return res.status(404).json({ message: "API endpoint not found" });
         res.status(500).send(`
             <h1>Environment Configuration Error</h1>
             <p>The frontend build folder was not found in any expected location.</p>
