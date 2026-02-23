@@ -21,7 +21,6 @@ const seedData = async () => {
             { name: 'Jasmin Admin', email: 'jasmin@gmail.com', password: 'jasmin123', role: 'admin' },
             { name: 'Fathima student', email: 'fathima@gmail.com', password: 'fathima123', role: 'student' },
             { name: 'Guest User', email: 'demo@learniq.com', password: '123456', role: 'student' },
-            { name: 'Instructor Sarah', email: 'instructor@test.com', password: '123456', role: 'instructor' },
         ];
 
         const users = await Promise.all(usersData.map(async (u) => {
