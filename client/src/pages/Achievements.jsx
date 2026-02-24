@@ -1,13 +1,18 @@
 import { useState, useEffect, useContext } from 'react';
 import AuthContext from '../auth/AuthContext';
-import api from '../utils/api';
-import { Award, Download, ExternalLink, Calendar, Search } from 'lucide-react';
+import api, { API_URL } from '../utils/api';
+import { Award, Download, ExternalLink, Calendar, Search, X, ShieldCheck, XCircle } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const Achievements = () => {
     const { user } = useContext(AuthContext);
     const [profile, setProfile] = useState(null);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
+    const [showVerifyModal, setShowVerifyModal] = useState(false);
+    const [verifyId, setVerifyId] = useState(null);
+    const [verifyData, setVerifyData] = useState(null);
+    const [verifyStatus, setVerifyStatus] = useState('idle'); // idle, loading, success, error
 
     useEffect(() => {
         const fetchProfile = async () => {
@@ -22,6 +27,20 @@ const Achievements = () => {
         };
         fetchProfile();
     }, []);
+
+    const handleVerifyClick = async (certId) => {
+        setVerifyId(certId);
+        setShowVerifyModal(true);
+        setVerifyStatus('loading');
+        try {
+            const { data } = await api.get(`/profile/verify/${certId}`);
+            setVerifyData(data);
+            setVerifyStatus('success');
+        } catch (err) {
+            console.error("Verification error:", err);
+            setVerifyStatus('error');
+        }
+    };
 
     const filteredAchievements = profile?.achievements?.filter(ach =>
         ach.title.toLowerCase().includes(searchTerm.toLowerCase())
@@ -127,7 +146,7 @@ const Achievements = () => {
                                 <Download size={18} /> Download
                             </button>
                             <button
-                                onClick={() => ach.certificateId ? window.open(`/verify/${ach.certificateId}`, '_blank') : alert("No verification ID found for this legacy certificate.")}
+                                onClick={() => ach.certificateId ? handleVerifyClick(ach.certificateId) : alert("No verification ID found for this legacy certificate.")}
                                 className="btn"
                                 style={{ padding: '10px 20px', backgroundColor: 'transparent', color: 'var(--primary)', border: '1px solid var(--primary)', fontSize: '0.9rem', gap: '8px' }}
                             >
@@ -144,6 +163,96 @@ const Achievements = () => {
                     </div>
                 )}
             </div>
+
+            {/* Verification Modal */}
+            <AnimatePresence>
+                {showVerifyModal && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        style={{
+                            position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+                            backgroundColor: 'rgba(15, 23, 42, 0.8)', backdropFilter: 'blur(4px)',
+                            display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 10000,
+                            padding: '20px'
+                        }}
+                    >
+                        <motion.div
+                            initial={{ scale: 0.9, y: 20 }}
+                            animate={{ scale: 1, y: 0 }}
+                            exit={{ scale: 0.9, y: 20 }}
+                            className="card"
+                            style={{ maxWidth: '600px', width: '100%', padding: '40px', position: 'relative', textAlign: 'center' }}
+                        >
+                            <button
+                                onClick={() => setShowVerifyModal(false)}
+                                style={{ position: 'absolute', top: '20px', right: '20px', background: 'none', border: 'none', cursor: 'pointer', color: '#64748B' }}
+                            >
+                                <X size={24} />
+                            </button>
+
+                            {verifyStatus === 'loading' && (
+                                <div style={{ padding: '40px' }}>
+                                    <div style={{ width: '50px', height: '50px', border: '5px solid #F1F5F9', borderTop: '5px solid var(--primary)', borderRadius: '50%', animation: 'spin 1s linear infinite', margin: '0 auto 20px' }}></div>
+                                    <h2 style={{ color: '#1E293B' }}>Verifying Certificate...</h2>
+                                </div>
+                            )}
+
+                            {verifyStatus === 'success' && verifyData && (
+                                <>
+                                    <div style={{ backgroundColor: '#F0FDF4', width: '80px', height: '80px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}>
+                                        <ShieldCheck size={45} color="#22C55E" />
+                                    </div>
+                                    <h2 style={{ fontSize: '1.8rem', fontWeight: 800, color: '#1E293B', marginBottom: '10px' }}>Verified Authentic</h2>
+                                    <p style={{ color: '#64748B', marginBottom: '30px' }}>This certificate is authentic and was issued by LearnIQ Academy.</p>
+
+                                    <div style={{ padding: '30px', border: '10px solid #F8FAFC', position: 'relative', backgroundColor: 'white', textAlign: 'center' }}>
+                                        <div style={{ border: '2px solid var(--primary)', padding: '25px', position: 'relative' }}>
+                                            <h4 style={{ color: 'var(--primary)', textTransform: 'uppercase', letterSpacing: '3px', fontSize: '0.7rem', marginBottom: '15px', fontWeight: 800 }}>LearnIQ Academy</h4>
+                                            <p style={{ fontStyle: 'italic', color: '#64748B', fontSize: '0.9rem', marginBottom: '5px' }}>Awarded to</p>
+                                            <h3 style={{ fontSize: '1.8rem', color: '#1E293B', margin: '10px 0', borderBottom: '1px solid #E2E8F0', paddingBottom: '5px', display: 'inline-block' }}>{verifyData.studentName}</h3>
+                                            <p style={{ color: '#64748B', fontSize: '0.85rem', marginTop: '10px' }}>For completing</p>
+                                            <h4 style={{ fontSize: '1.2rem', color: 'var(--primary)', margin: '5px 0' }}>{verifyData.courseName}</h4>
+
+                                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', marginTop: '30px', alignItems: 'flex-end', gap: '5px' }}>
+                                                <div style={{ textAlign: 'center', fontSize: '0.7rem' }}>
+                                                    <div style={{ fontStyle: 'italic', color: '#1E293B' }}>Jasmin Peer</div>
+                                                    <div style={{ height: '1px', backgroundColor: '#CBD5E1', margin: '3px auto' }}></div>
+                                                    <div style={{ color: '#64748B' }}>Director</div>
+                                                </div>
+                                                <div style={{ display: 'flex', justifyContent: 'center' }}>
+                                                    <div style={{ width: '45px', height: '45px', borderRadius: '50%', border: '3px double var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--primary)', fontWeight: 800, fontSize: '0.8rem' }}>LQ</div>
+                                                </div>
+                                                <div style={{ textAlign: 'center', fontSize: '0.7rem' }}>
+                                                    <div style={{ color: '#1E293B' }}>{new Date(verifyData.dateAwarded).toLocaleDateString()}</div>
+                                                    <div style={{ height: '1px', backgroundColor: '#CBD5E1', margin: '3px auto' }}></div>
+                                                    <div style={{ color: '#64748B' }}>Date Issued</div>
+                                                </div>
+                                            </div>
+                                            <div style={{ marginTop: '15px', fontSize: '0.65rem', color: '#94A3B8', fontFamily: 'monospace' }}>
+                                                ID: {verifyData.certificateId}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <button onClick={() => setShowVerifyModal(false)} className="btn btn-primary" style={{ marginTop: '30px', width: '100%' }}>Done</button>
+                                </>
+                            )}
+
+                            {verifyStatus === 'error' && (
+                                <>
+                                    <div style={{ backgroundColor: '#FEF2F2', width: '80px', height: '80px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}>
+                                        <XCircle size={45} color="#EF4444" />
+                                    </div>
+                                    <h2 style={{ fontSize: '1.8rem', fontWeight: 800, color: '#1E293B', marginBottom: '10px' }}>Verification Failed</h2>
+                                    <p style={{ color: '#64748B', marginBottom: '30px' }}>We couldn't verify this record. This link might be outdated or the certificate ID is invalid.</p>
+                                    <button onClick={() => setShowVerifyModal(false)} className="btn btn-secondary" style={{ width: '100%' }}>Close</button>
+                                </>
+                            )}
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </div>
     );
 };
