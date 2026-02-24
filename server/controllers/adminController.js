@@ -197,20 +197,35 @@ const getAllStudentProgress = asyncHandler(async (req, res) => {
     const progress = await Progress.find({})
         .populate('studentId', 'name email');
     
-    // Manual course lookup helper
+    // Manual course lookup helper (includes DB and Static)
     const allCourses = await Course.find({}).select('id title');
     const courseMap = {};
+    
+    // 1. Map DB Courses
     allCourses.forEach(c => { 
         if (c.id) courseMap[c.id] = c.title;
         courseMap[c._id.toString()] = c.title;
-        const slug = c.title.toLowerCase().replace(/\s+/g, '-');
-        courseMap[slug] = c.title;
         courseMap[c.title.toLowerCase()] = c.title;
     });
 
-    // Fallback from User model (for orphaned or old course IDs)
-    const studentsWithCourses1 = await User.find({ "enrolledCourses.0": { $exists: true } }).select('enrolledCourses');
-    studentsWithCourses1.forEach(u => {
+    // 2. Map Static Courses (Hardcoded fallbacks to match common IDs)
+    const staticIds = [
+        ["class-6-10-maths", "Mathematics (Class 6-10)"],
+        ["class-6-10-science", "Foundation Science (Class 6-10)"],
+        ["class-6-10-social", "Social Science (Class 6-10)"],
+        ["class-6-10-english", "English (Class 6-10)"],
+        ["class-11-12-physics", "Physics (Class 11-12)"],
+        ["class-11-12-chem", "Chemistry (Class 11-12)"],
+        ["class-11-12-bio", "Biology (Class 11-12)"],
+        ["pg-data-science", "PG Diploma in Data Science"]
+    ];
+    staticIds.forEach(([id, title]) => {
+        if (!courseMap[id]) courseMap[id] = title;
+    });
+
+    // 3. Fallback from enrolled courses in User model
+    const studentsWithCourses = await User.find({ "enrolledCourses.0": { $exists: true } }).select('enrolledCourses');
+    studentsWithCourses.forEach(u => {
         u.enrolledCourses.forEach(ec => {
             if (ec.courseId && ec.name && !courseMap[ec.courseId]) {
                 courseMap[ec.courseId] = ec.name;
@@ -220,14 +235,14 @@ const getAllStudentProgress = asyncHandler(async (req, res) => {
 
     const enrichedProgress = progress.map(p => {
         const pObj = p.toObject();
-        const title = courseMap[p.courseId] || courseMap[p.courseId?.toLowerCase()] || 'Unknown';
+        const title = courseMap[p.courseId] || courseMap[p.courseId?.toLowerCase()] || 'Unknown Course';
         return {
             ...pObj,
+            userId: p.studentId || { name: p.studentName || 'Unknown Student' }, // Map to userId for frontend compatibility
             courseId: {
                 id: p.courseId,
                 title: title
-            },
-            studentName: p.studentId ? p.studentId.name : 'Unknown Student'
+            }
         };
     });
 
@@ -301,12 +316,25 @@ const getUserDetailedStats = asyncHandler(async (req, res) => {
     allCourses.forEach(c => { 
         if (c.id) courseMap[c.id] = c.title;
         courseMap[c._id.toString()] = c.title;
-        const slug = c.title.toLowerCase().replace(/\s+/g, '-');
-        courseMap[slug] = c.title;
         courseMap[c.title.toLowerCase()] = c.title;
     });
 
-    // Fallback from User model (for orphaned or old course IDs)
+    // Map Static Courses
+    const staticIds = [
+        ["class-6-10-maths", "Mathematics (Class 6-10)"],
+        ["class-6-10-science", "Foundation Science (Class 6-10)"],
+        ["class-6-10-social", "Social Science (Class 6-10)"],
+        ["class-6-10-english", "English (Class 6-10)"],
+        ["class-11-12-physics", "Physics (Class 11-12)"],
+        ["class-11-12-chem", "Chemistry (Class 11-12)"],
+        ["class-11-12-bio", "Biology (Class 11-12)"],
+        ["pg-data-science", "PG Diploma in Data Science"]
+    ];
+    staticIds.forEach(([id, title]) => {
+        if (!courseMap[id]) courseMap[id] = title;
+    });
+
+    // Fallback from User model
     const studentsWithCourses2 = await User.find({ "enrolledCourses.0": { $exists: true } }).select('enrolledCourses');
     studentsWithCourses2.forEach(u => {
         u.enrolledCourses.forEach(ec => {
@@ -339,7 +367,7 @@ const getUserDetailedStats = asyncHandler(async (req, res) => {
         avgProgress: Math.round(avgProgress),
         category,
         courses: progressRecords.map(p => ({
-            title: courseMap[p.courseId] || courseMap[p.courseId?.toLowerCase()] || 'Unknown',
+            title: courseMap[p.courseId] || courseMap[p.courseId?.toLowerCase()] || 'Unknown Course',
             progress: p.completionPercentage,
             score: p.score
         }))

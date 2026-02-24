@@ -938,7 +938,7 @@ const AdminDashboard = ({ activeSection }) => {
                                     <tbody>
                                         {allProgress.map((p, idx) => (
                                             <tr key={idx} style={{ borderBottom: '1px solid #F1F5F9' }}>
-                                                <td style={{ padding: '20px', fontWeight: 600 }}>{p.userId?.name || 'Unknown'}</td>
+                                                <td style={{ padding: '20px', fontWeight: 600 }}>{p.userId?.name || p.studentName || 'Unknown Student'}</td>
                                                 <td style={{ padding: '20px', color: '#64748B' }}>{p.courseId?.title || 'Unknown'}</td>
                                                 <td style={{ padding: '20px' }}>
                                                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
