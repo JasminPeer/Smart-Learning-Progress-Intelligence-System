@@ -21,10 +21,9 @@ const Register = () => {
         // ... code truncated ...
         e.preventDefault();
         try {
-            const regData = await register(name, category, mobileNumber, email, password, role);
-            const registeredRole = String(regData?.role || regData?.user?.role || 'student').toLowerCase();
-            if (registeredRole === 'admin') navigate('/admin');
-            else navigate('/dashboard/student');
+            await register(name, category, mobileNumber, email, password, role);
+            // New users are always students (backend blocks admin registration)
+            navigate('/dashboard/student');
         } catch (err) {
             const msg = err.response?.data?.message || 'Registration failed. Please check your network connection.';
             console.error("Register Page Error:", msg);

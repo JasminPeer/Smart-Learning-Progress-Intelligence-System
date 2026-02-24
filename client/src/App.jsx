@@ -60,18 +60,14 @@ function DashboardIndexRedirect() {
   return <Navigate to="/dashboard/student" replace />;
 }
 
-// Redirects already-logged-in REAL users away from /login to their dashboard
-// Demo users (isDemo:true) are treated as guests — they see the login form
+// Always show the login/register form — redirect only happens AFTER form submit (in onSubmit)
+// This prevents stale tokens from silently redirecting users to /admin on page load
 function LoginRedirect() {
-  const { user, loading } = useContext(AuthContext);
-  if (loading) return null;
+  return <Login />;
+}
 
-  // IF user is null, OR user is demo, OR user has NO role -> stay on login
-  if (!user || user.isDemo || !user.role) return <Login />;
-
-  const roleLower = user.role.toLowerCase();
-  if (roleLower === 'admin') return <Navigate to="/admin" replace />;
-  return <Navigate to="/dashboard/student" replace />;
+function RegisterRedirect() {
+  return <Register />;
 }
 
 function AppContent() {
@@ -85,7 +81,7 @@ function AppContent() {
         {/* Public Routes */}
         <Route path="/" element={<Index />} />
         <Route path="/login" element={<LoginRedirect />} />
-        <Route path="/register" element={<Register />} />
+        <Route path="/register" element={<RegisterRedirect />} />
 
         {/* Support & Legal */}
         <Route path="/help" element={<HelpCenter />} />
