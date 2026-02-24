@@ -1,5 +1,6 @@
 import { useState, useContext, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
+import api from '../utils/api';
 import AuthContext from '../auth/AuthContext';
 import { User, Bell, Shield, Palette, HelpCircle, Save, Lock, Smartphone, Mail, Eye, Globe, LogOut, Camera, Trash2 } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -20,11 +21,7 @@ const Settings = () => {
     const fetchNotifications = async () => {
         setNotifLoading(true);
         try {
-            const token = localStorage.getItem('token');
-            const res = await fetch('/api/notifications', {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-            const data = await res.json();
+            const { data } = await api.get('/notifications');
             setNotifications(data);
         } catch (err) {
             console.error("Failed to fetch notifications:", err);
@@ -35,16 +32,7 @@ const Settings = () => {
 
     const handleUpdateNotif = async (id, updates) => {
         try {
-            const token = localStorage.getItem('token');
-            const res = await fetch(`/api/notifications/${id}`, {
-                method: 'PUT',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(updates)
-            });
-            const updated = await res.json();
+            const { data: updated } = await api.put(`/notifications/${id}`, updates);
             setNotifications(notifications.map(n => n._id === id ? updated : n));
         } catch (err) {
             console.error("Update failed:", err);
@@ -54,11 +42,7 @@ const Settings = () => {
     const handleDeleteNotif = async (id) => {
         if (!window.confirm("Delete this notification?")) return;
         try {
-            const token = localStorage.getItem('token');
-            await fetch(`/api/notifications/${id}`, {
-                method: 'DELETE',
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
+            await api.delete(`/notifications/${id}`);
             setNotifications(notifications.filter(n => n._id !== id));
         } catch (err) {
             console.error("Delete failed:", err);
