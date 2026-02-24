@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Search, Star, Clock, User, BookOpen, CheckCircle, PlayCircle } from 'lucide-react';
 import { courses as curriculumCourses } from '../data/curriculum';
 import AuthContext from '../auth/AuthContext';
-import api from '../utils/api';
+import api, { API_URL } from '../utils/api';
 
 const Courses = () => {
     const { user } = useContext(AuthContext);
@@ -146,7 +146,15 @@ const Courses = () => {
                             <div key={course.id} className="card" style={{ padding: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column', border: isCompleted ? '2px solid #10B981' : 'none' }}>
                                 {/* Image Area */}
                                 <div style={{ height: '180px', backgroundColor: '#1E1B4B', overflow: 'hidden', position: 'relative' }}>
-                                    <img src={course.coverImage || course.image || `/assets/store/${course.category?.toLowerCase().replace(/\s+/g, '_')}_placeholder.jpg`} alt={course.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                    <img
+                                        src={
+                                            course.coverImage ||
+                                            (course.image?.startsWith('/uploads') ? `${API_URL}${course.image}` : course.image) ||
+                                            `/assets/store/${course.category?.toLowerCase().replace(/\s+/g, '_')}_placeholder.jpg`
+                                        }
+                                        alt={course.title}
+                                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                                    />
                                     <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.1)' }}></div>
                                     {isEnrolled && (
                                         <div style={{ position: 'absolute', top: '10px', right: '10px', backgroundColor: isCompleted ? '#10B981' : '#4F46E5', color: 'white', padding: '5px 10px', borderRadius: '6px', fontSize: '0.8rem', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '5px', zIndex: 5 }}>

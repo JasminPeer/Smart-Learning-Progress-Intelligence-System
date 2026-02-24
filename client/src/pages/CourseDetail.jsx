@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Star, Clock, User, BookOpen, CheckCircle, PlayCircle, FileText, MessageCircle, Download, Share2, ArrowRight, ArrowLeft } from 'lucide-react';
 import { courses as curriculumCourses } from '../data/curriculum';
-import api from '../utils/api';
+import api, { API_URL } from '../utils/api';
 
 const CourseDetail = () => {
     const { id: courseId } = useParams();
@@ -73,7 +73,15 @@ const CourseDetail = () => {
             {/* Hero Section */}
             <div className="card" style={{ padding: 0, overflow: 'hidden', marginBottom: '30px', position: 'relative', borderRadius: '24px', border: 'none', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)' }}>
                 <div style={{ height: '400px', width: '100%', position: 'relative' }}>
-                    <img src={course.coverImage || course.image || `/assets/store/education_placeholder.jpg`} alt={course.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    <img
+                        src={
+                            course.coverImage ||
+                            (course.image?.startsWith('/uploads') ? `${API_URL}${course.image}` : course.image) ||
+                            `/assets/store/education_placeholder.jpg`
+                        }
+                        alt={course.title}
+                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                    />
                     <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(15, 23, 42, 0.95) 0%, rgba(15, 23, 42, 0.4) 50%, transparent 100%)' }}></div>
 
                     <div style={{ position: 'absolute', bottom: '40px', left: '40px', right: '40px', color: 'white' }}>

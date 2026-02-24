@@ -2,7 +2,7 @@ import { useState, useContext } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import AuthContext from '../auth/AuthContext';
 import Footer from '../components/layout/Footer';
-import { Brain } from 'lucide-react';
+import { Brain, Eye, EyeOff } from 'lucide-react';
 import loginBg from '../assets/auth/login-bg.jpg';
 import logoImg from '../assets/logo.png';
 
@@ -11,6 +11,7 @@ const Login = () => {
     const { login } = useContext(AuthContext);
     const navigate = useNavigate();
     const [error, setError] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
 
     const { email, password } = formData;
 
@@ -122,7 +123,35 @@ const Login = () => {
                                 </div>
                                 <div className="form-group">
                                     <label>Password</label>
-                                    <input type="password" name="password" value={password} onChange={onChange} required placeholder="••••••••" />
+                                    <div style={{ position: 'relative' }}>
+                                        <input
+                                            type={showPassword ? "text" : "password"}
+                                            name="password"
+                                            value={password}
+                                            onChange={onChange}
+                                            required
+                                            placeholder="••••••••"
+                                            style={{ paddingRight: '45px' }}
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowPassword(!showPassword)}
+                                            style={{
+                                                position: 'absolute',
+                                                right: '12px',
+                                                top: '50%',
+                                                transform: 'translateY(-50%)',
+                                                background: 'none',
+                                                border: 'none',
+                                                cursor: 'pointer',
+                                                color: '#64748B',
+                                                display: 'flex',
+                                                alignItems: 'center'
+                                            }}
+                                        >
+                                            {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                                        </button>
+                                    </div>
                                 </div>
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', fontSize: '0.9rem' }}>
                                     <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', margin: 0 }}>

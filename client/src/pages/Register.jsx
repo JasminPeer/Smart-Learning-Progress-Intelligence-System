@@ -2,7 +2,7 @@ import { useState, useContext } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import AuthContext from '../auth/AuthContext';
 import Footer from '../components/layout/Footer';
-import { Brain } from 'lucide-react';
+import { Brain, Eye, EyeOff } from 'lucide-react';
 import registerBg from '../assets/auth/register-bg.jpg';
 
 const Register = () => {
@@ -11,6 +11,7 @@ const Register = () => {
     const { register } = useContext(AuthContext);
     const navigate = useNavigate();
     const [error, setError] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
 
     const { name, category, mobileNumber, email, password, role } = formData;
 
@@ -107,7 +108,35 @@ const Register = () => {
 
                                 <div className="form-group">
                                     <label>Password</label>
-                                    <input type="password" name="password" value={password} onChange={onChange} required placeholder="Create a password" />
+                                    <div style={{ position: 'relative' }}>
+                                        <input
+                                            type={showPassword ? "text" : "password"}
+                                            name="password"
+                                            value={password}
+                                            onChange={onChange}
+                                            required
+                                            placeholder="Create a password"
+                                            style={{ paddingRight: '45px' }}
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowPassword(!showPassword)}
+                                            style={{
+                                                position: 'absolute',
+                                                right: '12px',
+                                                top: '50%',
+                                                transform: 'translateY(-50%)',
+                                                background: 'none',
+                                                border: 'none',
+                                                cursor: 'pointer',
+                                                color: '#64748B',
+                                                display: 'flex',
+                                                alignItems: 'center'
+                                            }}
+                                        >
+                                            {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                                        </button>
+                                    </div>
                                     <small style={{ color: 'var(--text-secondary)', marginTop: '5px', display: 'block' }}>Must be at least 6 characters</small>
                                 </div>
 

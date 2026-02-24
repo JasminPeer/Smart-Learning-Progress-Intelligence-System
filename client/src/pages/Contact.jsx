@@ -1,9 +1,13 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useContext } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import AuthContext from '../auth/AuthContext';
 import emailjs from '@emailjs/browser';
 import Footer from '../components/layout/Footer';
-import { Phone, Mail, MapPin, Send } from 'lucide-react';
+import { Phone, Mail, MapPin, Send, ArrowLeft } from 'lucide-react';
 
 const Contact = () => {
+    const { user } = useContext(AuthContext);
+    const navigate = useNavigate();
     const form = useRef();
     const [status, setStatus] = useState('');
 
@@ -28,7 +32,28 @@ const Contact = () => {
 
     return (
         <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-            <div className="container" style={{ flexGrow: 1, padding: '60px 20px' }}>
+            <div className="container" style={{ flexGrow: 1, padding: '60px 20px', position: 'relative' }}>
+                {user && (
+                    <button
+                        onClick={() => navigate('/settings')}
+                        style={{
+                            position: 'absolute',
+                            top: '20px',
+                            left: '20px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '8px',
+                            background: 'none',
+                            border: 'none',
+                            cursor: 'pointer',
+                            color: 'var(--primary)',
+                            fontWeight: 600,
+                            padding: '10px'
+                        }}
+                    >
+                        <ArrowLeft size={20} /> Back to Settings
+                    </button>
+                )}
                 <div style={{ textAlign: 'center', marginBottom: '60px' }}>
                     <h1 style={{ fontSize: '3rem', marginBottom: '15px' }}>Get in Touch</h1>
                     <p style={{ color: 'var(--text-secondary)', fontSize: '1.2rem' }}>We'd love to hear from you. Send us a message!</p>

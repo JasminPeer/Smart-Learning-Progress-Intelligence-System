@@ -1,5 +1,5 @@
 import { useState, useContext, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import api from '../utils/api';
 import AuthContext from '../auth/AuthContext';
 import { User, Bell, Shield, Palette, HelpCircle, Save, Lock, Smartphone, Mail, Eye, Globe, LogOut, Camera, Trash2 } from 'lucide-react';
@@ -8,7 +8,9 @@ import { motion } from 'framer-motion';
 const Settings = () => {
     const { user, updateUser, logout } = useContext(AuthContext);
     const location = useLocation();
+    const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState('profile');
+    const [showPassword, setShowPassword] = useState(false);
     const [notifications, setNotifications] = useState([]);
     const [notifLoading, setNotifLoading] = useState(false);
 
@@ -117,7 +119,9 @@ const Settings = () => {
                     <button onClick={() => setActiveTab('security')} style={{ background: activeTab === 'security' ? '#EEF2FF' : 'var(--bg-card)', border: '1px solid var(--border)', padding: '10px 20px', borderRadius: '10px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', fontWeight: activeTab === 'security' ? 700 : 500, color: activeTab === 'security' ? '#4F46E5' : 'var(--text-secondary)' }}><Shield size={18} /> Security</button>
                     <button onClick={() => setActiveTab('notifications')} style={{ background: activeTab === 'notifications' ? '#EEF2FF' : 'var(--bg-card)', border: '1px solid var(--border)', padding: '10px 20px', borderRadius: '10px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', fontWeight: activeTab === 'notifications' ? 700 : 500, color: activeTab === 'notifications' ? '#4F46E5' : 'var(--text-secondary)' }}><Bell size={18} /> Alerts</button>
                     <button onClick={() => setActiveTab('appearance')} style={{ background: activeTab === 'appearance' ? '#EEF2FF' : 'var(--bg-card)', border: '1px solid var(--border)', padding: '10px 20px', borderRadius: '10px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', fontWeight: activeTab === 'appearance' ? 700 : 500, color: activeTab === 'appearance' ? '#4F46E5' : 'var(--text-secondary)' }}><Palette size={18} /> Design</button>
-                    <button onClick={() => setActiveTab('support')} style={{ background: activeTab === 'support' ? '#EEF2FF' : 'var(--bg-card)', border: '1px solid var(--border)', padding: '10px 20px', borderRadius: '10px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', fontWeight: activeTab === 'support' ? 700 : 500, color: activeTab === 'support' ? '#4F46E5' : 'var(--text-secondary)' }}><HelpCircle size={18} /> Support</button>
+                    {user?.role !== 'admin' && (
+                        <button onClick={() => setActiveTab('support')} style={{ background: activeTab === 'support' ? '#EEF2FF' : 'var(--bg-card)', border: '1px solid var(--border)', padding: '10px 20px', borderRadius: '10px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', fontWeight: activeTab === 'support' ? 700 : 500, color: activeTab === 'support' ? '#4F46E5' : 'var(--text-secondary)' }}><HelpCircle size={18} /> Support</button>
+                    )}
                 </div>
 
                 {/* Content Area */}
@@ -229,16 +233,25 @@ const Settings = () => {
                                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
                                         <div>
                                             <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.85rem', fontWeight: 600 }}>Current Password</label>
-                                            <input name="current" type="password" placeholder="••••••••" style={{ width: '100%', padding: '12px', borderRadius: '10px', border: '1px solid var(--border)', backgroundColor: 'var(--bg-card)', color: 'var(--text-primary)' }} required />
+                                            <div style={{ position: 'relative' }}>
+                                                <input name="current" type={showPassword ? "text" : "password"} placeholder="••••••••" style={{ width: '100%', padding: '12px', borderRadius: '10px', border: '1px solid var(--border)', backgroundColor: 'var(--bg-card)', color: 'var(--text-primary)', paddingRight: '40px' }} required />
+                                                <button type="button" onClick={() => setShowPassword(!showPassword)} style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: '#64748B' }}>
+                                                    <Eye size={18} opacity={showPassword ? 1 : 0.5} />
+                                                </button>
+                                            </div>
                                         </div>
                                         <div></div>
                                         <div>
                                             <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.85rem', fontWeight: 600 }}>New Password</label>
-                                            <input name="newPass" type="password" placeholder="New password" style={{ width: '100%', padding: '12px', borderRadius: '10px', border: '1px solid var(--border)', backgroundColor: 'var(--bg-card)', color: 'var(--text-primary)' }} required />
+                                            <div style={{ position: 'relative' }}>
+                                                <input name="newPass" type={showPassword ? "text" : "password"} placeholder="New password" style={{ width: '100%', padding: '12px', borderRadius: '10px', border: '1px solid var(--border)', backgroundColor: 'var(--bg-card)', color: 'var(--text-primary)', paddingRight: '40px' }} required />
+                                            </div>
                                         </div>
                                         <div>
                                             <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.85rem', fontWeight: 600 }}>Confirm New Password</label>
-                                            <input name="confirm" type="password" placeholder="Confirm new password" style={{ width: '100%', padding: '12px', borderRadius: '10px', border: '1px solid var(--border)', backgroundColor: 'var(--bg-card)', color: 'var(--text-primary)' }} required />
+                                            <div style={{ position: 'relative' }}>
+                                                <input name="confirm" type={showPassword ? "text" : "password"} placeholder="Confirm new password" style={{ width: '100%', padding: '12px', borderRadius: '10px', border: '1px solid var(--border)', backgroundColor: 'var(--bg-card)', color: 'var(--text-primary)', paddingRight: '40px' }} required />
+                                            </div>
                                         </div>
                                     </div>
                                     <button type="submit" className="btn btn-primary" style={{ width: 'fit-content', padding: '12px 30px' }}>Update Password</button>
@@ -449,7 +462,7 @@ const Settings = () => {
 
                             <div style={{ marginTop: '40px', textAlign: 'center' }}>
                                 <p>Still need help?</p>
-                                <button className="btn btn-primary" style={{ marginTop: '10px' }}>Contact Support Team</button>
+                                <button onClick={() => navigate('/contact')} className="btn btn-primary" style={{ marginTop: '10px' }}>Contact Support Team</button>
                             </div>
                         </div>
                     )}

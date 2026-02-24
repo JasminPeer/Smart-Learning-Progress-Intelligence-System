@@ -5,6 +5,42 @@ const Course = require('../models/Course');
 const Progress = require('../models/Progress');
 const SystemConfig = require('../models/SystemConfig');
 const bcrypt = require('bcryptjs');
+const axios = require('axios');
+const path = require('path');
+const fs = require('fs');
+
+// Helper to download image from URL to local storage
+const downloadImage = async (url) => {
+    if (!url || !url.startsWith('http')) return url; // Already local or invalid
+    try {
+        const response = await axios({
+            url,
+            method: 'GET',
+            responseType: 'stream'
+        });
+
+        const extension = url.split('.').pop().split(/[?#]/)[0] || 'jpg';
+        const fileName = `course_${Date.now()}.${extension}`;
+        const uploadsDir = path.join(__dirname, '..', 'public', 'uploads');
+        
+        if (!fs.existsSync(uploadsDir)) {
+            fs.mkdirSync(uploadsDir, { recursive: true });
+        }
+
+        const filePath = path.join(uploadsDir, fileName);
+        const writer = fs.createWriteStream(filePath);
+
+        response.data.pipe(writer);
+
+        return new Promise((resolve, reject) => {
+            writer.on('finish', () => resolve(`/uploads/${fileName}`));
+            writer.on('error', reject);
+        });
+    } catch (error) {
+        console.error("Image download failed:", error.message);
+        return url; // Fallback to original URL
+    }
+};
 
 // @desc    Get system wide statistics
 // @route   GET /api/admin/stats
@@ -83,6 +119,8 @@ const getAllCourses = asyncHandler(async (req, res) => {
 const createCourse = asyncHandler(async (req, res) => {
     const { title, description, detailedDescription, theory, category, duration, image, introVideoUrl, rating, resources, topics, reviews, assessment } = req.body;
 
+    const localImage = await downloadImage(image);
+
     const course = await Course.create({
         title,
         description,
@@ -90,7 +128,7 @@ const createCourse = asyncHandler(async (req, res) => {
         theory,
         category,
         duration,
-        image,
+        image: localImage,
         introVideoUrl,
         rating: rating || 0,
         resources: resources || [],
@@ -116,13 +154,17 @@ const updateCourse = asyncHandler(async (req, res) => {
 
     const { title, description, detailedDescription, theory, category, duration, image, introVideoUrl, rating, resources, topics, reviews, assessment } = req.body;
 
+    if (image && image !== course.image) {
+        course.image = await downloadImage(image);
+    }
+
     course.title = title !== undefined ? title : course.title;
     course.description = description !== undefined ? description : course.description;
     course.detailedDescription = detailedDescription !== undefined ? detailedDescription : course.detailedDescription;
     course.theory = theory !== undefined ? theory : course.theory;
     course.category = category !== undefined ? category : course.category;
     course.duration = duration !== undefined ? duration : course.duration;
-    course.image = image !== undefined ? image : course.image;
+    // course.image = image !== undefined ? image : course.image; // Handled above
     course.introVideoUrl = introVideoUrl !== undefined ? introVideoUrl : course.introVideoUrl;
     course.rating = rating !== undefined ? rating : course.rating;
     course.resources = resources !== undefined ? resources : course.resources;
