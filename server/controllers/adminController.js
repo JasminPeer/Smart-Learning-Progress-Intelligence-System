@@ -194,56 +194,35 @@ const deleteCourse = asyncHandler(async (req, res) => {
 // @route   GET /api/admin/progress
 // @access  Private/Admin
 const getAllStudentProgress = asyncHandler(async (req, res) => {
-    const progress = await Progress.find({})
-        .populate('studentId', 'name email');
-    
-    // Manual course lookup helper (includes DB and Static)
-    const allCourses = await Course.find({}).select('id title');
-    const courseMap = {};
-    
-    // 1. Map DB Courses
-    allCourses.forEach(c => { 
-        if (c.id) courseMap[c.id] = c.title;
-        courseMap[c._id.toString()] = c.title;
-        courseMap[c.title.toLowerCase()] = c.title;
+    // Use Profile (source of truth) since it stores real course names during enrollment
+    const Profile = require('../models/Profile');
+    const profiles = await Profile.find({
+        'enrolledCourses.0': { $exists: true }
+    }).populate('user', 'name email');
+
+    // Also fetch Progress records for completion percentage
+    const progressRecords = await Progress.find({});
+    // Build a map: studentId + courseId => completionPercentage
+    const progressMap = {};
+    progressRecords.forEach(p => {
+        const key = `${p.studentId?.toString()}_${p.courseId}`;
+        progressMap[key] = p.completionPercentage || 0;
     });
 
-    // 2. Map Static Courses (Hardcoded fallbacks to match common IDs)
-    const staticIds = [
-        ["class-6-10-maths", "Mathematics (Class 6-10)"],
-        ["class-6-10-science", "Foundation Science (Class 6-10)"],
-        ["class-6-10-social", "Social Science (Class 6-10)"],
-        ["class-6-10-english", "English (Class 6-10)"],
-        ["class-11-12-physics", "Physics (Class 11-12)"],
-        ["class-11-12-chem", "Chemistry (Class 11-12)"],
-        ["class-11-12-bio", "Biology (Class 11-12)"],
-        ["pg-data-science", "PG Diploma in Data Science"]
-    ];
-    staticIds.forEach(([id, title]) => {
-        if (!courseMap[id]) courseMap[id] = title;
-    });
-
-    // 3. Fallback from enrolled courses in User model
-    const studentsWithCourses = await User.find({ "enrolledCourses.0": { $exists: true } }).select('enrolledCourses');
-    studentsWithCourses.forEach(u => {
-        u.enrolledCourses.forEach(ec => {
-            if (ec.courseId && ec.name && !courseMap[ec.courseId]) {
-                courseMap[ec.courseId] = ec.name;
-            }
+    // Flatten all enrolled courses from all profiles
+    const enrichedProgress = [];
+    profiles.forEach(profile => {
+        if (!profile.user) return; // skip orphaned profiles
+        profile.enrolledCourses.forEach(ec => {
+            const key = `${profile.user._id.toString()}_${ec.courseId}`;
+            const completion = progressMap[key] ?? (ec.progress || 0);
+            enrichedProgress.push({
+                userId: { name: profile.user.name, email: profile.user.email },
+                courseId: { title: ec.name || 'Unknown Course', id: ec.courseId },
+                progress: completion,
+                completed: ec.completed || false
+            });
         });
-    });
-
-    const enrichedProgress = progress.map(p => {
-        const pObj = p.toObject();
-        const title = courseMap[p.courseId] || courseMap[p.courseId?.toLowerCase()] || 'Unknown Course';
-        return {
-            ...pObj,
-            userId: p.studentId || { name: p.studentName || 'Unknown Student' }, // Map to userId for frontend compatibility
-            courseId: {
-                id: p.courseId,
-                title: title
-            }
-        };
     });
 
     res.json(enrichedProgress);
