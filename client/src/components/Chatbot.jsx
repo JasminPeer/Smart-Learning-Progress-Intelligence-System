@@ -3,7 +3,7 @@ import { useLocation } from 'react-router-dom';
 import { X, Send } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import AuthContext from '../auth/AuthContext';
-import axios from 'axios';
+import api from '../utils/api';
 
 // Error Boundary Component
 class ErrorBoundary extends Component {
@@ -92,7 +92,7 @@ const ChatContent = ({ localMessages, setLocalMessages, isTyping, setIsTyping, a
 
         try {
             console.log("[DEBUG] Chatbot - Sending message:", currentInput);
-            const { data } = await axios.post('/api/chatbot/chat', {
+            const { data } = await api.post('/chatbot/chat', {
                 message: currentInput,
                 history: localMessages.map(m => ({
                     sender: m.sender === 'user' ? 'user' : 'model',
@@ -323,7 +323,7 @@ const ChatbotInner = () => {
     useEffect(() => {
         const fetchConfig = async () => {
             try {
-                const { data } = await axios.get('/api/chatbot/config');
+                const { data } = await api.get('/chatbot/config');
                 if (data && typeof data === 'object') {
                     setAiConfig(prev => ({ ...prev, ...data }));
                 }

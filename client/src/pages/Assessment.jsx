@@ -2,7 +2,7 @@ import { useState, useEffect, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { courses } from '../data/curriculum';
 import AuthContext from '../auth/AuthContext';
-import axios from 'axios';
+import api from '../utils/api';
 import { Check, X, Award, Download, ArrowLeft, ArrowRight, RefreshCw, Star, Brain } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -26,8 +26,7 @@ const Assessment = () => {
                 let currentCourse = staticCourse;
 
                 if (!currentCourse) {
-                    const token = localStorage.getItem('token');
-                    const { data } = await axios.get(`/api/courses/${courseId}`, { headers: { Authorization: `Bearer ${token}` } });
+                    const { data } = await api.get(`/courses/${courseId}`);
                     currentCourse = { ...data, id: data._id };
                 }
 
@@ -94,17 +93,11 @@ const Assessment = () => {
 
     const saveAssessmentResult = async () => {
         try {
-            const token = localStorage.getItem('token');
-            const config = { headers: { Authorization: `Bearer ${token}` } };
-
-            // AWARD CERTIFICATE if Passed 
-            // Note: saveCertificate in profileController also finalizes Progress and Enrolled status
             if (isPassed) {
                 try {
                     console.log("Assessment Passed! Requesting certificate archiving...");
-                    await axios.post('/api/profile/certificate',
-                        { courseId, courseName: course.title, score: percentage },
-                        config
+                    await api.post('/profile/certificate',
+                        { courseId, courseName: course.title, score: percentage }
                     );
                 } catch (certError) {
                     console.error("Failed to archive certificate:", certError);

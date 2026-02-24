@@ -1,6 +1,6 @@
 import { useState, useEffect, useContext } from 'react';
 import AuthContext from '../auth/AuthContext';
-import axios from 'axios';
+import api from '../utils/api';
 import { TrendingUp, BookOpen, CheckCircle, Clock, Target, ArrowUpRight } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
@@ -12,10 +12,7 @@ const Progress = () => {
     useEffect(() => {
         const fetchProfile = async () => {
             try {
-                const token = localStorage.getItem('token');
-                const { data } = await axios.get('/api/profile/me', {
-                    headers: { Authorization: `Bearer ${token}` }
-                });
+                const { data } = await api.get('/profile/me');
                 setProfile(data);
             } catch (err) {
                 console.error("Fetch error:", err);

@@ -7,7 +7,7 @@ import RecommendationCard from '../components/ui/RecommendationCard';
 import SubjectCard from '../dashboards/SubjectCard';
 import GoalCard from '../dashboards/GoalCard';
 import { TrendingUp, BookOpen, Clock, Target, Flame, Plus, X, Award, ArrowRight, Settings, Trash2, Sparkles } from 'lucide-react';
-import axios from 'axios';
+import api from '../utils/api';
 import { motion, AnimatePresence } from 'framer-motion';
 import LeaderboardCard from './LeaderboardCard';
 
@@ -31,10 +31,7 @@ const Dashboard = () => {
         if (!window.confirm("Are you sure you want to unenroll from this course? Your progress will be lost.")) return;
 
         try {
-            const token = localStorage.getItem('token');
-            await axios.delete(`/api/profile/unenroll/${courseId}`, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            await api.delete(`/profile/unenroll/${courseId}`);
             // Update local state immediately
             setProfile(prev => ({
                 ...prev,
@@ -63,11 +60,8 @@ const Dashboard = () => {
     useEffect(() => {
         const fetchProfile = async () => {
             try {
-                const token = localStorage.getItem('token');
-                if (token) {
-                    const { data } = await axios.get('/api/profile/me', {
-                        headers: { Authorization: `Bearer ${token}` }
-                    });
+                if (localStorage.getItem('token')) {
+                    const { data } = await api.get('/profile/me');
                     setProfile(data);
                 }
             } catch (err) {

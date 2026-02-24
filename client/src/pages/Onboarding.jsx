@@ -1,6 +1,6 @@
 import { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '../utils/api';
 import AuthContext from '../auth/AuthContext';
 import { BookOpen, School, Plus, Trash2, CheckCircle } from 'lucide-react';
 
@@ -48,10 +48,7 @@ const Onboarding = () => {
         e.preventDefault();
         setLoading(true);
         try {
-            const token = localStorage.getItem('token');
-            const config = { headers: { Authorization: `Bearer ${token}` } };
-
-            await axios.post('/api/profile', formData, config);
+            await api.post('/profile', formData);
 
             // Success - Redirect to Dashboard
             navigate('/dashboard/student');

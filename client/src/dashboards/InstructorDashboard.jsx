@@ -1,5 +1,5 @@
 import { useEffect, useState, useContext } from 'react';
-import axios from 'axios';
+import api from '../utils/api';
 import AuthContext from '../auth/AuthContext';
 
 const InstructorDashboard = () => {
@@ -10,9 +10,7 @@ const InstructorDashboard = () => {
 
     const fetchCourses = async () => {
         try {
-            const token = localStorage.getItem('token');
-            const config = { headers: { Authorization: `Bearer ${token}` } };
-            const { data } = await axios.get('/api/courses', config);
+            const { data } = await api.get('/courses');
             setCourses(data);
         } catch (error) {
             console.error(error);
@@ -26,9 +24,7 @@ const InstructorDashboard = () => {
     const handleCreateCourse = async (e) => {
         e.preventDefault();
         try {
-            const token = localStorage.getItem('token');
-            const config = { headers: { Authorization: `Bearer ${token}` } };
-            await axios.post('/api/courses', newCourse, config);
+            await api.post('/courses', newCourse);
             setMessage('Course created successfully!');
             setNewCourse({ title: '', description: '' });
             fetchCourses();

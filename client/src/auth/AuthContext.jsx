@@ -1,5 +1,5 @@
 import { createContext, useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../utils/api';
 
 const AuthContext = createContext();
 
@@ -11,13 +11,8 @@ export const AuthProvider = ({ children }) => {
         const token = localStorage.getItem('token');
         if (token) {
             try {
-                const config = {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                };
                 // Verify token and get latest user details
-                const { data } = await axios.get('/api/auth/me', config);
+                const { data } = await api.get('/auth/me');
                 // Handle both wrapped { user: {...} } and flat response shapes
                 const userData = data.user || data;
                 setUser({ ...userData, token }); // user object from backend + token
@@ -56,7 +51,7 @@ export const AuthProvider = ({ children }) => {
         console.log("[DEBUG] AuthContext - Starting login attempt for:", email);
 
         try {
-            const response = await axios.post('/api/auth/login', { email, password });
+            const response = await api.post('/auth/login', { email, password });
             const { data, status, headers } = response;
 
             console.log("[DEBUG] AuthContext - Login Result:", {
@@ -100,7 +95,7 @@ export const AuthProvider = ({ children }) => {
     const register = async (name, category, mobileNumber, email, password, role) => {
         try {
             console.log("Attempting registration for:", email);
-            const { data } = await axios.post('/api/auth/register', { name, category, educationLevel: category, mobileNumber, email, password, role });
+            const { data } = await api.post('/auth/register', { name, category, educationLevel: category, mobileNumber, email, password, role });
             console.log("Registration success:", data);
             localStorage.setItem('token', data.token);
             const regUserData = data.user || data;
@@ -119,11 +114,8 @@ export const AuthProvider = ({ children }) => {
 
     const updateUser = async (updatedData) => {
         try {
+            const { data } = await api.put('/auth/profile', updatedData);
             const token = localStorage.getItem('token');
-            const config = {
-                headers: { Authorization: `Bearer ${token}` }
-            };
-            const { data } = await axios.put('/api/auth/profile', updatedData, config);
             setUser({ ...data, token });
             return data;
         } catch (error) {

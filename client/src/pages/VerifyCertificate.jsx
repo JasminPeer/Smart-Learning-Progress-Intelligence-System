@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import axios from 'axios';
+import api from '../utils/api';
 import { ShieldCheck, XCircle, Award, Calendar, User, BookOpen, ArrowLeft } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -12,7 +12,7 @@ const VerifyCertificate = () => {
     useEffect(() => {
         const verify = async () => {
             try {
-                const { data } = await axios.get(`/api/profile/verify/${certId}`);
+                const { data } = await api.get(`/profile/verify/${certId}`);
                 setCertData(data);
                 setStatus('valid');
             } catch (err) {

@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Search, Star, Clock, User, BookOpen, CheckCircle, PlayCircle } from 'lucide-react';
 import { courses as curriculumCourses } from '../data/curriculum';
 import AuthContext from '../auth/AuthContext';
-import axios from 'axios';
+import api from '../utils/api';
 
 const Courses = () => {
     const { user } = useContext(AuthContext);
@@ -16,12 +16,9 @@ const Courses = () => {
     useEffect(() => {
         const fetchAllData = async () => {
             try {
-                const token = localStorage.getItem('token');
-                const config = { headers: { Authorization: `Bearer ${token}` } };
-
                 const [profileRes, coursesRes] = await Promise.all([
-                    axios.get('/api/profile/me', config),
-                    axios.get('/api/courses', config)
+                    api.get('/profile/me'),
+                    api.get('/courses')
                 ]);
 
                 setEnrolledCourses(profileRes.data.enrolledCourses || []);
@@ -47,14 +44,8 @@ const Courses = () => {
         } else {
             // Enroll logic
             try {
-                const token = localStorage.getItem('token');
-                if (!token) {
-                    navigate('/login');
-                    return;
-                }
-                await axios.post('/api/profile/enroll',
-                    { courseId, name: courseTitle },
-                    { headers: { Authorization: `Bearer ${token}` } }
+                await api.post('/profile/enroll',
+                    { courseId, name: courseTitle }
                 );
                 // Refresh enrollment status
                 setEnrolledCourses(prev => [...prev, { courseId, name: courseTitle, completed: false }]);

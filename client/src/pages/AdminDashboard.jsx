@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '../utils/api';
 import { courses as staticCourses } from '../data/curriculum';
 import {
     Users,
@@ -118,8 +118,7 @@ const AdminDashboard = ({ activeSection }) => {
     const handleAddCourse = async (e) => {
         e.preventDefault();
         try {
-            const token = localStorage.getItem('token');
-            const res = await axios.post('/api/admin/courses', newCourse, { headers: { Authorization: `Bearer ${token}` } });
+            const res = await api.post('/admin/courses', newCourse);
             setAdminCourses([...adminCourses, res.data]);
             setIsModalOpen(false);
             setNewCourse({
@@ -151,8 +150,7 @@ const AdminDashboard = ({ activeSection }) => {
     const handleUpdateCourse = async (e) => {
         e.preventDefault();
         try {
-            const token = localStorage.getItem('token');
-            const res = await axios.put(`/api/admin/courses/${editingCourse._id}`, editingCourse, { headers: { Authorization: `Bearer ${token}` } });
+            const res = await api.put(`/admin/courses/${editingCourse._id}`, editingCourse);
             setAdminCourses(adminCourses.map(c => c._id === res.data._id ? res.data : c));
             setIsEditCourseModalOpen(false);
             setEditingCourse(null);
@@ -165,8 +163,7 @@ const AdminDashboard = ({ activeSection }) => {
 
     const handleSaveAIConfig = async () => {
         try {
-            const token = localStorage.getItem('token');
-            const res = await axios.post('/api/admin/ai-config', aiConfig, { headers: { Authorization: `Bearer ${token}` } });
+            const res = await api.post('/admin/ai-config', aiConfig);
             setAiConfig(res.data);
             alert("AI Configuration saved successfully!");
         } catch (err) {
@@ -179,12 +176,11 @@ const AdminDashboard = ({ activeSection }) => {
         const message = prompt(`Send a notification to ${studentName}:`);
         if (!message) return;
         try {
-            const token = localStorage.getItem('token');
-            await axios.post('/api/admin/notifications', {
+            await api.post('/admin/notifications', {
                 recipientId: studentId,
                 message,
                 type: 'alert'
-            }, { headers: { Authorization: `Bearer ${token}` } });
+            });
             alert('Notification sent successfully!');
         } catch (err) {
             console.error('Error sending notification:', err);
@@ -201,7 +197,7 @@ const AdminDashboard = ({ activeSection }) => {
             // Always load courses to ensure they're ready
             const staticMapped = staticCourses.map(sc => ({ ...sc, _id: sc.id, isStatic: true, level: 'Standard' }));
             try {
-                const coursesRes = await axios.get('/api/admin/courses', config);
+                const coursesRes = await api.get('/admin/courses');
                 const dbCourses = coursesRes.data || [];
                 const dbTitles = new Set(dbCourses.map(c => c.title));
                 const merged = [...dbCourses];
@@ -216,7 +212,7 @@ const AdminDashboard = ({ activeSection }) => {
 
             if (activeTab === 'overview') {
                 try {
-                    const statsRes = await axios.get('/api/admin/stats', config);
+                    const statsRes = await api.get('/admin/stats');
                     setStats(statsRes.data);
                     // Set engagement stats from stats
                     setEngagementStats(prev => ({
@@ -236,28 +232,28 @@ const AdminDashboard = ({ activeSection }) => {
                 }
             } else if (activeTab === 'users') {
                 try {
-                    const usersRes = await axios.get('/api/admin/users', config);
+                    const usersRes = await api.get('/admin/users');
                     setUsers(usersRes.data);
                 } catch (e) {
                     setUsers([]);
                 }
             } else if (activeTab === 'progress') {
                 try {
-                    const progressRes = await axios.get('/api/admin/progress', config);
+                    const progressRes = await api.get('/admin/progress');
                     setAllProgress(progressRes.data);
                 } catch (e) {
                     setAllProgress([]);
                 }
                 // Fetch engagement stats for Top 5 display
                 try {
-                    const engagementRes = await axios.get('/api/admin/engagement', config);
+                    const engagementRes = await api.get('/admin/engagement');
                     setEngagementStats(prev => ({ ...prev, topStudents: engagementRes.data.topStudents || [] }));
                 } catch (e) {
                     console.warn('Failed to fetch engagement stats:', e);
                 }
             } else if (activeTab === 'ai') {
                 try {
-                    const aiRes = await axios.get(`/api/admin/ai-config?cb=${Date.now()}`, config);
+                    const aiRes = await api.get(`/admin/ai-config?cb=${Date.now()}`);
                     setAiConfig(aiRes.data);
                 } catch (e) {
                     console.warn("AI Config fetch failed");
@@ -273,8 +269,7 @@ const AdminDashboard = ({ activeSection }) => {
     const handleDeleteUser = async (id) => {
         if (!window.confirm("Are you sure you want to delete this user?")) return;
         try {
-            const token = localStorage.getItem('token');
-            await axios.delete(`/api/admin/users/${id}`, { headers: { Authorization: `Bearer ${token}` } });
+            await api.delete(`/admin/users/${id}`);
             setUsers(users.filter(u => u._id !== id));
         } catch (err) {
             alert("Error deleting user");
@@ -284,8 +279,7 @@ const AdminDashboard = ({ activeSection }) => {
     const handleDeleteCourse = async (id) => {
         if (!window.confirm("Are you sure you want to delete this course?")) return;
         try {
-            const token = localStorage.getItem('token');
-            await axios.delete(`/api/admin/courses/${id}`, { headers: { Authorization: `Bearer ${token}` } });
+            await api.delete(`/admin/courses/${id}`);
             setAdminCourses(adminCourses.filter(c => c._id !== id));
         } catch (err) {
             alert("Error deleting course");
@@ -422,8 +416,7 @@ const AdminDashboard = ({ activeSection }) => {
     const handleCreateUser = async (e) => {
         e.preventDefault();
         try {
-            const token = localStorage.getItem('token');
-            const res = await axios.post('/api/admin/users', newUserForm, { headers: { Authorization: `Bearer ${token}` } });
+            const res = await api.post('/admin/users', newUserForm);
             setUsers([res.data, ...users]);
             setIsUserModalOpen(false);
             setNewUserForm({ name: '', email: '', password: '', role: 'student', category: '', mobileNumber: '' });
@@ -439,8 +432,7 @@ const AdminDashboard = ({ activeSection }) => {
         setIsStatsModalOpen(true);
         setUserStats(null);
         try {
-            const token = localStorage.getItem('token');
-            const res = await axios.get(`/api/admin/users/${user._id}/stats`, { headers: { Authorization: `Bearer ${token}` } });
+            const res = await api.get(`/admin/users/${user._id}/stats`);
             setUserStats(res.data);
         } catch (err) {
             console.error("Error fetching user stats:", err);

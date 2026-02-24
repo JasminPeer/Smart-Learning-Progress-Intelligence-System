@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Star, Clock, User, BookOpen, CheckCircle, PlayCircle, FileText, MessageCircle, Download, Share2, ArrowRight, ArrowLeft } from 'lucide-react';
 import { courses as curriculumCourses } from '../data/curriculum';
-import axios from 'axios';
+import api from '../utils/api';
 
 const CourseDetail = () => {
     const { id: courseId } = useParams();
@@ -21,15 +21,14 @@ const CourseDetail = () => {
                     setCourse(staticCourse);
                 } else {
                     // 2. Fetch from DB
-                    const token = localStorage.getItem('token');
-                    const { data } = await axios.get(`/api/courses/${courseId}`, { headers: { Authorization: `Bearer ${token}` } });
+                    const { data } = await api.get(`/courses/${courseId}`);
                     setCourse({ ...data, id: data._id }); // Normalize ID
                 }
 
                 // 3. Check enrollment
                 const token = localStorage.getItem('token');
                 if (token) {
-                    const { data: profile } = await axios.get('/api/profile/me', { headers: { Authorization: `Bearer ${token}` } });
+                    const { data: profile } = await api.get('/profile/me');
                     const isEnrolled = profile.enrolledCourses?.some(c => c.courseId === courseId);
                     setEnrolled(isEnrolled);
                 }
@@ -52,14 +51,8 @@ const CourseDetail = () => {
         }
 
         try {
-            const token = localStorage.getItem('token');
-            if (!token) {
-                navigate('/login');
-                return;
-            }
-            await axios.post('/api/profile/enroll',
-                { courseId: course.id, name: course.title },
-                { headers: { Authorization: `Bearer ${token}` } }
+            await api.post('/profile/enroll',
+                { courseId: course.id, name: course.title }
             );
             setEnrolled(true);
             alert(`Successfully enrolled in ${course.title}!`);

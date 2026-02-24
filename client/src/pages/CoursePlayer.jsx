@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { courses } from '../data/curriculum';
 import { PlayCircle, CheckCircle, ArrowRight, ArrowLeft, Book, Info, Clock, FileText, Download, BookOpen, Youtube } from 'lucide-react';
-import axios from 'axios';
+import api from '../utils/api';
 
 const CoursePlayer = () => {
     const { courseId } = useParams();
@@ -30,15 +30,13 @@ const CoursePlayer = () => {
                 let currentCourse = staticCourse;
 
                 if (!currentCourse) {
-                    const token = localStorage.getItem('token');
-                    const { data } = await axios.get(`/api/courses/${courseId}`, { headers: { Authorization: `Bearer ${token}` } });
+                    const { data } = await api.get(`/courses/${courseId}`);
                     currentCourse = { ...data, id: data._id };
                 }
                 setCourse(currentCourse);
 
                 // 2. Load Progress
-                const token = localStorage.getItem('token');
-                const { data: profile } = await axios.get('/api/profile/me', { headers: { Authorization: `Bearer ${token}` } });
+                const { data: profile } = await api.get('/profile/me');
                 const enrolledCourse = profile.enrolledCourses.find(c => c.courseId === courseId);
 
                 if (enrolledCourse) {
@@ -67,12 +65,8 @@ const CoursePlayer = () => {
         const finalProgress = Math.max(progress, calculatedProgress);
 
         try {
-            const token = localStorage.getItem('token');
-            const isFinished = finalProgress === 100;
-
-            await axios.put('/api/profile/progress',
-                { courseId, progress: finalProgress, completed: isFinished },
-                { headers: { Authorization: `Bearer ${token}` } }
+            await api.put('/profile/progress',
+                { courseId, progress: finalProgress, completed: isFinished }
             );
 
             setProgress(finalProgress);
