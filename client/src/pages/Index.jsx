@@ -1,7 +1,7 @@
 import { useRef, useContext, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion, useInView } from 'framer-motion';
-import { Sparkles, TrendingUp, BarChart3, Brain, Target, Shield, UserPlus, BookOpen, Zap, ArrowRight, CheckCircle2 } from 'lucide-react';
+import { Sparkles, TrendingUp, BarChart3, Brain, Target, Shield, UserPlus, BookOpen, Zap, ArrowRight, CheckCircle2, Menu, X } from 'lucide-react';
 import AuthContext from '../auth/AuthContext';
 import Footer from '../components/layout/Footer';
 import logoImg from '../assets/logo.png';
@@ -32,6 +32,7 @@ const FadeIn = ({ children, delay = 0, direction = "up" }) => {
 
 const Index = () => {
     const [isLoggingIn, setIsLoggingIn] = useState(false);
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const { login } = useContext(AuthContext);
     const navigate = useNavigate();
 
@@ -54,24 +55,50 @@ const Index = () => {
     return (
         <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', backgroundColor: 'var(--bg-main)' }}>
             {/* Navbar - Sticky */}
-            <nav className="glass" style={{
+            <nav className="glass index-nav" style={{
                 padding: '16px 40px', display: 'flex', justifyContent: 'space-between', alignItems: 'center',
                 position: 'sticky', top: 0, zIndex: 1000, margin: '0 20px 0', marginTop: '20px', borderRadius: '16px'
             }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                    <div style={{ width: '60px', height: '60px', cursor: 'pointer', display: 'flex', alignItems: 'center' }} onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
+                    <div className="index-nav-logo-img" style={{ width: '60px', height: '60px', cursor: 'pointer', display: 'flex', alignItems: 'center' }} onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
                         <img src={logoImg} alt="LearnIQ Logo" style={{ width: '100%', height: 'auto' }} />
                     </div>
-                    <span style={{ fontSize: '1.6rem', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.5px', cursor: 'pointer' }} onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>LearnIQ</span>
+                    <span className="index-nav-logo-text" style={{ fontSize: '1.6rem', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.5px', cursor: 'pointer' }} onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>LearnIQ</span>
                 </div>
-                <div style={{ display: 'flex', gap: '30px', alignItems: 'center' }}>
+                {/* Desktop nav links */}
+                <div className="index-nav-links" style={{ display: 'flex', gap: '30px', alignItems: 'center' }}>
                     <span style={{ cursor: 'pointer', color: 'var(--text-secondary)', fontWeight: 600, fontSize: '0.95rem' }} onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>Home</span>
                     <a href="#features" style={{ textDecoration: 'none', color: 'var(--text-secondary)', fontWeight: 600, fontSize: '0.95rem' }}>Features</a>
+                    <a href="#about" style={{ textDecoration: 'none', color: 'var(--text-secondary)', fontWeight: 600, fontSize: '0.95rem' }}>About Us</a>
                     <a href="#how-it-works" style={{ textDecoration: 'none', color: 'var(--text-secondary)', fontWeight: 600, fontSize: '0.95rem' }}>How it Works</a>
                     <Link to="/login" style={{ textDecoration: 'none', color: 'var(--text-primary)', fontWeight: 700, fontSize: '0.95rem' }}>Log In</Link>
                     <Link to="/register" className="btn btn-primary" style={{ padding: '10px 24px' }}>Get Started</Link>
                 </div>
+                {/* Mobile hamburger button */}
+                <div className="index-nav-mobile-menu" style={{ display: 'none', alignItems: 'center' }}>
+                    <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-primary)', display: 'flex', alignItems: 'center' }}>
+                        {mobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
+                    </button>
+                </div>
             </nav>
+            {/* Mobile dropdown menu */}
+            {mobileMenuOpen && (
+                <div style={{
+                    position: 'fixed', top: '90px', left: '10px', right: '10px', zIndex: 999,
+                    backgroundColor: 'white', borderRadius: '16px', padding: '20px 24px',
+                    boxShadow: '0 20px 60px rgba(0,0,0,0.15)', border: '1px solid var(--border)',
+                    display: 'flex', flexDirection: 'column', gap: '18px'
+                }}>
+                    <span style={{ cursor: 'pointer', color: 'var(--text-primary)', fontWeight: 600, fontSize: '1rem' }} onClick={() => { window.scrollTo({ top: 0, behavior: 'smooth' }); setMobileMenuOpen(false); }}>🏠 Home</span>
+                    <a href="#features" onClick={() => setMobileMenuOpen(false)} style={{ textDecoration: 'none', color: 'var(--text-primary)', fontWeight: 600, fontSize: '1rem' }}>✨ Features</a>
+                    <a href="#about" onClick={() => setMobileMenuOpen(false)} style={{ textDecoration: 'none', color: 'var(--text-primary)', fontWeight: 600, fontSize: '1rem' }}>🏫 About Us</a>
+                    <a href="#how-it-works" onClick={() => setMobileMenuOpen(false)} style={{ textDecoration: 'none', color: 'var(--text-primary)', fontWeight: 600, fontSize: '1rem' }}>⚙️ How it Works</a>
+                    <div style={{ borderTop: '1px solid var(--border)', paddingTop: '14px', display: 'flex', gap: '12px' }}>
+                        <Link to="/login" onClick={() => setMobileMenuOpen(false)} className="btn" style={{ flex: 1, justifyContent: 'center', border: '1px solid var(--border)', color: 'var(--text-primary)', backgroundColor: 'white' }}>Log In</Link>
+                        <Link to="/register" onClick={() => setMobileMenuOpen(false)} className="btn btn-primary" style={{ flex: 1, justifyContent: 'center' }}>Get Started</Link>
+                    </div>
+                </div>
+            )}
 
             {/* Hero Section */}
             <header style={{
@@ -86,32 +113,32 @@ const Index = () => {
                 }}></div>
 
                 {/* Floating Elements */}
-                <div style={{ position: 'absolute', top: '20%', left: '10%', animation: 'float 5s infinite' }}>
+                <div className="hero-float-icon" style={{ position: 'absolute', top: '20%', left: '10%', animation: 'float 5s infinite' }}>
                     <div className="card" style={{ padding: '15px', borderRadius: '18px', transform: 'rotate(-5deg)', boxShadow: '0 20px 40px rgba(0,0,0,0.05)' }}>
                         <BarChart3 color="var(--primary)" size={36} />
                     </div>
                 </div>
 
                 {/* New Icon 1: Book */}
-                <div style={{ position: 'absolute', bottom: '15%', left: '25%', animation: 'float 6s ease-in-out infinite' }}>
+                <div className="hero-float-icon" style={{ position: 'absolute', bottom: '15%', left: '25%', animation: 'float 6s ease-in-out infinite' }}>
                     <div className="card" style={{ padding: '12px', borderRadius: '15px', transform: 'rotate(-5deg)', boxShadow: '0 15px 30px rgba(0,0,0,0.05)' }}>
                         <BookOpen color="var(--calm-blue)" size={28} />
                     </div>
                 </div>
                 {/* New Icon 2: Zap */}
-                <div style={{ position: 'absolute', top: '15%', right: '10%', animation: 'float-reverse 7s infinite' }}>
+                <div className="hero-float-icon" style={{ position: 'absolute', top: '15%', right: '10%', animation: 'float-reverse 7s infinite' }}>
                     <div className="card" style={{ padding: '14px', borderRadius: '15px', transform: 'rotate(5deg)', boxShadow: '0 15px 30px rgba(0,0,0,0.05)' }}>
                         <Zap color="var(--interest-orange)" size={28} />
                     </div>
                 </div>
-                <div style={{ position: 'absolute', bottom: '20%', right: '10%', animation: 'float-reverse 6s infinite' }}>
+                <div className="hero-float-icon" style={{ position: 'absolute', bottom: '20%', right: '10%', animation: 'float-reverse 6s infinite' }}>
                     <div className="card" style={{ padding: '18px', borderRadius: '18px', transform: 'rotate(5deg)', boxShadow: '0 20px 40px rgba(0,0,0,0.05)' }}>
                         <Target color="var(--interest-orange)" size={40} />
                     </div>
                 </div>
 
                 <FadeIn>
-                    <div style={{
+                    <div className="hero-badge" style={{
                         backgroundColor: '#D1FAE5', color: 'var(--primary-dark)',
                         padding: '8px 20px', borderRadius: '50px', fontSize: '0.9rem', fontWeight: 700,
                         marginBottom: '30px', display: 'inline-flex', alignItems: 'center', gap: '8px'
@@ -121,7 +148,7 @@ const Index = () => {
                 </FadeIn>
 
                 <FadeIn delay={0.2}>
-                    <h1 style={{
+                    <h1 className="hero-title" style={{
                         fontSize: '4.5rem', fontWeight: 900, color: 'var(--text-primary)', maxWidth: '1000px',
                         lineHeight: 1.1, marginBottom: '24px', letterSpacing: '-0.04em'
                     }}>
@@ -131,7 +158,7 @@ const Index = () => {
                 </FadeIn>
 
                 <FadeIn delay={0.4}>
-                    <p style={{
+                    <p className="hero-subtitle" style={{
                         fontSize: '1.4rem', color: 'var(--text-secondary)', maxWidth: '800px',
                         marginBottom: '48px', lineHeight: 1.6, fontWeight: 500
                     }}>
@@ -140,7 +167,7 @@ const Index = () => {
                     </p>
                 </FadeIn>
 
-                <div style={{
+                <div className="hero-buttons" style={{
                     display: 'flex',
                     gap: '16px',
                     justifyContent: 'center',
@@ -271,6 +298,52 @@ const Index = () => {
                             </div>
                         </div>
                     </FadeIn>
+                </div>
+            </section>
+
+            {/* About Us Section */}
+            <section id="about" style={{ padding: '100px 20px', backgroundColor: 'var(--bg-main)' }}>
+                <div className="container">
+                    <FadeIn>
+                        <div style={{ textAlign: 'center', marginBottom: '70px' }}>
+                            <h2 className="about-title" style={{ fontSize: '2.75rem', marginBottom: '16px', fontWeight: 800 }}>About LearnIQ</h2>
+                            <p style={{ color: 'var(--text-secondary)', fontSize: '1.1rem', maxWidth: '600px', margin: '0 auto' }}>
+                                Built by students, for students — LearnIQ is your AI-powered companion for smarter, faster academic growth.
+                            </p>
+                        </div>
+                    </FadeIn>
+                    <div className="about-grid" style={{ display: 'flex', gap: '40px', alignItems: 'center', flexWrap: 'wrap' }}>
+                        {/* Left — Story */}
+                        <div style={{ flex: '1 1 340px' }}>
+                            <FadeIn delay={0.1}>
+                                <div className="card" style={{ padding: '40px' }}>
+                                    <div style={{ fontSize: '2.5rem', marginBottom: '16px' }}>🎓</div>
+                                    <h3 style={{ fontSize: '1.5rem', marginBottom: '14px', color: 'var(--primary-dark)' }}>Our Mission</h3>
+                                    <p style={{ color: 'var(--text-secondary)', lineHeight: 1.8, fontSize: '0.98rem' }}>
+                                        We believe every student deserves a personalized learning experience. LearnIQ combines AI, real-time analytics, and gamification
+                                        to help learners of all levels — from Class 6 to post-graduate — achieve their full potential.
+                                    </p>
+                                </div>
+                            </FadeIn>
+                        </div>
+                        {/* Right — Stats cards */}
+                        <div style={{ flex: '1 1 340px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+                            {[
+                                { emoji: '🚀', value: '10,000+', label: 'Active Students' },
+                                { emoji: '📚', value: '50+', label: 'Courses Available' },
+                                { emoji: '🏆', value: '95%', label: 'Student Satisfaction' },
+                                { emoji: '🤖', value: 'AI-First', label: 'Smart Recommendations' },
+                            ].map((stat, i) => (
+                                <FadeIn delay={i * 0.1} key={i}>
+                                    <div className="card" style={{ textAlign: 'center', padding: '28px 20px' }}>
+                                        <div style={{ fontSize: '2rem', marginBottom: '8px' }}>{stat.emoji}</div>
+                                        <div style={{ fontSize: '1.6rem', fontWeight: 800, color: 'var(--primary)' }}>{stat.value}</div>
+                                        <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginTop: '4px' }}>{stat.label}</div>
+                                    </div>
+                                </FadeIn>
+                            ))}
+                        </div>
+                    </div>
                 </div>
             </section>
 

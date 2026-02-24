@@ -42,11 +42,27 @@ const Login = () => {
 
     return (
         <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', backgroundColor: 'white' }}>
+            {/* Mini top nav — visible on login page so Features/About links work */}
+            <div className="auth-top-nav" style={{
+                display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                padding: '12px 40px', backgroundColor: '#F8FAFC', borderBottom: '1px solid #E5E7EB'
+            }}>
+                <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '8px', textDecoration: 'none', color: 'var(--text-primary)' }}>
+                    <img src={logoImg} alt="LearnIQ" style={{ width: '32px', height: '32px' }} />
+                    <span style={{ fontWeight: 800, fontSize: '1.1rem' }}>LearnIQ</span>
+                </Link>
+                <div className="auth-top-nav-links" style={{ display: 'flex', gap: '24px', alignItems: 'center' }}>
+                    <a href="/#features" style={{ textDecoration: 'none', color: 'var(--text-secondary)', fontWeight: 600, fontSize: '0.9rem' }}>✨ Features</a>
+                    <a href="/#about" style={{ textDecoration: 'none', color: 'var(--text-secondary)', fontWeight: 600, fontSize: '0.9rem' }}>🏫 About Us</a>
+                    <a href="/#how-it-works" style={{ textDecoration: 'none', color: 'var(--text-secondary)', fontWeight: 600, fontSize: '0.9rem' }}>⚙️ How it Works</a>
+                    <Link to="/register" className="btn btn-primary" style={{ padding: '8px 18px', fontSize: '0.85rem' }}>Sign Up Free</Link>
+                </div>
+            </div>
             <div style={{ display: 'flex', flexGrow: 1, flexDirection: 'column' }}>
                 <div style={{ display: 'flex', flexWrap: 'wrap-reverse', minHeight: 'calc(100vh - 80px)' }}> {/* wrap-reverse to stack correctly on mobile if needed */}
 
                     {/* Left Panel - Visual (Purple Gradient) */}
-                    <div className="auth-gradient" style={{
+                    <div className="auth-gradient auth-panel-right" style={{
                         flex: '1.2 1 500px',
                         display: 'flex',
                         flexDirection: 'column',
@@ -102,7 +118,7 @@ const Login = () => {
                     </div>
 
                     {/* Right Panel - Login Form (White) */}
-                    <div style={{ flex: '1 1 500px', padding: '40px', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+                    <div className="auth-panel-left" style={{ flex: '1 1 500px', padding: '40px', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
                         <div style={{ width: '100%', maxWidth: '400px' }}>
                             <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '30px', textDecoration: 'none', color: 'inherit' }}>
                                 <div style={{ width: '50px', height: '50px', cursor: 'pointer', display: 'flex', alignItems: 'center' }}>

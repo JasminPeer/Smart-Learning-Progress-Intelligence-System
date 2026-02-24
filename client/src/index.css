@@ -250,6 +250,84 @@ textarea:focus {
   background-color: #F8FAFC;
 }
 
+/* ===== RESPONSIVE DESIGN — ALL SCREEN SIZES ===== */
+
+/* Large tablets / small laptops */
+@media (max-width: 1024px) {
+  .grid-cols-4 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .grid-cols-3 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .container {
+    padding: 0 24px;
+  }
+}
+
+/* Tablets */
+@media (max-width: 768px) {
+
+  .grid-cols-3,
+  .grid-cols-2,
+  .grid-cols-4 {
+    grid-template-columns: 1fr;
+  }
+
+  /* Index page hero */
+  .hero-title {
+    font-size: 2.8rem !important;
+  }
+
+  .hero-subtitle {
+    font-size: 1.1rem !important;
+  }
+
+  /* Index page navbar */
+  .index-nav-links {
+    display: none !important;
+  }
+
+  .index-nav-mobile-menu {
+    display: flex !important;
+  }
+
+  /* Auth page two-panel layout — stack vertically */
+  .auth-panel-right {
+    display: none !important;
+  }
+
+  .auth-panel-left {
+    flex: 1 1 100% !important;
+    padding: 30px 20px !important;
+  }
+
+  /* Section padding */
+  section {
+    padding-top: 60px !important;
+    padding-bottom: 60px !important;
+  }
+
+  /* CTA section */
+  .cta-section {
+    padding: 60px 24px !important;
+    border-radius: 24px !important;
+  }
+
+  .cta-title {
+    font-size: 2rem !important;
+  }
+
+  /* Features/Steps sections */
+  .features-grid {
+    gap: 24px !important;
+    row-gap: 24px !important;
+  }
+}
+
+/* Mobile */
 @media (max-width: 640px) {
   .btn {
     padding: 10px 20px;
@@ -262,5 +340,112 @@ textarea:focus {
 
   main {
     padding: 20px !important;
+  }
+
+  /* Hero text scaling */
+  .hero-title {
+    font-size: 2.2rem !important;
+    letter-spacing: -0.02em !important;
+  }
+
+  .hero-subtitle {
+    font-size: 1rem !important;
+  }
+
+  .hero-badge {
+    font-size: 0.8rem !important;
+    padding: 6px 14px !important;
+  }
+
+  .hero-buttons {
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 12px !important;
+    width: 100% !important;
+  }
+
+  .hero-buttons a,
+  .hero-buttons button {
+    width: 100% !important;
+    max-width: 320px !important;
+  }
+
+  /* Hide floating hero icons on mobile */
+  .hero-float-icon {
+    display: none !important;
+  }
+
+  /* Index navbar */
+  .index-nav {
+    padding: 12px 20px !important;
+    margin: 10px !important;
+  }
+
+  .index-nav-logo-text {
+    font-size: 1.3rem !important;
+  }
+
+  .index-nav-logo-img {
+    width: 44px !important;
+    height: 44px !important;
+  }
+
+  /* Auth top nav (login/register pages) */
+  .auth-top-nav {
+    padding: 10px 16px !important;
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+  }
+
+  .auth-top-nav-links {
+    gap: 14px !important;
+    font-size: 0.85rem !important;
+  }
+
+  /* Auth form */
+  .auth-panel-left {
+    padding: 20px 16px !important;
+  }
+
+  /* Footer */
+  footer .container>div:first-child {
+    grid-template-columns: 1fr !important;
+    gap: 30px !important;
+  }
+
+  /* About section */
+  .about-grid {
+    flex-direction: column !important;
+    gap: 24px !important;
+  }
+
+  .about-title {
+    font-size: 2rem !important;
+  }
+
+  /* Sections */
+  section {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+
+  h2 {
+    font-size: 1.9rem !important;
+  }
+}
+
+/* Small mobile (iPhone SE etc.) */
+@media (max-width: 480px) {
+  .hero-title {
+    font-size: 1.9rem !important;
+  }
+
+  .btn-primary {
+    font-size: 0.9rem !important;
+    padding: 12px 20px !important;
+  }
+
+  .card {
+    border-radius: 14px;
   }
 }
