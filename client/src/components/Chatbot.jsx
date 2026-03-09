@@ -143,7 +143,8 @@ const ChatContent = ({ localMessages, setLocalMessages, isTyping, setIsTyping, a
             flexDirection: 'column',
             flex: 1,
             minHeight: 0,
-            backgroundColor: '#f3f4f6'
+            backgroundColor: '#f3f4f6',
+            color: '#1F2937'
         }}>
             {/* Messages Area */}
             <div className="chat-messages" style={{
@@ -270,7 +271,9 @@ const ChatContent = ({ localMessages, setLocalMessages, isTyping, setIsTyping, a
                         borderRadius: '20px',
                         border: '1px solid #D1D5DB',
                         outline: 'none',
-                        fontSize: '0.95rem'
+                        fontSize: '0.95rem',
+                        color: '#1F2937',
+                        backgroundColor: 'white'
                     }}
                 />
                 <button
@@ -369,6 +372,7 @@ const ChatbotInner = () => {
                             width: '360px',
                             height: '550px',
                             backgroundColor: 'white',
+                            color: '#1F2937',
                             borderRadius: '24px',
                             boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)',
                             display: 'flex',
