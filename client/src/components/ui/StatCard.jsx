@@ -3,7 +3,7 @@ const StatCard = ({ title, value, subtitle, icon, trend, trendLabel, variant = '
     // Variant Styles
     const styles = {
         default: {
-            background: 'var(--bg-card)',
+            background: 'white',
             color: 'var(--text-primary)',
             border: 'none',
             iconBg: 'var(--secondary-light)',
