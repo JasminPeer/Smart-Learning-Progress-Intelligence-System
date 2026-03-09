@@ -13,7 +13,7 @@ const SubjectCard = ({ subject, startingScore, currentProgress, risk }) => {
                     <span style={{ color: '#64748B', fontWeight: 600 }}>Starting Performance</span>
                     <span style={{ fontWeight: 800, color: 'var(--primary)' }}>{startingScore}%</span>
                 </div>
-                <div style={{ width: '100%', height: '8px', backgroundColor: '#F1F5F9', borderRadius: '10px', overflow: 'hidden' }}>
+                <div style={{ width: '100%', height: '8px', backgroundColor: 'var(--dashboard-bg, #F1F5F9)', borderRadius: '10px', overflow: 'hidden' }}>
                     <div style={{ width: `${startingScore}%`, height: '100%', backgroundColor: 'var(--primary)', borderRadius: '10px' }}></div>
                 </div>
             </div>
@@ -23,7 +23,7 @@ const SubjectCard = ({ subject, startingScore, currentProgress, risk }) => {
                     <span style={{ color: '#64748B', fontWeight: 600 }}>Current Progress</span>
                     <span style={{ fontWeight: 800, color: 'var(--secondary)' }}>{currentProgress}%</span>
                 </div>
-                <div style={{ width: '100%', height: '8px', backgroundColor: '#F1F5F9', borderRadius: '10px', overflow: 'hidden' }}>
+                <div style={{ width: '100%', height: '8px', backgroundColor: 'var(--dashboard-bg, #F1F5F9)', borderRadius: '10px', overflow: 'hidden' }}>
                     <div style={{ width: `${currentProgress}%`, height: '100%', backgroundColor: 'var(--secondary)', borderRadius: '10px' }}></div>
                 </div>
             </div>

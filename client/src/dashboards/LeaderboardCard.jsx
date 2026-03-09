@@ -17,7 +17,7 @@ const LeaderboardCard = () => {
                         display: 'flex',
                         alignItems: 'center',
                         padding: '10px 0',
-                        borderBottom: index < students.length - 1 ? '1px solid #f0f0f0' : 'none'
+                        borderBottom: index < students.length - 1 ? '1px solid var(--border)' : 'none'
                     }}>
                         <span style={{ fontWeight: 'bold', width: '24px', color: index < 3 ? 'var(--warning)' : 'var(--text-secondary)' }}>#{index + 1}</span>
                         <span style={{ fontSize: '1.2rem', marginRight: '10px' }}>{student.avatar}</span>

@@ -46,6 +46,8 @@
   --sidebar-bg: #022C22;
   --sidebar-hover: #065F46;
   --glass: rgba(6, 78, 59, 0.7);
+  --dashboard-bg: var(--bg-main);
+  --stat-card-bg: var(--bg-card);
 }
 
 body {
