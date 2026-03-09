@@ -233,7 +233,7 @@ const Dashboard = () => {
                 marginTop: '20px'
             }}>
                 {/* Performance Trend Chart */}
-                <div className="card" style={{ minHeight: '400px', display: 'flex', flexDirection: 'column', border: 'none', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)', marginTop: '20px' }}>
+                <div className="card" style={{ minHeight: '400px', display: 'flex', flexDirection: 'column', border: 'none', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)', marginTop: '20px', backgroundColor: 'var(--bg-card)', color: 'var(--text-primary)' }}>
                     <div style={{ marginBottom: '30px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <div>
                             <h3 style={{ marginBottom: '5px' }}>Performance Trend</h3>
@@ -285,7 +285,7 @@ const Dashboard = () => {
                     {isDemoMode ? (
                         <LeaderboardCard />
                     ) : (
-                        <div className="card" style={{ border: 'none', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }}>
+                        <div className="card" style={{ border: 'none', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)', backgroundColor: 'var(--bg-card)', color: 'var(--text-primary)' }}>
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
                                 <h3 style={{ margin: 0, fontSize: '1.2rem' }}>Learning Goals</h3>
                                 <button onClick={() => handleAction('Add Goal')} className="btn" style={{ padding: '8px 16px', fontSize: '0.85rem', backgroundColor: '#F3F4F6', color: '#1E293B' }}>+ Add Goal</button>
@@ -370,7 +370,7 @@ const Dashboard = () => {
                     <h3 style={{ marginBottom: '20px' }}>Course Progress</h3>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '30px', marginBottom: '40px' }}>
                         {currentProfile?.enrolledCourses?.filter(c => !c.completed).length > 0 ? currentProfile.enrolledCourses.filter(c => !c.completed).map((ec, idx) => (
-                            <div key={idx} className="card" style={{ padding: '25px', cursor: 'pointer', position: 'relative' }} onClick={() => navigate(`/learn/${ec.courseId}`)}>
+                            <div key={idx} className="card" style={{ padding: '25px', cursor: 'pointer', position: 'relative', backgroundColor: 'var(--bg-card)', color: 'var(--text-primary)' }} onClick={() => navigate(`/learn/${ec.courseId}`)}>
                                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '15px' }}>
                                     <h4 style={{ margin: 0 }}>{ec.name}</h4>
                                     <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
@@ -452,7 +452,7 @@ const Dashboard = () => {
                     position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
                     backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000
                 }}>
-                    <div className="card" style={{ width: '400px', padding: '30px' }}>
+                    <div className="card" style={{ width: '400px', padding: '30px', backgroundColor: 'var(--bg-card)', color: 'var(--text-primary)' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
                             <h3 style={{ margin: 0 }}>Add New Goal</h3>
                             <button onClick={() => setShowGoalModal(false)} style={{ background: 'none', border: 'none', cursor: 'pointer' }}><X size={20} /></button>
