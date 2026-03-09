@@ -80,7 +80,7 @@ const DashboardLayout = ({ role, children }) => {
     };
 
     return (
-        <div style={{ display: 'flex', height: '100vh', backgroundColor: 'var(--dashboard-bg, #F1F5F9)' }}> {/* Slate 100 BG */}
+        <div data-theme={user?.theme || 'light'} style={{ display: 'flex', height: '100vh', backgroundColor: 'var(--dashboard-bg, #F1F5F9)', color: 'var(--text-primary)' }}> {/* Slate 100 BG */}
 
             {/* Dark Sidebar - Matches Screenshot but using Brand Green */}
             <div style={{

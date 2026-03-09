@@ -27,9 +27,6 @@ export const AuthProvider = ({ children }) => {
 
     useEffect(() => {
         if (user) {
-            // Apply theme
-            document.documentElement.setAttribute('data-theme', user.theme || 'light');
-
             // Apply font size
             const fontSizes = {
                 small: '14px',
@@ -38,7 +35,7 @@ export const AuthProvider = ({ children }) => {
             };
             document.documentElement.style.fontSize = fontSizes[user.fontSize || 'medium'];
         } else {
-            document.documentElement.setAttribute('data-theme', 'light');
+            // Reset font size
             document.documentElement.style.fontSize = '16px';
         }
     }, [user]);
