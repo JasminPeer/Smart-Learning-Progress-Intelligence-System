@@ -6,7 +6,7 @@ An end-to-end full-stack educational intelligence platform that tracks, analyzes
 
 ## 🌐 Live Demo & Preview
 <!-- ADD YOUR LIVE DEMO LINK BELOW -->
-> 🚀 **Live Demo**: [Click here to view live project](PASTE_YOUR_LIVE_DEMO_URL_HERE)  
+> 🚀 **Live Demo**: https://smart-learning-frontend.onrender.com/  
 > *(Deploy to Vercel, Netlify, Render, or GitHub Pages and paste your live link above)*
 
 ---
